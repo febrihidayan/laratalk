@@ -1,0 +1,22 @@
+.image {
+    display: block;
+    position: relative;
+    img {
+        border-radius: 50%;
+        display: block;
+        height: auto;
+        width: 100%;
+    }
+    &.is-48 {
+        height: 48px;
+        width: 48px;
+    }
+    &.is-40 {
+        height: 40px;
+        width: 40px;
+    }
+    &.is-128 {
+        height: 128px;
+        width: 128px;
+    }
+}

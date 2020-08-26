@@ -1,0 +1,35 @@
+{
+    "name": "febrihidayan/laratalk",
+    "description": "Laratalk memberikan obrolan antara pengguna dan group berbasis Laravel",
+    "keywords": ["laratalk", "packages", "laravel", "chatting", "realtime", "messages", "pusher"],
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/febrihidayan/laratalk/issues",
+        "source": "https://github.com/febrihidayan/laratalk"
+    },
+    "authors": [
+        {
+            "name": "Febri Hidayan",
+            "email": "febrihidayan20@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "laravel/framework": "^6.0|^7.0",
+        "pusher/pusher-php-server": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Laratalk\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Laratalk\\LaratalkServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

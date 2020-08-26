@@ -1,0 +1,26 @@
+.scroll::-webkit-scrollbar {
+	width: 14px;
+}
+.scroll::-webkit-scrollbar-thumb {
+	background-clip: content-box;
+	border: 4px solid transparent;
+	border-radius: 7px;
+	box-shadow: inset 0 0 0 10px;
+}
+.scroll::-webkit-scrollbar-button {
+	display: none;
+	height: 0;
+	width: 0;
+}
+.scroll::-webkit-scrollbar-corner {
+	background-color: transparent;
+}
+.scroll {
+	color: #00000000;
+	overflow: auto;
+	transition: color 0.3s;
+
+	&:hover {
+		color: #90a4ae;
+	}
+}
