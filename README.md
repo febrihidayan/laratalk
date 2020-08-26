@@ -20,7 +20,7 @@ Laratalk adalah package laravel untuk kebutuhan realtime chat di aplikasi Anda.
 
 Install package Laratalk
 ```
-composer require febrihidayan\laratalk
+composer require febrihidayan/laratalk
 ```
 
 Kemudian jalankan artisan berikut untuk publish asset
