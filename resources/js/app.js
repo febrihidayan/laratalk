@@ -1,11 +1,12 @@
-import Vue from 'vue'
-import App from './App.vue'
-
 require('./plugins')
 
-Vue.config.productionTip = false
+import { createApp } from 'vue'
+import App from './App.vue'
 
-const app = new Vue({
-    el: '#laratalk',
-    render: h => h(App),
+createApp(App)
+.mixin({
+    data: {
+        laratalk: window.laratalk
+    }
 })
+.mount('#laratalk')

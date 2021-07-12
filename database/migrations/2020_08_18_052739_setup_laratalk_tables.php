@@ -14,7 +14,7 @@ class SetupLaratalkTables extends Migration
     public function up()
     {
         Schema::create('laratalk_messages', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->unsignedBigInteger('from_id');
             $table->unsignedBigInteger('to_id')->nullable();
             $table->unsignedBigInteger('group_id')->nullable();
@@ -26,7 +26,7 @@ class SetupLaratalkTables extends Migration
         });
         
         Schema::create('laratalk_groups', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->string('name');
             $table->string('description')->nullable();
             $table->string('image')->nullable();

@@ -3,11 +3,12 @@
 return [
 
     /**
-     * --------------------------------------------------------------------------
+     *--------------------------------------------------------------------------
      * App Name
      * --------------------------------------------------------------------------
      * 
-     * Sesuaikan nama aplikasi yang akan ditampilkan atau biarkan secara default
+     * Customize the name of the application to be displayed or leave it by
+     * default
      * 
      */
     'name' => env('LARATALK_NAME', 'Laratalk'),
@@ -17,8 +18,8 @@ return [
      * Base Route
      * --------------------------------------------------------------------------
      * 
-     * Laratalk dapat di akses dengan routing laratalk, Anda bisa menyesuaikan
-     * dengan routing kesukaan Anda atau biarkan ini secara default
+     * Laratalk can be accessed with laratalk routing, you can adjust to your
+     * favorite routing or leave it by default
      * 
      */
     'path' => env('LARATALK_PATH', 'laratalk'),
@@ -28,11 +29,11 @@ return [
      * Route Middleware
      * --------------------------------------------------------------------------
      * 
-     * Middleware ini akan digunakan di semua routing Laratalk, Anda bisa mengubah
-     * salah satunya atau menambahkan middleware yang telah Anda buat.
+     * This middleware will be used in all Laratalk routing, you can change any
+     * of them or add middleware that you have created.
      * 
-     * Ingat! biarkan middleware auth tetap ada, jika di hapus Laratalk tidak
-     * berkerja dengan baik
+     * Remember! leave the auth middleware still there, if it is removed
+     * Laratalk doesn't work properly
      * 
      */
     'middleware' => [
