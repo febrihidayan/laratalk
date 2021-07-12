@@ -8,11 +8,8 @@
     
     <title>{{ config('laratalk.name') }}</title>
 
-    <link rel="stylesheet" type="text/css" href="{{ mix('css/app.css', 'vendor/laratalk') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.2.0/css/all.min.css">
-
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Karla|Merriweather:400,700">
+    <link rel="stylesheet" type="text/css" href="{{ mix('css/app.css', 'vendor/laratalk') }}">
 </head>
 <body class="overflow-hidden">
 
