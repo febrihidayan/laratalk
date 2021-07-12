@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Laratalk\Http\Controllers\LaratalkController;
+use Laratalk\Http\Controllers\MessageController;
+use Laratalk\Http\Controllers\UserController;
 
 Route::group([
-    'namespace' => 'Laratalk\Http\Controllers',
     'prefix' => config('laratalk.path'),
     'middleware' => config('laratalk.middleware'),
     'as' => 'laratalk.'
@@ -11,15 +13,15 @@ Route::group([
 
     Route::prefix('api')->group( function() {
 
-        Route::get('user/{query}', 'UserController')->name('user');
+        Route::get('user/{query}', UserController::class)
+            ->name('user');
 
-        Route::resource('message', 'MessageController', [
-            'only' => ['show', 'store', 'update']
-        ]);
+        Route::resource('message', MessageController::class)
+            ->only(['show', 'store', 'update']);
 
     });
 
-    Route::get('/{view?}', 'LaratalkController')
+    Route::get('/{view?}', LaratalkController::class)
         ->where('view', '(.*)')
         ->name('index');
 

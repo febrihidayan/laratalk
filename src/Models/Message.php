@@ -13,6 +13,7 @@ class Message extends Model
      * @var string
      */
     protected $table = 'laratalk_messages';
+    
     /**
      * The attributes that are mass assignable.
      *

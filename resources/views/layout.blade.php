@@ -14,7 +14,7 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Karla|Merriweather:400,700">
 </head>
-<body>
+<body class="overflow-hidden">
 
     <div id="laratalk">
         <router-view></router-view>
