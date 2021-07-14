@@ -17958,17 +17958,19 @@ __webpack_require__.r(__webpack_exports__);
     fetchMessages: function fetchMessages(id) {
       var _this2 = this;
 
-      this.form.to_id = id;
-      axios.get('message/' + id).then(function (_ref2) {
-        var data = _ref2.data;
-        _this2.message = data;
+      if (this.form.to_id != id) {
+        this.form.to_id = id;
+        axios.get('message/' + id).then(function (_ref2) {
+          var data = _ref2.data;
+          _this2.message = data;
 
-        var index = _this2.users.findIndex(function (s) {
-          return s.id === id;
+          var index = _this2.users.findIndex(function (s) {
+            return s.id === id;
+          });
+
+          _this2.users[index].read_count = 0;
         });
-
-        _this2.users[index].read_count = 0;
-      });
+      }
     },
     pushMessage: function pushMessage(data, user_id) {
       var _this3 = this;
@@ -18416,6 +18418,53 @@ var _hoisted_47 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(
 /* HOISTED */
 );
 
+var _hoisted_48 = {
+  "class": "sidebar-detail overflow-y-auto"
+};
+var _hoisted_49 = {
+  "class": "bg-white dark:bg-dark-300 p-6"
+};
+
+var _hoisted_50 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("figure", {
+  "class": "my-4"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("img", {
+  "class": "rounded-full h-48 w-48 mx-auto cursor-pointer",
+  src: "https://bulma.io/images/placeholders/128x128.png",
+  alt: "person"
+})], -1
+/* HOISTED */
+);
+
+var _hoisted_51 = {
+  "class": "text-xl"
+};
+var _hoisted_52 = {
+  "class": "bg-white dark:bg-dark-300 my-2 px-6 py-4"
+};
+
+var _hoisted_53 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("small", {
+  "class": "text-purple-800 dark:text-purple-300"
+}, "Contact information", -1
+/* HOISTED */
+);
+
+var _hoisted_54 = {
+  "class": "mt-4"
+};
+
+var _hoisted_55 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("a", {
+  "class": "flex cursor-pointer bg-white text-red-600 dark:bg-dark-300 my-2 px-6 py-4"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("svg", {
+  "class": "svg-icon !fill-red-600 !stroke-red-600",
+  viewBox: "0 0 20 20"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("path", {
+  d: "M17.114,3.923h-4.589V2.427c0-0.252-0.207-0.459-0.46-0.459H7.935c-0.252,0-0.459,0.207-0.459,0.459v1.496h-4.59c-0.252,0-0.459,0.205-0.459,0.459c0,0.252,0.207,0.459,0.459,0.459h1.51v12.732c0,0.252,0.207,0.459,0.459,0.459h10.29c0.254,0,0.459-0.207,0.459-0.459V4.841h1.511c0.252,0,0.459-0.207,0.459-0.459C17.573,4.127,17.366,3.923,17.114,3.923M8.394,2.886h3.214v0.918H8.394V2.886z M14.686,17.114H5.314V4.841h9.372V17.114z M12.525,7.306v7.344c0,0.252-0.207,0.459-0.46,0.459s-0.458-0.207-0.458-0.459V7.306c0-0.254,0.205-0.459,0.458-0.459S12.525,7.051,12.525,7.306M8.394,7.306v7.344c0,0.252-0.207,0.459-0.459,0.459s-0.459-0.207-0.459-0.459V7.306c0-0.254,0.207-0.459,0.459-0.459S8.394,7.051,8.394,7.306"
+})]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
+  "class": "ml-6"
+}, "Delete chat")], -1
+/* HOISTED */
+);
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("section", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("aside", {
     "class": ["bg-white dark:bg-dark-300 sm:border-r-1 dark:sm:border-dark-200 h-screen fixed top-0 left-0 z-30 ease-in-out transition-all duration-300", {
@@ -18524,7 +18573,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }), 128
   /* KEYED_FRAGMENT */
   ))]), _hoisted_44]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("aside", {
-    "class": ["flex-none bg-white dark:bg-dark-300 w-0 h-screen <xl:fixed <xl:top-0 <xl:right-0 z-10 ease-in-out transition-all duration-300", {
+    "class": ["flex-none bg-light-600 dark:bg-dark-100 w-0 <xl:fixed <xl:top-0 <xl:right-0 z-10 ease-in-out transition-all duration-300", {
       'w-100 <sm:w-full md:border-l-1 dark:md:border-dark-200': $data.isDetail
     }]
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_45, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("a", {
@@ -18532,7 +18581,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onClick: _cache[10] || (_cache[10] = function ($event) {
       return $data.isDetail = !$data.isDetail;
     })
-  }, [_hoisted_46]), _hoisted_47])], 2
+  }, [_hoisted_46]), _hoisted_47]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_48, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_49, [_hoisted_50, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("p", _hoisted_51, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.message.name), 1
+  /* TEXT */
+  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_52, [_hoisted_53, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_54, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.message.email), 1
+  /* TEXT */
+  )])]), _hoisted_55])], 2
   /* CLASS */
   )]);
 }
