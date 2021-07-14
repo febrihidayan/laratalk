@@ -2,6 +2,9 @@
 
 namespace Laratalk;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
+
 class Laratalk
 {
     /**
@@ -11,15 +14,18 @@ class Laratalk
      */
     public static function scriptBuild(): array
     {
+        $user = Auth::user();
+
         return [
-            'title' => config('laratalk.name'),
-            'path' => config('laratalk.path'),
-            'user_id' => auth()->user()->id,
-            'profile' => config('laratalk.users'),
-            'echo' => [
-                'key' => env('PUSHER_APP_KEY'),
-                'cluster' => env('PUSHER_APP_CLUSTER')
-            ]
+            'title' => Config::get('laratalk.name'),
+            'path' => Config::get('laratalk.path'),
+            'profile' => [
+                'id' => $user->id,
+                'avatar' => $user->avatar,
+                'name' => $user->name,
+                'email' => $user->email,
+            ],
+            'echo' => Config::get('broadcasting.connections.pusher')
         ];
     }
 }
