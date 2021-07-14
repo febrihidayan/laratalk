@@ -71,39 +71,57 @@
                     <input type="search" class="flex-grow dark:bg-dark-50 focus:outline-none ml-3" placeholder="Search">
                 </div>
             </div>
-            <div class="sidebar-content overflow-y-auto divide-y dark:divide-gray-700 divide-light-500">
-                <div v-for="item in 10" :key="item" class="sidebar-list flex hover:font-medium hover:bg-light-200 dark:hover:bg-dark-200 cursor-pointer px-4 py-3" @click="isRight = true">
-                    <div class="flex-grow-0 flex-shrink-0">
+            <div class="sidebar-content overflow-y-auto overflow-x-hidden divide-y dark:divide-gray-700 divide-light-500">
+                <div
+                    v-for="(item, index) in users"
+                    :key="index"
+                    @click="isRight = true"
+                    :title="item.content"
+                    :class="[`sidebar-list flex h-18 hover:bg-light-200 dark:hover:bg-dark-200 cursor-pointer`, {
+                        'font-medium': item.read_count
+                    }]"
+                >
+                    <div class="flex flex-col justify-center px-3">
                         <figure>
                             <img class="rounded-full h-13 w-13" src="https://bulma.io/images/placeholders/128x128.png" alt="person">
                         </figure>
                     </div>
-                    <div class="flex-grow w-73 ml-4">
+                    <div class="flex flex-grow flex-col justify-center w-73 pr-3">
                         <div class="flex">
-                            <p class="truncate text-lg mr-auto">Febri Hidayan</p>
-                            <p><small>Yesterday</small></p>
+                            <p class="flex-grow truncate text-lg">{{
+                                item.name
+                            }}</p>
+                            <small class="flex-none">Yesterday</small>
                         </div>
-                        <div class="flex">
-                            <small class="flex w-full text-sm mr-auto">
-                                <svg class="fill-blue-500 w-5 h-5" viewBox="0 0 20 20">
+                        <div class="flex text-sm">
+                            <template
+                                v-if="item.id != item.content_by"
+                            >
+                                <svg class="flex-none fill-blue-500 w-5 h-5" viewBox="0 0 20 20">
                                     <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
                                 </svg>
-                                <svg class="fill-blue-500 w-5 h-5 -ml-3" viewBox="0 0 20 20">
+                                <svg class="flex-none fill-blue-500 w-5 h-5 -ml-3" viewBox="0 0 20 20">
                                     <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
                                 </svg>
-                                <span class="truncate ml-1">Lorem ipsum dolor sit amet dolor sit amet dolor sit amet.</span>
-                            </small>
-                            <div class="relative">
-                                <div class="button-dropdown absolute font-normal bg-gradient-to-tr from-light-200/80 to-light-200 dark:from-dark-200/80 dark:to-dark-200 right-0 opacity-0">
-                                    <a class="cursor-pointer float-right" aria-haspopup="true" aria-controls="dropdown-menu">
-                                        <svg class="fill-blue-500 bg-light-200 dark:bg-dark-200 w-6 h-6 float-right transform -rotate-90" viewBox="0 0 20 20">
-                                            <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
-                                        </svg>
-                                    </a>
-                                    <div class="bg-white hidden dark:bg-dark-300 absolute right-0 mt-5 py-2 w-48 rounded-md shadow-lg" id="dropdown-menu" role="menu">
-                                        <a href="#" class="text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-light-700 dark:hover:bg-dark-100 dark:hover:text-light-100 block px-4 py-2 text-sm">Delete Chat</a>
-                                        <a href="#" class="text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-light-700 dark:hover:bg-dark-100 dark:hover:text-light-100 block px-4 py-2 text-sm">Exit Group</a>
-                                    </div>
+                            </template>
+                            <span class="flex-grow truncate">{{
+                                item.content
+                            }}</span>
+                            <small
+                                v-if="item.read_count"
+                                class="flex-none bg-blue-600 text-white w-5 h-5 leading-5 text-center rounded-full"
+                            >{{
+                                item.read_count
+                            }}</small>
+                            <div class="button-dropdown flex-none relative font-normal -mr-9 pl-3 ease-in-out transition-all duration-200">
+                                <a class="cursor-pointer" aria-haspopup="true" aria-controls="dropdown-menu">
+                                    <svg class="fill-blue-500 w-6 h-6 transform -rotate-90" viewBox="0 0 20 20">
+                                        <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
+                                    </svg>
+                                </a>
+                                <div class="bg-white hidden dark:bg-dark-300 absolute right-0 mt-5 py-2 w-48 rounded-md shadow-lg" id="dropdown-menu" role="menu">
+                                    <a href="#" class="text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-light-700 dark:hover:bg-dark-100 dark:hover:text-light-100 block px-4 py-2 text-sm">Delete Chat</a>
+                                    <a href="#" class="text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-light-700 dark:hover:bg-dark-100 dark:hover:text-light-100 block px-4 py-2 text-sm">Exit Group</a>
                                 </div>
                             </div>
                         </div>
