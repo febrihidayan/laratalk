@@ -209,7 +209,7 @@
                 </div>
             </div>
         </main>
-        <aside :class="[`flex-none bg-white dark:bg-dark-300 w-0 h-screen <xl:fixed <xl:top-0 <xl:right-0 z-10 ease-in-out transition-all duration-300`, {
+        <aside :class="[`flex-none bg-light-600 dark:bg-dark-100 w-0 <xl:fixed <xl:top-0 <xl:right-0 z-10 ease-in-out transition-all duration-300`, {
             'w-100 <sm:w-full md:border-l-1 dark:md:border-dark-200': isDetail
         }]">
             <div class="flex bg-blue-500 dark:bg-dark-400 text-white p-4">
@@ -219,6 +219,30 @@
                     </svg>
                 </a>
                 <p class="text-base ml-3">Contact Info</p>
+            </div>
+            <div class="sidebar-detail overflow-y-auto">
+                <div class="bg-white dark:bg-dark-300 p-6">
+                    <figure class="my-4">
+                        <img class="rounded-full h-48 w-48 mx-auto cursor-pointer" src="https://bulma.io/images/placeholders/128x128.png" alt="person">
+                    </figure>
+                    <p class="text-xl">{{
+                        message.name
+                    }}</p>
+                </div>
+                <div class="bg-white dark:bg-dark-300 my-2 px-6 py-4">
+                    <small class="text-purple-800 dark:text-purple-300">Contact information</small>
+                    <div class="mt-4">
+                        <p>{{
+                            message.email
+                        }}</p>
+                    </div>
+                </div>
+                <a class="flex cursor-pointer bg-white text-red-600 dark:bg-dark-300 my-2 px-6 py-4">
+                    <svg class="svg-icon !fill-red-600 !stroke-red-600" viewBox="0 0 20 20">
+                        <path d="M17.114,3.923h-4.589V2.427c0-0.252-0.207-0.459-0.46-0.459H7.935c-0.252,0-0.459,0.207-0.459,0.459v1.496h-4.59c-0.252,0-0.459,0.205-0.459,0.459c0,0.252,0.207,0.459,0.459,0.459h1.51v12.732c0,0.252,0.207,0.459,0.459,0.459h10.29c0.254,0,0.459-0.207,0.459-0.459V4.841h1.511c0.252,0,0.459-0.207,0.459-0.459C17.573,4.127,17.366,3.923,17.114,3.923M8.394,2.886h3.214v0.918H8.394V2.886z M14.686,17.114H5.314V4.841h9.372V17.114z M12.525,7.306v7.344c0,0.252-0.207,0.459-0.46,0.459s-0.458-0.207-0.458-0.459V7.306c0-0.254,0.205-0.459,0.458-0.459S12.525,7.051,12.525,7.306M8.394,7.306v7.344c0,0.252-0.207,0.459-0.459,0.459s-0.459-0.207-0.459-0.459V7.306c0-0.254,0.207-0.459,0.459-0.459S8.394,7.051,8.394,7.306"></path>
+                    </svg>
+                    <span class="ml-6">Delete chat</span>
+                </a>
             </div>
         </aside>
     </section>
@@ -262,14 +286,18 @@ export default {
 
         fetchMessages(id)
         {
-            this.form.to_id = id
+            if (this.form.to_id != id) {
+            
+                this.form.to_id = id
+                
+                axios.get('message/' + id).then(({ data }) => {
+                    this.message = data
+    
+                    let index = this.users.findIndex((s) => s.id === id)
+                    this.users[index].read_count = 0
+                })
 
-            axios.get('message/' + id).then(({ data }) => {
-                this.message = data
-
-                let index = this.users.findIndex((s) => s.id === id)
-                this.users[index].read_count = 0
-            })
+            }
         },
 
         pushMessage(data, user_id, type = '')

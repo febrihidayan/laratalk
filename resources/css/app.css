@@ -24,6 +24,10 @@
     height: calc(100vh - 6.5rem);
 }
 
+.sidebar-detail {
+    height: calc(100vh - 3.5rem);
+}
+
 .main-content {
     height: calc(100vh - 7.25rem);
 }
