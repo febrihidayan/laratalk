@@ -18642,10 +18642,10 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__.default({
-  broadcaster: 'pusher',
+  broadcaster: laratalk.echo.driver,
   key: laratalk.echo.key,
-  cluster: laratalk.echo.cluster,
-  forceTLS: true,
+  cluster: laratalk.echo.options.cluster,
+  forceTLS: laratalk.echo.options.useTLS,
   namespace: 'Laratalk.Events'
 });
 

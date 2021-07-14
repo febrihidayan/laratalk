@@ -22,9 +22,9 @@ import Echo from 'laravel-echo';
 window.Pusher = require('pusher-js');
 
 window.Echo = new Echo({
-    broadcaster: 'pusher',
+    broadcaster: laratalk.echo.driver,
     key: laratalk.echo.key,
-    cluster: laratalk.echo.cluster,
-    forceTLS: true,
+    cluster: laratalk.echo.options.cluster,
+    forceTLS: laratalk.echo.options.useTLS,
     namespace: 'Laratalk.Events'
 });
