@@ -4,6 +4,7 @@ namespace Laratalk\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Auth;
 
 class Message extends Model
 {
@@ -43,14 +44,61 @@ class Message extends Model
         'read_at',
     ];
 
-    public function userFrom()
+    public const SEND = 'send';
+
+    public const ACCEPT = 'accept';
+
+    public const READ = 'read';
+
+    public function readCount(): int
     {
-        return $this->belongsTo(User::class, 'from_id');
+        return $this->joinMeta()
+            ->join('users', 'laratalk_message_meta.to_id', '=', 'users.id')
+            ->where([
+                ['laratalk_messages.from_id', $this->id],
+                ['laratalk_message_meta.to_id', Auth::id()]
+            ])
+            ->whereNull('laratalk_message_meta.read_at')->count();
     }
 
-    public function userTo()
+    public function statusMessage(): string
     {
-        return $this->belongsTo(User::class, 'to_id');
+        if ($this->read_at) {
+            return self::READ;
+        }
+
+        if ($this->accept_at) {
+            return self::ACCEPT;
+        }
+
+        return self::SEND;
+    }
+
+    public function scopeAuthUser($query)
+    {
+        return $query->where(function ($q) {
+                $q->where('laratalk_messages.from_id', Auth::id())
+                    ->orWhere('laratalk_message_meta.to_id', Auth::id());
+            });
+    }
+
+    public function scopeJoinMeta($query)
+    {
+        return $query->join(
+            'laratalk_message_meta',
+            'laratalk_message_meta.message_id',
+            '=',
+            'laratalk_messages.id'
+        );
+    }
+
+    public function scopeJoinUser($query)
+    {
+        return $query->joinMeta()
+            ->join('users',  function ($join) {
+                $join->on('laratalk_messages.from_id', '=', 'users.id')
+                    ->orOn('laratalk_message_meta.to_id', '=', 'users.id');
+            });
     }
 
 }

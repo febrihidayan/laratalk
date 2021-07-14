@@ -232,6 +232,10 @@ textarea::-ms-input-placeholder {
   --tw-bg-opacity: 1;
   background-color: rgba(74, 74, 74, var(--tw-bg-opacity));
 }
+.bg-blue-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(37, 99, 235, var(--tw-bg-opacity));
+}
 .bg-gradient-to-r {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
 }
@@ -378,8 +382,14 @@ textarea::-ms-input-placeholder {
 .flex-nowrap {
   flex-wrap: nowrap;
 }
+.justify-center {
+  justify-content: center;
+}
 .flex-none {
   flex: none;
+}
+.flex-1 {
+  flex: 1 1 0%;
 }
 .flex-grow {
   flex-grow: 1;
@@ -399,6 +409,9 @@ textarea::-ms-input-placeholder {
 .font-normal {
   font-weight: 400;
 }
+.font-medium {
+  font-weight: 500;
+}
 .h-screen {
   height: 100vh;
 }
@@ -414,8 +427,17 @@ textarea::-ms-input-placeholder {
 .h-5 {
   height: 1.25rem;
 }
+.h-2 {
+  height: 0.5rem;
+}
 .h-13 {
   height: 3.25rem;
+}
+.h-15 {
+  height: 3.75rem;
+}
+.h-18 {
+  height: 4.5rem;
 }
 .text-base {
   font-size: 1rem;
@@ -432,8 +454,17 @@ textarea::-ms-input-placeholder {
 .leading-none {
   line-height: 1;
 }
+.leading-5 {
+  line-height: 1.25rem;
+}
+.leading-6 {
+  line-height: 1.5rem;
+}
 .m-4 {
   margin: 1rem;
+}
+.m-2 {
+  margin: 0.5rem;
 }
 .my-8 {
   margin-top: 2rem;
@@ -454,6 +485,10 @@ textarea::-ms-input-placeholder {
 .my-4 {
   margin-top: 1rem;
   margin-bottom: 1rem;
+}
+.mx-3 {
+  margin-left: 0.75rem;
+  margin-right: 0.75rem;
 }
 .ml-3 {
   margin-left: 0.75rem;
@@ -497,11 +532,29 @@ textarea::-ms-input-placeholder {
 .ml-1 {
   margin-left: 0.25rem;
 }
+.ml-2 {
+  margin-left: 0.5rem;
+}
+.-mr-3 {
+  margin-right: -0.75rem;
+}
+.-ml-7 {
+  margin-left: -1.75rem;
+}
+.-ml-9 {
+  margin-left: -2.25rem;
+}
+.-mr-9 {
+  margin-right: -2.25rem;
+}
 .max-w-66\/100 {
   max-width: 66%;
 }
 .max-w-100 {
   max-width: 25rem;
+}
+.min-w-0 {
+  min-width: 0px;
 }
 .min-w-100 {
   min-width: 25rem;
@@ -528,6 +581,9 @@ textarea::-ms-input-placeholder {
 .overflow-y-auto {
   overflow-y: auto;
 }
+.overflow-x-hidden {
+  overflow-x: hidden;
+}
 .p-4 {
   padding: 1rem;
 }
@@ -536,6 +592,9 @@ textarea::-ms-input-placeholder {
 }
 .p-3 {
   padding: 0.75rem;
+}
+.p-2 {
+  padding: 0.5rem;
 }
 .px-5 {
   padding-left: 1.25rem;
@@ -556,6 +615,19 @@ textarea::-ms-input-placeholder {
 .px-24 {
   padding-left: 6rem;
   padding-right: 6rem;
+}
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+.pr-2 {
+  padding-right: 0.5rem;
+}
+.pr-3 {
+  padding-right: 0.75rem;
+}
+.pl-3 {
+  padding-left: 0.75rem;
 }
 .fixed {
   position: fixed;
@@ -580,6 +652,12 @@ textarea::-ms-input-placeholder {
 }
 .right-0 {
   right: 0px;
+}
+.-right-8 {
+  right: -2rem;
+}
+.-right-full {
+  right: -100%;
 }
 .resize-none {
   resize: none;
@@ -615,6 +693,9 @@ textarea::-ms-input-placeholder {
 .fill-blue-500 {
   --tw-fill-opacity: 1;
   fill: rgba(59, 130, 246, var(--tw-fill-opacity));
+}
+.text-center {
+  text-align: center;
 }
 .text-right {
   text-align: right;
@@ -696,6 +777,9 @@ textarea::-ms-input-placeholder {
 .w-80 {
   width: 20rem;
 }
+.w-2 {
+  width: 0.5rem;
+}
 .w-13 {
   width: 3.25rem;
 }
@@ -740,6 +824,9 @@ textarea::-ms-input-placeholder {
 }
 .rotate-90 {
   --tw-rotate: 90deg;
+}
+.translate-x-full {
+  --tw-translate-x: 100%;
 }
 .transition-all {
   transition-property: all;
@@ -870,7 +957,11 @@ textarea::-ms-input-placeholder {
     height: calc(100vh - 7.25rem);
 }
 
-.message:hover .button-dropdown,
 .sidebar-list:hover .button-dropdown {
+    padding-left: .25rem;
+    margin-right: 0;
+}
+
+.message:hover .button-dropdown {
     opacity: 1;
 }

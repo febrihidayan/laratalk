@@ -28,7 +28,11 @@
     height: calc(100vh - 7.25rem);
 }
 
-.message:hover .button-dropdown,
 .sidebar-list:hover .button-dropdown {
+    padding-left: .25rem;
+    margin-right: 0;
+}
+
+.message:hover .button-dropdown {
     opacity: 1;
 }
