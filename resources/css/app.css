@@ -22,14 +22,17 @@
 
 .sidebar-content {
     height: calc(100vh - 6.5rem);
+    @apply overflow-y-auto overflow-x-hidden;
 }
 
 .sidebar-detail {
     height: calc(100vh - 3.5rem);
+    @apply overflow-y-auto overflow-x-hidden;
 }
 
 .main-content {
     height: calc(100vh - 7.25rem);
+    @apply overflow-y-auto overflow-x-hidden;
 }
 
 .sidebar-list:hover .button-dropdown {

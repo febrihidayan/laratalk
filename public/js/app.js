@@ -18103,7 +18103,7 @@ var _hoisted_4 = {
   "class": "text-base ml-3"
 };
 var _hoisted_5 = {
-  "class": "m-4"
+  "class": "sidebar-detail"
 };
 var _hoisted_6 = {
   key: 0,
@@ -18195,7 +18195,7 @@ var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(
 );
 
 var _hoisted_17 = {
-  "class": "sidebar-content bg-white dark:bg-dark-300 overflow-y-auto overflow-x-hidden divide-y dark:divide-gray-700 divide-light-500"
+  "class": "sidebar-content bg-white dark:bg-dark-300 divide-y dark:divide-gray-700 divide-light-500"
 };
 
 var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", {
@@ -18327,7 +18327,7 @@ var _hoisted_36 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(
 );
 
 var _hoisted_37 = {
-  "class": "main-content bg-light-200 dark:bg-dark-100 flex flex-col overflow-y-auto px-24 <sm:px-5 <md:px-10",
+  "class": "main-content bg-light-200 dark:bg-dark-100 flex flex-col px-24 <sm:px-5 <md:px-10",
   id: "main-content"
 };
 var _hoisted_38 = {
@@ -18419,7 +18419,7 @@ var _hoisted_47 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(
 );
 
 var _hoisted_48 = {
-  "class": "sidebar-detail overflow-y-auto"
+  "class": "sidebar-detail"
 };
 var _hoisted_49 = {
   "class": "bg-white dark:bg-dark-300 p-6"
@@ -18467,7 +18467,7 @@ var _hoisted_55 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("section", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("aside", {
-    "class": ["bg-white dark:bg-dark-300 sm:border-r-1 dark:sm:border-dark-200 h-screen fixed top-0 left-0 z-30 ease-in-out transition-all duration-300", {
+    "class": ["bg-white dark:bg-dark-300 sm:border-r-1 dark:sm:border-dark-200 fixed top-0 left-0 z-30 ease-in-out transition-all duration-300", {
       'min-w-100 <sm:w-full': $data.right_detail,
       '-left-full -left-100': !$data.right_detail
     }]
