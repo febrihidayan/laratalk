@@ -29,10 +29,27 @@
 }
 
 .sidebar-list:hover .button-dropdown {
-    padding-left: .25rem;
-    margin-right: 0;
+    @apply mr-0 pl-1;
 }
 
 .message:hover .button-dropdown {
-    opacity: 1;
+    @apply opacity-100;
+}
+
+.svg-icon {
+    stroke-width: .25;
+    @apply fill-purple-400 stroke-purple-400 w-6 h-6;
+}
+
+.svg-icon.svg-sm {
+    @apply !w-5 !h-5;
+}
+
+.dark .svg-icon {
+    stroke-width: .5;
+    @apply fill-true-gray-200 stroke-true-gray-200;
+}
+
+.transition-effect {
+    @apply ease-in-out transition-all duration-200;
 }
