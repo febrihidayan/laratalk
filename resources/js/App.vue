@@ -1,7 +1,7 @@
 <template>
     <section class="flex dark:text-gray-100">
         <aside
-            :class="[`bg-white dark:bg-dark-300 sm:border-r-1 dark:sm:border-dark-200 h-screen fixed top-0 left-0 z-30 ease-in-out transition-all duration-300`, {
+            :class="[`bg-white dark:bg-dark-300 sm:border-r-1 dark:sm:border-dark-200 fixed top-0 left-0 z-30 ease-in-out transition-all duration-300`, {
                 'min-w-100 <sm:w-full': right_detail,
                 '-left-full -left-100': !right_detail
             }]"
@@ -16,7 +16,7 @@
                     {{ right_detail == 'profile' ? 'Profile' : 'New Chat' }}
                 </p>
             </div>
-            <div class="m-4">
+            <div class="sidebar-detail">
                 <template v-if="right_detail == 'profile'">
                     <figure class="my-8">
                         <img class="rounded-full h-48 w-48 mx-auto cursor-pointer" src="https://bulma.io/images/placeholders/128x128.png" alt="person">
@@ -71,7 +71,7 @@
                     <input type="search" class="flex-grow dark:bg-dark-50 focus:outline-none ml-3" placeholder="Search">
                 </div>
             </div>
-            <div class="sidebar-content bg-white dark:bg-dark-300 overflow-y-auto overflow-x-hidden divide-y dark:divide-gray-700 divide-light-500">
+            <div class="sidebar-content bg-white dark:bg-dark-300 divide-y dark:divide-gray-700 divide-light-500">
                 <div
                     v-for="(item, index) in users"
                     :key="index"
@@ -159,7 +159,7 @@
                     </div>
                 </div>
             </div>
-            <div class="main-content bg-light-200 dark:bg-dark-100 flex flex-col overflow-y-auto px-24 <sm:px-5 <md:px-10" id="main-content">
+            <div class="main-content bg-light-200 dark:bg-dark-100 flex flex-col px-24 <sm:px-5 <md:px-10" id="main-content">
                 <template v-for="(item, index) in message.messages" :key="index">
                     <div
                         v-if="message.id == item.content_by"
@@ -220,7 +220,7 @@
                 </a>
                 <p class="text-base ml-3">Contact Info</p>
             </div>
-            <div class="sidebar-detail overflow-y-auto">
+            <div class="sidebar-detail">
                 <div class="bg-white dark:bg-dark-300 p-6">
                     <figure class="my-4">
                         <img class="rounded-full h-48 w-48 mx-auto cursor-pointer" src="https://bulma.io/images/placeholders/128x128.png" alt="person">
