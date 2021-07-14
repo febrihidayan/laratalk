@@ -232,6 +232,22 @@ textarea::-ms-input-placeholder {
   --tw-bg-opacity: 1;
   background-color: rgba(31, 31, 31, var(--tw-bg-opacity));
 }
+.bg-light-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(246, 246, 246, var(--tw-bg-opacity));
+}
+.bg-light-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(242, 242, 242, var(--tw-bg-opacity));
+}
+.dark .dark\:hover\:bg-true-gray-800:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgba(38, 38, 38, var(--tw-bg-opacity));
+}
+.dark .dark\:bg-true-gray-800 {
+  --tw-bg-opacity: 1;
+  background-color: rgba(38, 38, 38, var(--tw-bg-opacity));
+}
 .bg-gradient-to-tr {
   background-image: linear-gradient(to top right, var(--tw-gradient-stops));
 }

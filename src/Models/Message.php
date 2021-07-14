@@ -82,6 +82,20 @@ class Message extends Model
             });
     }
 
+    public function scopeWhereMetaUser($query, $userId, $orWhere = false)
+    {
+        $fields = [
+            ['from_id', $orWhere ? $userId : Auth::id()],
+            ['laratalk_message_meta.to_id', !$orWhere ? $userId : Auth::id()]
+        ];
+
+        if ($orWhere) {
+            return $query->orWhere($fields);
+        }
+
+        return $query->where($fields);
+    }
+
     public function scopeJoinMeta($query)
     {
         return $query->join(
@@ -89,6 +103,17 @@ class Message extends Model
             'laratalk_message_meta.message_id',
             '=',
             'laratalk_messages.id'
+        );
+    }
+
+    // TODO: Will be used for group messages
+    public function scopeJoinMetaUser($query)
+    {
+        return $query->join(
+            'users',
+            'laratalk_message_meta.to_id',
+            '=',
+            'users.id'
         );
     }
 

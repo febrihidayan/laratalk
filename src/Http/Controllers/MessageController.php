@@ -2,8 +2,10 @@
 
 namespace Laratalk\Http\Controllers;
 
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
 use Laratalk\Events\MessageEvent;
 use Laratalk\Http\Resources\MessageResource;
 use Laratalk\Models\Message;
@@ -12,28 +14,29 @@ class MessageController extends Controller
 {
     protected function show($id)
     {
-        $to = [
-            ['from_id', $id],
-            ['to_id', auth()->user()->id]
-        ];
+        $messages = Message::joinMeta()
+            ->whereMetaUser($id)
+            ->whereMetaUser($id, true)
+            ->oldest('laratalk_messages.created_at')
+            ->get();
 
-        $messages = Message::with('userFrom')->where($to);
-
-        $first = $messages;
-
-        if ($first->exists()) {
-
-            DB::table('laratalk_messages')->where($to)->update(['read_at' => now()]);
+        if ($messages->count()) {
+            
+            Message::joinMeta()
+                ->whereMetaUser($id, true)
+                ->update(['read_at' => now()]);
+            
         }
 
-        $messages = $messages->orWhere([
-            ['from_id', auth()->user()->id],
-            ['to_id', $id]
-        ])->get();
+        $user = User::find($id);
 
-        $messages = MessageResource::collection($messages);
-
-        return response()->json($messages);
+        return Response::json([
+            'id' => $user->id,
+            'avatar' => $user->avatar,
+            'name' => $user->name,
+            'email' => $user->email,
+            'messages' => MessageResource::collection($messages)
+        ]);
     }
 
     protected function store()

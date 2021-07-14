@@ -75,10 +75,12 @@
                 <div
                     v-for="(item, index) in users"
                     :key="index"
-                    @click="isRight = true"
+                    @click="fetchMessages(item.id);isRight = true"
                     :title="item.content"
-                    :class="[`sidebar-list flex h-18 hover:bg-light-300 dark:hover:bg-true-gray-700 cursor-pointer`, {
-                        'font-medium': item.read_count
+                    :class="[`sidebar-list flex h-18 cursor-pointer`, {
+                        'font-medium': item.read_count,
+                        'hover:bg-light-300 dark:hover:bg-true-gray-700': form.to_id != item.id,
+                        'bg-light-500 dark:bg-true-gray-800': form.to_id == item.id
                     }]"
                 >
                     <div class="flex flex-col justify-center px-3">
@@ -91,7 +93,7 @@
                             <p class="flex-grow truncate text-lg">{{
                                 item.name
                             }}</p>
-                            <small class="flex-none">Yesterday</small>
+                            <small class="flex-none my-auto">Yesterday</small>
                         </div>
                         <div class="flex text-sm">
                             <template
@@ -142,9 +144,11 @@
                     <div class="flex-grow-0 flex-shrink-0 cursor-pointer" @click="isDetail = true">
                         <img class="rounded-full h-10 w-10" src="https://bulma.io/images/placeholders/128x128.png" alt="person">
                     </div>
-                    <div class="flex-grow cursor-pointer ml-4" @click="isDetail = true">
-                        <p class="text-base leading-none">Febri Hidayan</p>
-                        <small class="text-sm leading-none">Lorem ipsum dolor sit amet.</small>
+                    <div class="flex-grow cursor-pointer ml-4 my-auto" @click="isDetail = true">
+                        <p class="text-base leading-none">{{
+                            message.name
+                        }}</p>
+                        <!-- <small class="text-sm leading-none"></small> -->
                     </div>
                     <div class="flex flex-grow-0 flex-shrink-0 my-auto">
                         <a class="cursor-pointer mx-2">
@@ -156,8 +160,11 @@
                 </div>
             </div>
             <div class="main-content bg-light-200 dark:bg-dark-100 flex flex-col overflow-y-auto px-24 <sm:px-5 <md:px-10" id="main-content">
-                <template v-for="item in 10" :key="item">
-                    <div class="message bg-white dark:text-dark-300 grid rounded-r-2xl rounded-t-2xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-3 mr-auto">
+                <template v-for="(item, index) in message.messages" :key="index">
+                    <div
+                        v-if="message.id == item.content_by"
+                        class="message bg-white dark:text-dark-300 grid rounded-r-2xl rounded-t-2xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-3 mr-auto"
+                    >
                         <div class="relative">
                             <a class="button-dropdown cursor-pointer absolute w-10 bg-gradient-to-tr from-white/80 to-white right-0 opacity-0 transition-effect">
                                 <svg class="svg-icon !bg-white !fill-gray-400 !stroke-gray-400 float-right transform -rotate-90" viewBox="0 0 20 20">
@@ -165,10 +172,15 @@
                                 </svg>
                             </a>
                         </div>
-                        <p>Lorem ipsum dolor sit amet consectetur.</p>
+                        <p>{{
+                            item.content
+                        }}</p>
                         <small class="text-right">20:30</small>
                     </div>
-                    <div class="message bg-dark-500 text-white rounded-t-2xl rounded-l-2xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-3 ml-auto">
+                    <div
+                        v-else
+                        class="message bg-dark-500 text-white rounded-t-2xl rounded-l-2xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-3 ml-auto"
+                    >
                         <div class="relative">
                             <a class="button-dropdown cursor-pointer absolute w-10 bg-gradient-to-tr from-dark-500/80 to-dark-500 right-0 opacity-0 transition-effect">
                                 <svg class="svg-icon !bg-dark-500 float-right transform -rotate-90" viewBox="0 0 20 20">
@@ -176,7 +188,9 @@
                                 </svg>
                             </a>
                         </div>
-                        <p>Lorem ipsum dolor sit.</p>
+                        <p>{{
+                            item.content
+                        }}</p>
                         <small class="flex float-right">
                             20:34
                             <svg class="svg-icon svg-sm" viewBox="0 0 20 20">
@@ -225,7 +239,7 @@ export default {
             userIndex: null,
             search: '',
             users: [],
-            messages: [],
+            message: {},
             profile: {},
             form: {
                 from_id: window.Laratalk.user_id,
@@ -251,12 +265,10 @@ export default {
             this.form.to_id = id
 
             axios.get('message/' + id).then(({ data }) => {
-                this.messages = data
+                this.message = data
 
                 let index = this.users.findIndex((s) => s.id === id)
-                this.userIndex = index
-                this.profile = this.users[index]
-                this.users[index].count = 0
+                this.users[index].read_count = 0
             })
         },
 
