@@ -3,6 +3,7 @@
 namespace Laratalk\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Laratalk\Laratalk;
 
 class UserListResource extends JsonResource
 {
@@ -16,7 +17,7 @@ class UserListResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'avatar' => $this->avatar,
+            'avatar' => Laratalk::getUserAvatar($this->email),
             'name' => $this->name,
             'content' => $this->content ?? '',
             'content_by' => $this->from_id,

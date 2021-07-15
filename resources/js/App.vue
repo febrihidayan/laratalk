@@ -19,7 +19,11 @@
             <div class="sidebar-detail">
                 <template v-if="right_detail == 'profile'">
                     <figure class="my-8">
-                        <img class="rounded-full h-48 w-48 mx-auto cursor-pointer" src="https://bulma.io/images/placeholders/128x128.png" alt="person">
+                        <img
+                            class="rounded-full h-48 w-48 mx-auto cursor-pointer"
+                            :src="laratalk.profile.avatar"
+                            alt="profile"
+                        >
                     </figure>
                 </template>
             </div>
@@ -31,7 +35,12 @@
         >
             <div class="flex bg-light-600 dark:bg-dark-400 px-5 py-2">
                 <div class="flex-grow">
-                    <img @click="right_detail = 'profile'" class="rounded-full h-10 w-10 cursor-pointer" src="https://bulma.io/images/placeholders/128x128.png" alt="person">
+                    <img
+                        @click="right_detail = 'profile'"
+                        class="rounded-full h-10 w-10 cursor-pointer"
+                        :src="laratalk.profile.avatar"
+                        alt="profile"
+                    >
                 </div>
                 <div class="flex flex-grow-0 flex-shrink-0 my-auto">
                     <a class="cursor-pointer mx-2" @click="right_detail = 'chat'">
@@ -85,7 +94,11 @@
                 >
                     <div class="flex flex-col justify-center px-3">
                         <figure>
-                            <img class="rounded-full h-13 w-13" src="https://bulma.io/images/placeholders/128x128.png" alt="person">
+                            <img
+                                class="rounded-full h-13 w-13"
+                                :src="item.avatar"
+                                alt="avatar"
+                            >
                         </figure>
                     </div>
                     <div class="flex flex-grow flex-col justify-center w-73 pr-3">
@@ -153,7 +166,11 @@
                         </a>
                     </div>
                     <div class="flex-grow-0 flex-shrink-0 cursor-pointer" @click="isDetail = true">
-                        <img class="rounded-full h-10 w-10" src="https://bulma.io/images/placeholders/128x128.png" alt="person">
+                        <img
+                            class="rounded-full h-10 w-10"
+                            :src="message.avatar"
+                            alt="avatar"
+                        >
                     </div>
                     <div class="flex-grow cursor-pointer ml-4 my-auto" @click="isDetail = true">
                         <p class="text-base leading-none">{{
@@ -251,7 +268,11 @@
             <div class="sidebar-detail">
                 <div class="bg-white dark:bg-dark-300 p-6">
                     <figure class="my-4">
-                        <img class="rounded-full h-48 w-48 mx-auto cursor-pointer" src="https://bulma.io/images/placeholders/128x128.png" alt="person">
+                        <img
+                            class="rounded-full h-48 w-48 mx-auto cursor-pointer"
+                            :src="message.avatar"
+                            alt="avatar"
+                        >
                     </figure>
                     <p class="text-xl">{{
                         message.name
