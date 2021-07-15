@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratalk\Events;
+namespace Laratalk\Events\Messages;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -9,22 +9,24 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Laratalk\Http\Resources\MessageResource;
 
-class MessageEvent implements ShouldBroadcast
+class SendEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    private $field;
+    private $data;
+
+    private $toId;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($field)
+    public function __construct($data, $toId)
     {
-        $this->field = $field;
+        $this->data = $data;
+        $this->toId = $toId;
     }
 
     /**
@@ -34,7 +36,7 @@ class MessageEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('laratalk-user.' . $this->field->to_id);
+        return new Channel("laratalk-user-message.{$this->toId}");
     }
 
     /**
@@ -44,7 +46,6 @@ class MessageEvent implements ShouldBroadcast
      */
     public function broadcastWith()
     {
-        $message = json_decode((new MessageResource($this->field))->toJson(), true);
-        return $message;
+        return $this->data;
     }
 }

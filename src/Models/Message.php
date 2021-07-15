@@ -3,7 +3,6 @@
 namespace Laratalk\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
 
 class Message extends Model
@@ -21,8 +20,7 @@ class Message extends Model
      * @var array
      */
     protected $fillable = [
-        'from_id', 'to_id', 'group_id', 'content', 'read_at',
-        'pinned', 'parent_id'
+        'from_id', 'group_id', 'content'
     ];
 
     /**

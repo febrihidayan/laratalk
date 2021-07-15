@@ -99,10 +99,21 @@
                             <template
                                 v-if="item.id != item.content_by"
                             >
-                                <svg class="svg-icon svg-sm flex-none" viewBox="0 0 20 20">
+                                <svg
+                                    :class="[`svg-icon svg-sm flex-none`, {
+                                        '!fill-dark-200 !stroke-dark-200 dark:!fill-light-200 dark:!stroke-light-200': item.status != 'read'
+                                    }]"
+                                    viewBox="0 0 20 20"
+                                >
                                     <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
                                 </svg>
-                                <svg class="svg-icon svg-sm flex-none -ml-3" viewBox="0 0 20 20">
+                                <svg
+                                    v-if="item.status != 'send'"
+                                    :class="[`svg-icon svg-sm flex-none -ml-4`, {
+                                        '!fill-dark-200 !stroke-dark-200 dark:!fill-light-200 dark:!stroke-light-200': item.status == 'accept'
+                                    }]"
+                                    viewBox="0 0 20 20"
+                                >
                                     <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
                                 </svg>
                             </template>
@@ -193,10 +204,21 @@
                         }}</p>
                         <small class="flex float-right">
                             20:34
-                            <svg class="svg-icon svg-sm" viewBox="0 0 20 20">
+                            <svg
+                                :class="[`svg-icon svg-sm`, {
+                                    '!fill-light-200 !stroke-light-200': item.status != 'read'
+                                }]"
+                                viewBox="0 0 20 20"
+                            >
                                 <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
                             </svg>
-                            <svg class="svg-icon svg-sm -ml-4" viewBox="0 0 20 20">
+                            <svg
+                                v-if="item.status != 'send'"
+                                :class="[`svg-icon svg-sm -ml-4`, {
+                                    '!fill-light-200 !stroke-light-200': item.status == 'accept'
+                                }]"
+                                viewBox="0 0 20 20"
+                            >
                                 <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
                             </svg>
                         </small>
@@ -205,7 +227,13 @@
             </div>
             <div class="bg-light-600 dark:bg-dark-500 px-5 py-2">
                 <div class="rounded-full bg-white dark:bg-dark-200 mx-auto px-4 py-2">
-                    <textarea class="dark:bg-dark-200 focus:outline-none w-full h-6 break-words border-none resize-none" placeholder="Type a message"></textarea>
+                    <form @keyup.enter="sendMessage">
+                        <textarea 
+                            v-model="form.content"
+                            class="dark:bg-dark-200 focus:outline-none w-full h-6 break-words border-none resize-none"
+                            placeholder="Type a message"
+                        />
+                    </form>
                 </div>
             </div>
         </main>
@@ -266,7 +294,6 @@ export default {
             message: {},
             profile: {},
             form: {
-                from_id: window.Laratalk.user_id,
                 to_id: '',
                 content: ''
             }
@@ -290,91 +317,124 @@ export default {
             
                 this.form.to_id = id
                 
-                axios.get('message/' + id).then(({ data }) => {
+                axios.get(`message-show/${id}`).then(({ data }) => {
                     this.message = data
     
                     let index = this.users.findIndex((s) => s.id === id)
                     this.users[index].read_count = 0
+
+                    this.scrollToEnd()
                 })
 
             }
         },
 
-        pushMessage(data, user_id, type = '')
+        pushMessage(data, type = '')
         {
-            let index = this.users.findIndex((s) => s.id === user_id)
+            let index = this.users.findIndex((s) => s.id === (
+                type == 'push' ? data.content_by : this.message.id
+            ))
 
-            if (index != -1 && type == 'push') {
-                this.users.splice(index, 1)
-            }
-
-            /**
-             * if untuk pesan submit
-             */
-            if (type == '') {
+            if (index != -1) {
+                
                 this.users[index].content = data.content
-                this.users[index].to_id = data.to_id
+                this.users[index].content_by = data.content_by
+                this.users[index].content_at = data.content_at
+                this.users[index].status = 'send'
 
-                let user = this.users[index]
-
-                this.users.splice(index, 1)
-                this.users.unshift(user)
-            }
-
-            /**
-             * else untuk pesan dari laravel echo
-             */
-            else {
-                this.users.unshift(data)
-            }
-
-            /**
-             * Jika dia melihat pesan user
-             */
-            if (this.form.to_id != '') {
-                index = this.users.findIndex((s) => s.id === this.form.to_id)
-
-                this.users[index].count = 0
-                this.userIndex = index
-
-                if (this.form.to_id == user_id) {
-
-                    this.messages.push({
-                        avatar: data.avatar,
-                        content: data.content,
-                        created_at: data.created_at,
-                        from_id: data.from_id,
-                    })
-
-                    axios.put('/message/' + user_id)
-    
+                if (type == 'push' && this.message.id != data.content_by) {
+                    this.users[index].read_count++
                 }
 
+            } else {
+                this.users.unshift({
+                    id: data.content_by,
+                    avatar: data.avatar,
+                    name: data.name,
+                    content: data.content,
+                    content_by: data.content_by,
+                    read_count: 1,
+                    status: data.status,
+                    content_at: data.content_at
+                })
             }
+
+            if (this.message.messages) {
+
+                this.message.messages.push(data)
+
+            }
+
+            if (this.laratalk.profile.id != data.content_by) {
+
+                let status = this.message.id == data.content_by
+                    ? 'read' : 'accept'
+
+                axios.post('message-status', {
+                    id: data.id,
+                    content_by: data.content_by,
+                    status
+                })
+                
+            }
+            
+            this.scrollToEnd()
         },
 
         sendMessage()
         {
-            axios.post('message', this.form).then(({ data }) => {
+            axios.post('message-store', this.form).then(({ data }) => {
                 this.form.content = ''
                 this.search = ''
 
-                this.pushMessage(data, data.to_id)
+                this.pushMessage(data)
             })
         },
 
         fetchEcho()
         {
-            Echo.channel('laratalk-user.' + window.Laratalk.user_id)
-                .listen('MessageEvent', (e) => {
-                    this.pushMessage(e, e.from_id, 'push')
+            Echo.channel('laratalk-user-message.' + this.laratalk.profile.id)
+                .listen('Messages\\SendEvent', (e) => {
+
+                    this.pushMessage(e, 'push')
+
+                })
+                .listen('Messages\\StatusEvent', (e) => {
+
+                    let index = this.users.findIndex((s) => s.id === e.content_to)
+
+                    if (index != -1) {
+                        
+                        this.users[index].status = e.status
+
+                        if (this.message.messages) {
+                            if (typeof e.id === 'number') {
+    
+                                this.message.messages
+                                    .find((s) => s.id === e.id)
+                                        .status = e.status
+
+                            } else {
+
+                                e.id.forEach((id) => {
+                                    this.message.messages
+                                        .find((s) => s.id === id)
+                                            .status = e.status
+                                })
+
+                            }
+                        }
+
+                    }
                 })
         },
 
         scrollToEnd()
         {
-            let container = this.$el.querySelector("#main-content")
-            container.scrollTop = container.scrollHeight
+            setTimeout(() => {
+                let container = this.$el.querySelector("#main-content")
+                container.scrollTop = container.scrollHeight
+            }, 10)
         }
 
     },
@@ -389,9 +449,6 @@ export default {
             this.fetchUsers()
         }, 500),
 
-        messages: debounce( function() {
-            this.scrollToEnd()
-        }, 10),
         dark_mode: function(e) {
             if (e) {
                 document.documentElement.classList.add('dark')
