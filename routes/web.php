@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use Laratalk\Http\Controllers\LaratalkController;
-use Laratalk\Http\Controllers\MessageController;
+use Laratalk\Http\Controllers\Messages\StatusController;
+use Laratalk\Http\Controllers\Messages\ShowController;
+use Laratalk\Http\Controllers\Messages\StoreController;
 use Laratalk\Http\Controllers\UserController;
 
 Route::group([
@@ -15,9 +17,12 @@ Route::group([
 
         Route::get('user/{query}', UserController::class)
             ->name('user');
+            
+        Route::get('message-show/{id}', ShowController::class);
 
-        Route::resource('message', MessageController::class)
-            ->only(['show', 'store', 'update']);
+        Route::post('message-status', StatusController::class);
+
+        Route::post('message-store', StoreController::class);
 
     });
 
