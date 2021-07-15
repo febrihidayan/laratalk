@@ -2,41 +2,36 @@
 
 namespace Laratalk;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
-
 class Laratalk
 {
     /**
-     * Build a global JavaScript object for the Vue app.
+     * Return an encoded string of app translations.
      *
+     * @param $locale
      * @return array
      */
-    public static function scriptBuild(): array
+    public static function availableTranslations($locale): array
     {
-        $user = Auth::user();
-
-        return [
-            'title' => Config::get('laratalk.name'),
-            'path' => Config::get('laratalk.path'),
-            'profile' => [
-                'id' => $user->id,
-                'avatar' => self::getUserAvatar($user->email),
-                'name' => $user->name,
-                'email' => $user->email,
-            ],
-            'echo' => Config::get('broadcasting.connections.pusher')
-        ];
+        return trans('laratalk::app', [], $locale);
     }
 
     /**
-     * Get avatar user
-     * 
-     * @var string $email
+     * Generate a Gravatar for a given email.
+     *
+     * @param string $email
+     * @param int $size
+     * @param string $default
+     * @param string $rating
      * @return string
      */
-    public static function getUserAvatar($email)
-    {
-        return "https://www.gravatar.com/avatar/" . md5(strtolower(trim($email))) . "?s=40";
+    public static function gravatar(
+        string $email,
+        int $size = 200,
+        string $default = 'retro',
+        string $rating = 'g'
+    ): string {
+        $hash = md5(strtolower(trim($email)));
+
+        return "https://www.gravatar.com/avatar/{$hash}?s={$size}&d={$default}&r={$rating}";
     }
 }

@@ -1,5 +1,5 @@
 <template>
-    <section class="flex dark:text-gray-100">
+    <section class="flex dark:bg-dark-100 dark:text-gray-100">
         <aside
             :class="[`bg-white dark:bg-dark-300 sm:border-r-1 dark:sm:border-dark-200 fixed top-0 left-0 z-30 ease-in-out transition-all duration-300`, {
                 'min-w-100 <sm:w-full': right_detail,
@@ -13,7 +13,7 @@
                     </svg>
                 </a>
                 <p class="text-base ml-3">
-                    {{ right_detail == 'profile' ? 'Profile' : 'New Chat' }}
+                    {{ right_detail == 'profile' ? trans.profile : trans.new_chat }}
                 </p>
             </div>
             <div class="sidebar-detail">
@@ -77,7 +77,11 @@
                             <path d="M18.125,15.804l-4.038-4.037c0.675-1.079,1.012-2.308,1.01-3.534C15.089,4.62,12.199,1.75,8.584,1.75C4.815,1.75,1.982,4.726,2,8.286c0.021,3.577,2.908,6.549,6.578,6.549c1.241,0,2.417-0.347,3.44-0.985l4.032,4.026c0.167,0.166,0.43,0.166,0.596,0l1.479-1.478C18.292,16.234,18.292,15.968,18.125,15.804 M8.578,13.99c-3.198,0-5.716-2.593-5.733-5.71c-0.017-3.084,2.438-5.686,5.74-5.686c3.197,0,5.625,2.493,5.64,5.624C14.242,11.548,11.621,13.99,8.578,13.99 M16.349,16.981l-3.637-3.635c0.131-0.11,0.721-0.695,0.876-0.884l3.642,3.639L16.349,16.981z"></path>
                         </svg>
                     </span>
-                    <input type="search" class="flex-grow dark:bg-dark-50 focus:outline-none ml-3" placeholder="Search">
+                    <input
+                        type="search"
+                        class="flex-grow dark:bg-dark-50 focus:outline-none ml-3" 
+                        :placeholder="trans.search"
+                    >
                 </div>
             </div>
             <div class="sidebar-content bg-white dark:bg-dark-300 divide-y dark:divide-gray-700 divide-light-500">
@@ -155,104 +159,120 @@
                 </div>
             </div>
         </aside>
-        <main class="flex-grow z-10">
-            <div class="bg-light-600 dark:bg-dark-400 px-5 py-2 <lg:px-2">
-                <div class="flex">
-                    <div class="flex-none mr-3 my-auto lg:hidden">
-                        <a class="cursor-pointer" @click="isRight = !isRight">
-                            <svg class="svg-icon" viewBox="0 0 20 20">
-                                <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
-                            </svg>
-                        </a>
+        <main
+            :class="[`flex-grow z-10`, {
+                'flex': !message.messages
+            }]"
+        >
+            <template v-if="message.messages">
+                <div class="bg-light-600 dark:bg-dark-400 px-5 py-2 <lg:px-2">
+                    <div class="flex">
+                        <div class="flex-none mr-3 my-auto lg:hidden">
+                            <a class="cursor-pointer" @click="isRight = !isRight">
+                                <svg class="svg-icon" viewBox="0 0 20 20">
+                                    <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
+                                </svg>
+                            </a>
+                        </div>
+                        <div class="flex-grow-0 flex-shrink-0 cursor-pointer" @click="isDetail = true">
+                            <img
+                                class="rounded-full h-10 w-10"
+                                :src="message.avatar"
+                                alt="avatar"
+                            >
+                        </div>
+                        <div class="flex-grow cursor-pointer ml-4 my-auto" @click="isDetail = true">
+                            <p class="text-base leading-none">{{
+                                message.name
+                            }}</p>
+                            <!-- <small class="text-sm leading-none"></small> -->
+                        </div>
+                        <div class="flex flex-grow-0 flex-shrink-0 my-auto">
+                            <a class="cursor-pointer mx-2">
+                                <svg class="svg-icon transform rotate-90" viewBox="0 0 20 20">
+                                    <path d="M3.936,7.979c-1.116,0-2.021,0.905-2.021,2.021s0.905,2.021,2.021,2.021S5.957,11.116,5.957,10 S5.052,7.979,3.936,7.979z M3.936,11.011c-0.558,0-1.011-0.452-1.011-1.011s0.453-1.011,1.011-1.011S4.946,9.441,4.946,10 S4.494,11.011,3.936,11.011z M16.064,7.979c-1.116,0-2.021,0.905-2.021,2.021s0.905,2.021,2.021,2.021s2.021-0.905,2.021-2.021 S17.181,7.979,16.064,7.979z M16.064,11.011c-0.559,0-1.011-0.452-1.011-1.011s0.452-1.011,1.011-1.011S17.075,9.441,17.075,10 S16.623,11.011,16.064,11.011z M10,7.979c-1.116,0-2.021,0.905-2.021,2.021S8.884,12.021,10,12.021s2.021-0.905,2.021-2.021 S11.116,7.979,10,7.979z M10,11.011c-0.558,0-1.011-0.452-1.011-1.011S9.442,8.989,10,8.989S11.011,9.441,11.011,10 S10.558,11.011,10,11.011z"></path>
+                                </svg>
+                            </a>
+                        </div>
                     </div>
-                    <div class="flex-grow-0 flex-shrink-0 cursor-pointer" @click="isDetail = true">
-                        <img
-                            class="rounded-full h-10 w-10"
-                            :src="message.avatar"
-                            alt="avatar"
+                </div>
+                <div class="main-content bg-light-200 dark:bg-dark-100 flex flex-col px-24 <sm:px-5 <md:px-10" id="main-content">
+                    <template v-for="(item, index) in message.messages" :key="index">
+                        <div
+                            v-if="message.id == item.content_by"
+                            class="message bg-white dark:text-dark-300 grid rounded-r-2xl rounded-t-2xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-3 mr-auto"
                         >
-                    </div>
-                    <div class="flex-grow cursor-pointer ml-4 my-auto" @click="isDetail = true">
-                        <p class="text-base leading-none">{{
-                            message.name
-                        }}</p>
-                        <!-- <small class="text-sm leading-none"></small> -->
-                    </div>
-                    <div class="flex flex-grow-0 flex-shrink-0 my-auto">
-                        <a class="cursor-pointer mx-2">
-                            <svg class="svg-icon transform rotate-90" viewBox="0 0 20 20">
-                                <path d="M3.936,7.979c-1.116,0-2.021,0.905-2.021,2.021s0.905,2.021,2.021,2.021S5.957,11.116,5.957,10 S5.052,7.979,3.936,7.979z M3.936,11.011c-0.558,0-1.011-0.452-1.011-1.011s0.453-1.011,1.011-1.011S4.946,9.441,4.946,10 S4.494,11.011,3.936,11.011z M16.064,7.979c-1.116,0-2.021,0.905-2.021,2.021s0.905,2.021,2.021,2.021s2.021-0.905,2.021-2.021 S17.181,7.979,16.064,7.979z M16.064,11.011c-0.559,0-1.011-0.452-1.011-1.011s0.452-1.011,1.011-1.011S17.075,9.441,17.075,10 S16.623,11.011,16.064,11.011z M10,7.979c-1.116,0-2.021,0.905-2.021,2.021S8.884,12.021,10,12.021s2.021-0.905,2.021-2.021 S11.116,7.979,10,7.979z M10,11.011c-0.558,0-1.011-0.452-1.011-1.011S9.442,8.989,10,8.989S11.011,9.441,11.011,10 S10.558,11.011,10,11.011z"></path>
-                            </svg>
-                        </a>
+                            <div class="relative">
+                                <a class="button-dropdown cursor-pointer absolute w-10 bg-gradient-to-tr from-white/80 to-white right-0 opacity-0 transition-effect">
+                                    <svg class="svg-icon !bg-white !fill-gray-400 !stroke-gray-400 float-right transform -rotate-90" viewBox="0 0 20 20">
+                                        <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                            <p>{{
+                                item.content
+                            }}</p>
+                            <small class="text-right">20:30</small>
+                        </div>
+                        <div
+                            v-else
+                            class="message bg-dark-500 text-white rounded-t-2xl rounded-l-2xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-3 ml-auto"
+                        >
+                            <div class="relative">
+                                <a class="button-dropdown cursor-pointer absolute w-10 bg-gradient-to-tr from-dark-500/80 to-dark-500 right-0 opacity-0 transition-effect">
+                                    <svg class="svg-icon !bg-dark-500 float-right transform -rotate-90" viewBox="0 0 20 20">
+                                        <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                            <p>{{
+                                item.content
+                            }}</p>
+                            <small class="flex float-right">
+                                20:34
+                                <svg
+                                    :class="[`svg-icon svg-sm`, {
+                                        '!fill-light-200 !stroke-light-200': item.status != 'read'
+                                    }]"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
+                                </svg>
+                                <svg
+                                    v-if="item.status != 'send'"
+                                    :class="[`svg-icon svg-sm -ml-4`, {
+                                        '!fill-light-200 !stroke-light-200': item.status == 'accept'
+                                    }]"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
+                                </svg>
+                            </small>
+                        </div>
+                    </template>
+                </div>
+                <div class="bg-light-600 dark:bg-dark-500 px-5 py-2">
+                    <div class="rounded-full bg-white dark:bg-dark-200 mx-auto px-4 py-2">
+                        <form @keyup.enter="sendMessage">
+                            <textarea 
+                                v-model="form.content"
+                                class="dark:bg-dark-200 focus:outline-none w-full h-6 break-words border-none resize-none"
+                                :placeholder="trans.type_a_message"
+                            />
+                        </form>
                     </div>
                 </div>
-            </div>
-            <div class="main-content bg-light-200 dark:bg-dark-100 flex flex-col px-24 <sm:px-5 <md:px-10" id="main-content">
-                <template v-for="(item, index) in message.messages" :key="index">
-                    <div
-                        v-if="message.id == item.content_by"
-                        class="message bg-white dark:text-dark-300 grid rounded-r-2xl rounded-t-2xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-3 mr-auto"
-                    >
-                        <div class="relative">
-                            <a class="button-dropdown cursor-pointer absolute w-10 bg-gradient-to-tr from-white/80 to-white right-0 opacity-0 transition-effect">
-                                <svg class="svg-icon !bg-white !fill-gray-400 !stroke-gray-400 float-right transform -rotate-90" viewBox="0 0 20 20">
-                                    <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
-                                </svg>
-                            </a>
-                        </div>
-                        <p>{{
-                            item.content
-                        }}</p>
-                        <small class="text-right">20:30</small>
-                    </div>
-                    <div
-                        v-else
-                        class="message bg-dark-500 text-white rounded-t-2xl rounded-l-2xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-3 ml-auto"
-                    >
-                        <div class="relative">
-                            <a class="button-dropdown cursor-pointer absolute w-10 bg-gradient-to-tr from-dark-500/80 to-dark-500 right-0 opacity-0 transition-effect">
-                                <svg class="svg-icon !bg-dark-500 float-right transform -rotate-90" viewBox="0 0 20 20">
-                                    <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
-                                </svg>
-                            </a>
-                        </div>
-                        <p>{{
-                            item.content
-                        }}</p>
-                        <small class="flex float-right">
-                            20:34
-                            <svg
-                                :class="[`svg-icon svg-sm`, {
-                                    '!fill-light-200 !stroke-light-200': item.status != 'read'
-                                }]"
-                                viewBox="0 0 20 20"
-                            >
-                                <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
-                            </svg>
-                            <svg
-                                v-if="item.status != 'send'"
-                                :class="[`svg-icon svg-sm -ml-4`, {
-                                    '!fill-light-200 !stroke-light-200': item.status == 'accept'
-                                }]"
-                                viewBox="0 0 20 20"
-                            >
-                                <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
-                            </svg>
-                        </small>
-                    </div>
-                </template>
-            </div>
-            <div class="bg-light-600 dark:bg-dark-500 px-5 py-2">
-                <div class="rounded-full bg-white dark:bg-dark-200 mx-auto px-4 py-2">
-                    <form @keyup.enter="sendMessage">
-                        <textarea 
-                            v-model="form.content"
-                            class="dark:bg-dark-200 focus:outline-none w-full h-6 break-words border-none resize-none"
-                            placeholder="Type a message"
-                        />
-                    </form>
+            </template>
+            <template v-else>
+                <div class="flex flex-grow flex-col justify-center text-center h-screen overflow-y-auto">
+                    <h1 class="font-semibold text-3xl">{{
+                        trans.laratalk_title
+                    }}</h1>
+                    <p class="my-3">{{
+                        trans.laratalk_description
+                    }}</p>
                 </div>
-            </div>
+            </template>
         </main>
         <aside :class="[`flex-none bg-light-600 dark:bg-dark-100 w-0 <xl:fixed <xl:top-0 <xl:right-0 z-10 ease-in-out transition-all duration-300`, {
             'w-100 <sm:w-full md:border-l-1 dark:md:border-dark-200': isDetail
@@ -263,7 +283,9 @@
                         <path d="M15.898,4.045c-0.271-0.272-0.713-0.272-0.986,0l-4.71,4.711L5.493,4.045c-0.272-0.272-0.714-0.272-0.986,0s-0.272,0.714,0,0.986l4.709,4.711l-4.71,4.711c-0.272,0.271-0.272,0.713,0,0.986c0.136,0.136,0.314,0.203,0.492,0.203c0.179,0,0.357-0.067,0.493-0.203l4.711-4.711l4.71,4.711c0.137,0.136,0.314,0.203,0.494,0.203c0.178,0,0.355-0.067,0.492-0.203c0.273-0.273,0.273-0.715,0-0.986l-4.711-4.711l4.711-4.711C16.172,4.759,16.172,4.317,15.898,4.045z"></path>
                     </svg>
                 </a>
-                <p class="text-base ml-3">Contact Info</p>
+                <p class="text-base ml-3">{{
+                    trans.contact_info
+                }}</p>
             </div>
             <div class="sidebar-detail">
                 <div class="bg-white dark:bg-dark-300 p-6">
@@ -279,7 +301,9 @@
                     }}</p>
                 </div>
                 <div class="bg-white dark:bg-dark-300 my-2 px-6 py-4">
-                    <small class="text-purple-800 dark:text-purple-300">Contact information</small>
+                    <small class="text-purple-800 dark:text-purple-300">{{
+                        trans.info_and_email_address
+                    }}</small>
                     <div class="mt-4">
                         <p>{{
                             message.email
@@ -290,7 +314,9 @@
                     <svg class="svg-icon !fill-red-600 !stroke-red-600" viewBox="0 0 20 20">
                         <path d="M17.114,3.923h-4.589V2.427c0-0.252-0.207-0.459-0.46-0.459H7.935c-0.252,0-0.459,0.207-0.459,0.459v1.496h-4.59c-0.252,0-0.459,0.205-0.459,0.459c0,0.252,0.207,0.459,0.459,0.459h1.51v12.732c0,0.252,0.207,0.459,0.459,0.459h10.29c0.254,0,0.459-0.207,0.459-0.459V4.841h1.511c0.252,0,0.459-0.207,0.459-0.459C17.573,4.127,17.366,3.923,17.114,3.923M8.394,2.886h3.214v0.918H8.394V2.886z M14.686,17.114H5.314V4.841h9.372V17.114z M12.525,7.306v7.344c0,0.252-0.207,0.459-0.46,0.459s-0.458-0.207-0.458-0.459V7.306c0-0.254,0.205-0.459,0.458-0.459S12.525,7.051,12.525,7.306M8.394,7.306v7.344c0,0.252-0.207,0.459-0.459,0.459s-0.459-0.207-0.459-0.459V7.306c0-0.254,0.207-0.459,0.459-0.459S8.394,7.051,8.394,7.306"></path>
                     </svg>
-                    <span class="ml-6">Delete chat</span>
+                    <span class="ml-6">{{
+                        trans.delete_chat
+                    }}</span>
                 </a>
             </div>
         </aside>
@@ -298,13 +324,11 @@
 </template>
 
 <script>
-import { debounce } from 'lodash'
+import debounce from 'lodash/debounce'
 
 export default {
     data() {
         return {
-            laratalk: window.Laratalk,
-            dark_mode: false,
             right_detail: null,
             isRight: false,
             isDetail: false,
@@ -468,16 +492,7 @@ export default {
     watch: {
         search: debounce( function() {
             this.fetchUsers()
-        }, 500),
-
-        dark_mode: function(e) {
-            if (e) {
-                document.documentElement.classList.add('dark')
-            }
-            else {
-                document.documentElement.classList.remove('dark')
-            }
-        }
+        }, 500)
     }
 }
 </script>

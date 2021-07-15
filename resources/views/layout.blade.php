@@ -18,7 +18,7 @@
     </div>
 
     <script>
-        window.Laratalk = @json($scripts);
+        window.laratalk = @json($scripts);
     </script>
     
     <script type="text/javascript" src="{{ mix('js/app.js', 'vendor/laratalk') }}"></script>
