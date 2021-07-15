@@ -17,6 +17,7 @@ class LaratalkServiceProvider extends ServiceProvider
     {
         $this->registerRoutes();
         $this->registerResources();
+        $this->registerTranslations();
         $this->registerMigrations();
         $this->registerAssetPublishing();
     }
@@ -57,6 +58,16 @@ class LaratalkServiceProvider extends ServiceProvider
     private function registerResources()
     {
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'laratalk');
+    }
+
+    /**
+     * Register the possible Ttanslations used by Laratalk.
+     *
+     * @return void
+     */
+    private function registerTranslations()
+    {
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'laratalk');
     }
 
     /**

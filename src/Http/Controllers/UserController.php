@@ -20,8 +20,6 @@ class UserController extends Controller
                 ->where('users.id', '!=', Auth::id())
                 ->get()
                 ->unique('id');
-
-            // dd($users);
             
         } else {
 

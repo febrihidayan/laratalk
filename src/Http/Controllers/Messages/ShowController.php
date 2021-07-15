@@ -41,7 +41,7 @@ class ShowController extends Controller
 
         return Response::json([
             'id' => $user->id,
-            'avatar' => Laratalk::getUserAvatar($user->email),
+            'avatar' => Laratalk::gravatar($user->email),
             'name' => $user->name,
             'email' => $user->email,
             'messages' => MessageResource::collection($messages)

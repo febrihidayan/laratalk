@@ -17,7 +17,7 @@ class UserListResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'avatar' => Laratalk::getUserAvatar($this->email),
+            'avatar' => Laratalk::gravatar($this->email),
             'name' => $this->name,
             'content' => $this->content ?? '',
             'content_by' => $this->from_id,
