@@ -21,11 +21,22 @@ class Laratalk
             'path' => Config::get('laratalk.path'),
             'profile' => [
                 'id' => $user->id,
-                'avatar' => $user->avatar,
+                'avatar' => self::getUserAvatar($user->email),
                 'name' => $user->name,
                 'email' => $user->email,
             ],
             'echo' => Config::get('broadcasting.connections.pusher')
         ];
+    }
+
+    /**
+     * Get avatar user
+     * 
+     * @var string $email
+     * @return string
+     */
+    public static function getUserAvatar($email)
+    {
+        return "https://www.gravatar.com/avatar/" . md5(strtolower(trim($email))) . "?s=40";
     }
 }

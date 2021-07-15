@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Laratalk\Events\Messages\SendEvent;
 use Laratalk\Http\Resources\MessageResource;
+use Laratalk\Laratalk;
 use Laratalk\Models\Message;
 use Laratalk\Models\MessageMeta;
 
@@ -28,7 +29,7 @@ class StoreController extends Controller
 
         if (!$messageExists) {
             $data = [
-                'avatar' => Auth::user()->avatar,
+                'avatar' => Laratalk::getUserAvatar(Auth::email()),
                 'name' => Auth::user()->name
             ];
         }

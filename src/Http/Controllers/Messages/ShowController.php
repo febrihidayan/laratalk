@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 use Laratalk\Events\Messages\StatusEvent;
 use Laratalk\Http\Resources\MessageResource;
+use Laratalk\Laratalk;
 use Laratalk\Models\Message;
 
 class ShowController extends Controller
@@ -40,7 +41,7 @@ class ShowController extends Controller
 
         return Response::json([
             'id' => $user->id,
-            'avatar' => $user->avatar,
+            'avatar' => Laratalk::getUserAvatar($user->email),
             'name' => $user->name,
             'email' => $user->email,
             'messages' => MessageResource::collection($messages)
