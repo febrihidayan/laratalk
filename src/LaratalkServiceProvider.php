@@ -15,6 +15,7 @@ class LaratalkServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->registerChannels();
         $this->registerRoutes();
         $this->registerResources();
         $this->registerTranslations();
@@ -38,6 +39,16 @@ class LaratalkServiceProvider extends ServiceProvider
             InstallCommand::class,
             PublishCommand::class,
         ]);
+    }
+
+    /**
+     * Register the package channels.
+     *
+     * @return void
+     */
+    private function registerChannels()
+    {
+        $this->loadRoutesFrom(__DIR__ . '/../routes/channels.php');
     }
 
     /**
