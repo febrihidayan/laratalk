@@ -23,7 +23,7 @@ class UserListResource extends JsonResource
             'content_by' => $this->from_id,
             'read_count' => $this->readCount(),
             'status' => $this->statusMessage(),
-            'content_at' => $this->created_at
+            'last_time' => Laratalk::lastTime($this->created_at)
         ];
     }
 }

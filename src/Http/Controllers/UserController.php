@@ -18,7 +18,13 @@ class UserController extends Controller
             $users = Message::joinUser()->authUser()
                 ->latest('laratalk_messages.created_at')
                 ->where('users.id', '!=', Auth::id())
-                ->get()
+                ->get([
+                    'laratalk_messages.*',
+                    'laratalk_message_meta.*',
+                    'users.id',
+                    'users.name',
+                    'users.email',
+                ])
                 ->unique('id');
             
         } else {
