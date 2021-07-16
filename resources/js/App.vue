@@ -111,30 +111,35 @@
                             }}</small>
                         </div>
                         <div class="flex text-sm">
-                            <template
-                                v-if="item.id != item.content_by"
-                            >
-                                <svg
-                                    :class="[`svg-icon svg-sm flex-none`, {
-                                        '!fill-dark-200 !stroke-dark-200 dark:!fill-light-200 dark:!stroke-light-200': item.status != 'read'
-                                    }]"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
-                                </svg>
-                                <svg
-                                    v-if="item.status != 'send'"
-                                    :class="[`svg-icon svg-sm flex-none -ml-4`, {
-                                        '!fill-dark-200 !stroke-dark-200 dark:!fill-light-200 dark:!stroke-light-200': item.status == 'accept'
-                                    }]"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
-                                </svg>
-                            </template>
-                            <span class="flex-grow truncate">{{
-                                item.content
+                            <span v-if="item.typing" class="flex-grow">{{
+                                trans.typing
                             }}</span>
+                            <template v-else>
+                                <template
+                                    v-if="item.id != item.content_by"
+                                >
+                                    <svg
+                                        :class="[`svg-icon svg-sm flex-none`, {
+                                            '!fill-dark-200 !stroke-dark-200 dark:!fill-light-200 dark:!stroke-light-200': item.status != 'read'
+                                        }]"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
+                                    </svg>
+                                    <svg
+                                        v-if="item.status != 'send'"
+                                        :class="[`svg-icon svg-sm flex-none -ml-4`, {
+                                            '!fill-dark-200 !stroke-dark-200 dark:!fill-light-200 dark:!stroke-light-200': item.status == 'accept'
+                                        }]"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
+                                    </svg>
+                                </template>
+                                <span class="flex-grow truncate">{{
+                                    item.content
+                                }}</span>
+                            </template>
                             <small
                                 v-if="item.read_count"
                                 class="flex-none bg-purple-600 text-white w-5 h-5 leading-5 text-center rounded-full"
@@ -183,7 +188,12 @@
                             <p class="text-base leading-none">{{
                                 message.name
                             }}</p>
-                            <!-- <small class="text-sm leading-none"></small> -->
+                            <small v-if="message.typing" class="text-sm leading-none">{{
+                                trans.typing
+                            }}</small>
+                            <small v-if="message.online && !message.typing" class="text-sm leading-none">{{
+                                trans.online
+                            }}</small>
                         </div>
                         <div class="flex flex-grow-0 flex-shrink-0 my-auto">
                             <a class="cursor-pointer mx-2">
@@ -265,13 +275,13 @@
                 </div>
                 <div class="bg-light-600 dark:bg-dark-500 px-5 py-2">
                     <div class="rounded-full bg-white dark:bg-dark-200 mx-auto px-4 py-2">
-                        <form @keyup.enter="sendMessage">
-                            <textarea 
-                                v-model="form.content"
-                                class="dark:bg-dark-200 focus:outline-none w-full h-6 break-words border-none resize-none"
-                                :placeholder="trans.type_a_message"
-                            />
-                        </form>
+                        <textarea 
+                            v-model="form.content"
+                            class="dark:bg-dark-200 focus:outline-none w-full h-6 break-words border-none resize-none"
+                            :placeholder="trans.type_a_message"
+                            @keydown="isTyping"
+                            @keyup.enter="sendMessage"
+                        />
                     </div>
                 </div>
             </template>
@@ -349,6 +359,9 @@ export default {
             search: '',
             users: [],
             message: {},
+            message_countdown: null,
+            message_second: 0,
+            message_typing: false,
             profile: {},
             form: {
                 to_id: '',
@@ -377,8 +390,10 @@ export default {
                 axios.get(`message-show/${id}`).then(({ data }) => {
                     this.message = data
     
-                    let index = this.users.findIndex((s) => s.id === id)
-                    this.users[index].read_count = 0
+                    let user = this.users.find((s) => s.id === id)
+
+                    user.read_count = 0
+                    this.message.online = user.online
 
                     this.scrollToEnd()
                 })
@@ -421,6 +436,8 @@ export default {
             if (this.message.messages) {
 
                 this.message.messages.push(data)
+            
+                this.scrollToEnd()
 
             }
 
@@ -436,12 +453,12 @@ export default {
                 })
                 
             }
-            
-            this.scrollToEnd()
         },
 
         sendMessage()
         {
+            this.sendTyping(false)
+            
             axios.post('message-store', this.form).then(({ data }) => {
                 this.form.content = ''
                 this.search = ''
@@ -485,6 +502,89 @@ export default {
                         }
 
                     }
+                })
+            
+            Echo.join('online')
+                .here((users) => {
+                    users.forEach((e) => {
+                        this.users.find((user) => {
+                            if (user.id === e.id) {
+                                user.online = true
+                            }
+                        })
+                    })
+                })
+                .joining((e) => {
+                    this.users
+                        .find((s) => s.id === e.id)
+                            .online = true
+                    
+                    if (this.message.id === e.id) {
+                        this.message.online = true
+                    }
+                })
+                .leaving((e) => {
+                    this.users
+                        .find((s) => s.id === e.id)
+                            .online = false
+                    
+                    if (this.message.id === e.id) {
+                        this.message.online = false
+                    }
+                })
+            
+            Echo.private('chat')
+                .listenForWhisper(`typing-${this.laratalk.profile.id}`, (e) => {
+
+                    this.users
+                        .find((s) => s.id === e.id)
+                            .typing = e.typing
+                    
+                    if (this.message.id === e.id) {
+                        this.message.typing = e.typing
+                    }
+
+                })
+
+        },
+
+        isTyping() {
+            let _this = this
+
+            if (this.message_second <= 0 && !this.message_typing) {
+
+                this.message_typing = true
+                this.sendTyping()
+
+            }
+
+            this.message_second = 3
+
+            clearInterval(this.message_countdown)
+
+            this.message_countdown = setInterval( function() {
+
+                if (--_this.message_second <= 0 && _this.message_typing) {
+
+                    clearInterval(_this.message_countdown)
+
+                    _this.message_typing = false
+                    _this.sendTyping()
+
+                }
+
+            }, 1000)
+        },
+
+        sendTyping(bool = null) {
+            if (bool != null) {
+                this.message_typing = bool
+            }
+
+            Echo.private('chat')
+                .whisper(`typing-${this.message.id}`, {
+                    id: this.laratalk.profile.id,
+                    typing: bool || this.message_typing
                 })
         },
 
