@@ -54,9 +54,7 @@ class LaratalkController extends Controller
                     'name' => $user->name,
                     'email' => $user->email,
                 ],
-                'translations' => Laratalk::availableTranslations(
-                    Config::get('app.locale')
-                ),
+                'translations' => Laratalk::availableTranslations(),
                 'echo' => Config::get('broadcasting.connections.pusher')
             ]);
     }

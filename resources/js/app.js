@@ -10,23 +10,31 @@ createApp(App)
         laratalk: window.laratalk,
         trans: window.laratalk.translations,
     },
-    
-    mounted() {
-        this.dark_mode = localStorage.getItem('dark_mode')
-    },
 
-    watch: {
-        dark_mode: function(e) {
-            this.dark_mode = e
-            localStorage.setItem('dark_mode', e)
+    methods: {
+        setDarkMode(val = null) {
+            let bool = val || this.dark_mode
 
-            if (e) {
+            bool = typeof bool == 'string' ? JSON.parse(bool) : bool
+
+            if (val == null) {
+                bool = !bool
+            }
+
+            if (bool) {
                 document.documentElement.classList.add('dark')
             }
             else {
                 document.documentElement.classList.remove('dark')
             }
+
+            localStorage.setItem('dark_mode', bool)
+            this.dark_mode = bool
         }
+    },
+
+    mounted() {
+        this.setDarkMode(localStorage.getItem('dark_mode'))
     }
 })
 .mount('#laratalk')

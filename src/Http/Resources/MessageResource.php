@@ -4,6 +4,7 @@ namespace Laratalk\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
+use Laratalk\Laratalk;
 
 class MessageResource extends JsonResource
 {
@@ -19,7 +20,8 @@ class MessageResource extends JsonResource
             'id' => $this->id,
             'content' => $this->content,
             'content_by' => $this->from_id,
-            'content_at' => $this->created_at
+            'last_time' => Laratalk::lastTime($this->created_at, true),
+            'time' => $this->created_at->format('H.i')
         ];
 
         if (Auth::id() === $this->from_id) {

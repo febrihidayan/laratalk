@@ -29,7 +29,7 @@ class StoreController extends Controller
 
         if (!$messageExists) {
             $data = [
-                'avatar' => Laratalk::gravatar(Auth::email()),
+                'avatar' => Laratalk::gravatar(Auth::user()->email),
                 'name' => Auth::user()->name
             ];
         }
