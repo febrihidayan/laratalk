@@ -17999,9 +17999,9 @@ __webpack_require__.r(__webpack_exports__);
         }
       } else {
         this.users.unshift({
-          id: data.id,
-          avatar: data.avatar || this.message.avatar,
-          name: data.name || this.message.name,
+          id: this.message.id || data.id,
+          avatar: this.message.avatar || data.avatar,
+          name: this.message.name || data.name,
           content: data.content,
           content_by: data.content_by,
           read_count: 1,
@@ -18043,27 +18043,25 @@ __webpack_require__.r(__webpack_exports__);
       Echo.channel('laratalk-user-message.' + this.laratalk.profile.id).listen('Messages\\SendEvent', function (e) {
         _this6.pushMessage(e, 'push');
       }).listen('Messages\\StatusEvent', function (e) {
-        var index = _this6.users.findIndex(function (s) {
-          return s.id === e.content_to;
-        });
+        _this6.users.find(function (s) {
+          if (s.id === e.content_to) {
+            s.status = e.status;
 
-        if (index != -1) {
-          _this6.users[index].status = e.status;
-
-          if (_this6.message.messages) {
-            if (typeof e.id === 'number') {
-              _this6.message.messages.find(function (s) {
-                return s.id === e.id;
-              }).status = e.status;
-            } else {
-              e.id.forEach(function (id) {
+            if (_this6.message.messages) {
+              if (typeof e.id === 'number') {
                 _this6.message.messages.find(function (s) {
-                  return s.id === id;
+                  return s.id === e.id;
                 }).status = e.status;
-              });
+              } else {
+                e.id.forEach(function (id) {
+                  _this6.message.messages.find(function (s) {
+                    return s.id === id;
+                  }).status = e.status;
+                });
+              }
             }
           }
-        }
+        });
       });
       Echo.join('online').here(function (users) {
         users.forEach(function (e) {

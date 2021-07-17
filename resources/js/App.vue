@@ -468,9 +468,9 @@ export default {
 
             } else {
                 this.users.unshift({
-                    id: data.id,
-                    avatar: data.avatar || this.message.avatar,
-                    name: data.name || this.message.name,
+                    id: this.message.id || data.id,
+                    avatar: this.message.avatar || data.avatar,
+                    name: this.message.name || data.name,
                     content: data.content,
                     content_by: data.content_by,
                     read_count: 1,
@@ -523,32 +523,30 @@ export default {
 
                 })
                 .listen('Messages\\StatusEvent', (e) => {
-
-                    let index = this.users.findIndex((s) => s.id === e.content_to)
-
-                    if (index != -1) {
-                        
-                        this.users[index].status = e.status
-
-                        if (this.message.messages) {
-                            if (typeof e.id === 'number') {
+                    this.users.find((s) => {
+                        if (s.id === e.content_to) {
+                            
+                            s.status = e.status
     
-                                this.message.messages
-                                    .find((s) => s.id === e.id)
-                                        .status = e.status
-
-                            } else {
-
-                                e.id.forEach((id) => {
+                            if (this.message.messages) {
+                                if (typeof e.id === 'number') {
+        
                                     this.message.messages
-                                        .find((s) => s.id === id)
+                                        .find((s) => s.id === e.id)
                                             .status = e.status
-                                })
-
+    
+                                } else {
+    
+                                    e.id.forEach((id) => {
+                                        this.message.messages
+                                            .find((s) => s.id === id)
+                                                .status = e.status
+                                    })
+    
+                                }
                             }
                         }
-
-                    }
+                    })
                 })
             
             Echo.join('online')
