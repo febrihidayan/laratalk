@@ -17927,179 +17927,68 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      left_detail: null,
-      isRight: false,
-      isDetail: false,
+      form: {
+        to_id: '',
+        content: ''
+      },
       isChat: false,
-      userIndex: null,
-      search: '',
-      users: [],
-      users_new_chat: [],
+      isDetail: false,
+      isRight: false,
+      left_detail: null,
       message: {},
       message_countdown: null,
       message_second: 0,
       message_typing: false,
       profile: {},
-      form: {
-        to_id: '',
-        content: ''
-      }
+      search: '',
+      userIndex: null,
+      users: [],
+      users_new_chat: []
     };
   },
   methods: {
-    fetchUsers: function fetchUsers() {
-      var _this2 = this;
-
-      var q = this.search || 'all';
-      axios.get('user/' + q).then(function (_ref) {
-        var data = _ref.data;
-        _this2.users = data;
-      });
-    },
     fetchMessages: function fetchMessages(id) {
-      var _this3 = this;
+      var _this2 = this;
 
       if (this.form.to_id != id) {
         this.isRight = true;
         this.form.to_id = id;
-        axios.get("message-show/".concat(id)).then(function (_ref2) {
-          var data = _ref2.data;
-          _this3.message = data;
+        axios.get("message-show/".concat(id)).then(function (_ref) {
+          var data = _ref.data;
+          _this2.message = data;
 
-          var user = _this3.users.find(function (s) {
+          var user = _this2.users.find(function (s) {
             return s.id === id;
           });
 
           if (user) {
             user.read_count = 0;
-            _this3.message.online = user.online;
+            _this2.message.online = user.online;
           }
 
-          _this3.scrollToEnd();
+          _this2.scrollToEnd();
         });
       }
     },
-    pushMessage: function pushMessage(data) {
+    fetchSearchNewChat: lodash_debounce__WEBPACK_IMPORTED_MODULE_0___default()(function (e) {
+      var _this3 = this;
+
+      axios.get('user-new-chat', {
+        params: {
+          q: e.target.value
+        }
+      }).then(function (_ref2) {
+        var data = _ref2.data;
+        _this3.users_new_chat = data;
+      });
+    }, 500),
+    fetchUsers: function fetchUsers() {
       var _this4 = this;
 
-      var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-      var index = this.users.findIndex(function (s) {
-        return s.id === (type == 'push' ? data.content_by : _this4.message.id);
-      });
-
-      if (index != -1) {
-        this.users[index].content = data.content;
-        this.users[index].content_by = data.content_by;
-        this.users[index].last_time = data.time;
-        this.users[index].status = 'send';
-
-        if (type == 'push' && this.message.id != data.content_by) {
-          this.users[index].read_count++;
-        }
-      } else {
-        this.users.unshift({
-          id: this.message.id || data.id,
-          avatar: this.message.avatar || data.avatar,
-          name: this.message.name || data.name,
-          content: data.content,
-          content_by: data.content_by,
-          read_count: type == 'push' ? 1 : 0,
-          status: data.status,
-          last_time: data.time
-        });
-      }
-
-      if (this.message.messages) {
-        this.message.messages.push(data);
-        this.scrollToEnd();
-      }
-
-      if (this.laratalk.profile.id != data.content_by) {
-        var status = this.message.id == data.content_by ? 'read' : 'accept';
-        axios.post('message-status', {
-          id: data.id,
-          content_by: data.content_by,
-          status: status
-        });
-      }
-    },
-    sendMessage: function sendMessage() {
-      var _this5 = this;
-
-      this.sendTyping(false);
-      axios.post('message-store', this.form).then(function (_ref3) {
+      var q = this.search || 'all';
+      axios.get('user/' + q).then(function (_ref3) {
         var data = _ref3.data;
-        _this5.form.content = '';
-        _this5.search = '';
-
-        _this5.pushMessage(data);
-      });
-    },
-    fetchEcho: function fetchEcho() {
-      var _this6 = this;
-
-      Echo.channel('laratalk-user-message.' + this.laratalk.profile.id).listen('Messages\\SendEvent', function (e) {
-        _this6.pushMessage(e, 'push');
-      }).listen('Messages\\StatusEvent', function (e) {
-        _this6.users.find(function (s) {
-          if (s.id === e.content_to) {
-            s.status = e.status;
-
-            if (_this6.message.messages) {
-              if (typeof e.id === 'number') {
-                _this6.message.messages.find(function (s) {
-                  return s.id === e.id;
-                }).status = e.status;
-              } else {
-                e.id.forEach(function (id) {
-                  _this6.message.messages.find(function (s) {
-                    return s.id === id;
-                  }).status = e.status;
-                });
-              }
-            }
-          }
-        });
-      });
-      Echo.join('online').here(function (users) {
-        users.forEach(function (e) {
-          _this6.users.find(function (user) {
-            if (user.id === e.id) {
-              user.online = true;
-            }
-          });
-        });
-      }).joining(function (e) {
-        _this6.users.find(function (s) {
-          if (s.id === e.id) {
-            s.online = true;
-          }
-        });
-
-        if (_this6.message.id === e.id) {
-          _this6.message.online = true;
-        }
-      }).leaving(function (e) {
-        _this6.users.find(function (s) {
-          if (s.id === e.id) {
-            s.online = false;
-          }
-        });
-
-        if (_this6.message.id === e.id) {
-          _this6.message.online = false;
-        }
-      });
-      Echo["private"]('chat').listenForWhisper("typing-".concat(this.laratalk.profile.id), function (e) {
-        _this6.users.find(function (s) {
-          if (s.id === e.id) {
-            s.typing = e.typing;
-          }
-        });
-
-        if (_this6.message.id === e.id) {
-          _this6.message.typing = e.typing;
-        }
+        _this4.users = data;
       });
     },
     isTyping: function isTyping() {
@@ -18121,22 +18010,138 @@ __webpack_require__.r(__webpack_exports__);
         }
       }, 1000);
     },
+    listenEcho: function listenEcho() {
+      var _this5 = this;
+
+      Echo.channel('laratalk-user-message.' + this.laratalk.profile.id).listen('Messages\\SendEvent', function (e) {
+        _this5.pushMessage(e);
+      }).listen('Messages\\StatusEvent', function (e) {
+        _this5.users.find(function (s) {
+          if (s.id === e.content_to) {
+            s.status = e.status;
+
+            if (_this5.message.messages) {
+              (typeof e.id === 'number' ? [e.id] : e.id).forEach(function (id) {
+                _this5.message.messages.find(function (s) {
+                  return s.id === id;
+                }).status = e.status;
+              });
+            }
+          }
+        });
+      });
+      Echo.join('online').here(function (users) {
+        users.forEach(function (e) {
+          _this5.users.find(function (user) {
+            if (user.id === e.id) {
+              user.online = true;
+            }
+          });
+        });
+      }).joining(function (e) {
+        _this5.users.find(function (s) {
+          if (s.id === e.id) {
+            s.online = true;
+          }
+        });
+
+        if (_this5.message.id === e.id) {
+          _this5.message.online = true;
+        }
+      }).leaving(function (e) {
+        _this5.users.find(function (s) {
+          if (s.id === e.id) {
+            s.online = false;
+          }
+        });
+
+        if (_this5.message.id === e.id) {
+          _this5.message.online = false;
+        }
+      });
+      Echo["private"]('chat').listenForWhisper("typing-".concat(this.laratalk.profile.id), function (e) {
+        _this5.users.find(function (s) {
+          if (s.id === e.id) {
+            s.typing = e.typing;
+          }
+        });
+
+        if (_this5.message.id === e.id) {
+          _this5.message.typing = e.typing;
+        }
+      });
+    },
+    pushMessage: function pushMessage(data) {
+      var _this6 = this;
+
+      var userIndex = this.users.findIndex(function (s) {
+        return s.id === (_this6.laratalk.profile.id != data.content_by ? data.content_by : _this6.message.id);
+      });
+
+      if (userIndex != -1) {
+        var user = this.users[userIndex];
+        user.content = data.content;
+        user.content_by = data.content_by;
+        user.last_time = data.time;
+        user.status = 'send';
+
+        if (this.laratalk.profile.id != data.content_by && this.message.id != data.content_by) {
+          user.read_count++;
+        }
+
+        this.users.unshift(this.users.splice(userIndex, 1)[0]);
+      } else {
+        this.users.unshift({
+          id: this.message.id || data.content_by,
+          avatar: this.message.avatar || data.avatar,
+          name: this.message.name || data.name,
+          content: data.content,
+          content_by: data.content_by,
+          read_count: this.laratalk.profile.id != data.content_by ? 1 : 0,
+          status: data.status,
+          last_time: data.time
+        });
+      }
+
+      if (this.message.messages && (this.laratalk.profile.id === data.content_by || this.message.id === data.content_by)) {
+        this.message.messages.push(data);
+        this.scrollToEnd();
+      }
+
+      if (this.laratalk.profile.id != data.content_by) {
+        var status = this.message.id == data.content_by ? 'read' : 'accept';
+        axios.post('message-status', {
+          id: data.id,
+          content_by: data.content_by,
+          status: status
+        });
+      }
+    },
     resetLeft: function resetLeft() {
       this.left_detail = null;
       this.users_new_chat = [];
     },
-    searchNewChat: lodash_debounce__WEBPACK_IMPORTED_MODULE_0___default()(function (e) {
+    scrollToEnd: function scrollToEnd() {
       var _this7 = this;
 
-      axios.get('user-new-chat', {
-        params: {
-          q: e.target.value
-        }
-      }).then(function (_ref4) {
+      setTimeout(function () {
+        var container = _this7.$el.querySelector("#main-content");
+
+        container.scrollTop = container.scrollHeight;
+      }, 10);
+    },
+    sendMessage: function sendMessage() {
+      var _this8 = this;
+
+      this.sendTyping(false);
+      axios.post('message-store', this.form).then(function (_ref4) {
         var data = _ref4.data;
-        _this7.users_new_chat = data;
+        _this8.form.content = '';
+        _this8.search = '';
+
+        _this8.pushMessage(data);
       });
-    }, 500),
+    },
     sendTyping: function sendTyping() {
       var bool = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
@@ -18148,23 +18153,13 @@ __webpack_require__.r(__webpack_exports__);
         id: this.laratalk.profile.id,
         typing: bool || this.message_typing
       });
-    },
-    scrollToEnd: function scrollToEnd() {
-      var _this8 = this;
-
-      setTimeout(function () {
-        var container = _this8.$el.querySelector("#main-content");
-
-        container.scrollTop = container.scrollHeight;
-      }, 10);
     }
   },
-  mounted: function mounted() {
+  beforeMount: function beforeMount() {
     this.fetchUsers();
-    this.fetchEcho();
+    this.listenEcho();
   },
   watch: {
-    searchNewChat: lodash_debounce__WEBPACK_IMPORTED_MODULE_0___default()(function () {}, 500),
     search: lodash_debounce__WEBPACK_IMPORTED_MODULE_0___default()(function () {
       this.fetchUsers();
     }, 500)
@@ -18609,7 +18604,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     placeholder: _ctx.trans.search,
     autofocus: "",
     onInput: _cache[2] || (_cache[2] = function () {
-      return $options.searchNewChat && $options.searchNewChat.apply($options, arguments);
+      return $options.fetchSearchNewChat && $options.fetchSearchNewChat.apply($options, arguments);
     })
   }, null, 40
   /* PROPS, HYDRATE_EVENTS */
