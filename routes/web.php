@@ -16,8 +16,7 @@ Route::group([
 
     Route::prefix('api')->group( function() {
 
-        Route::get('user/{query}', UserChatController::class)
-            ->name('user');
+        Route::get('user-chat', UserChatController::class);
 
         Route::get('user-new-chat', NewChatController::class);
             

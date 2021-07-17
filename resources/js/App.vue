@@ -139,6 +139,7 @@
                         type="search"
                         class="flex-grow dark:bg-dark-50 focus:outline-none ml-3" 
                         :placeholder="trans.search"
+                        @input="fetchSearchUserChat"
                     >
                 </div>
             </div>
@@ -426,7 +427,6 @@ export default {
             message_second: 0,
             message_typing: false,
             profile: {},
-            search: '',
             userIndex: null,
             users: [],
             users_new_chat: [],
@@ -458,6 +458,12 @@ export default {
             }
         },
 
+        fetchSearchUserChat: debounce( function(e) {
+
+            this.fetchUsers(e.target.value)
+
+        }, 500),
+
         fetchSearchNewChat: debounce(function (e) {
             axios
                 .get('user-new-chat', {
@@ -470,11 +476,12 @@ export default {
                 })
         }, 500),
 
-        fetchUsers()
+        fetchUsers(q = '')
         {
-            let q = this.search || 'all'
-
-            axios.get('user/' + q).then(({ data }) => {
+            axios.get('user-chat', {
+                params: { q }
+            })
+            .then(({ data }) => {
                 this.users = data
             })
         },
@@ -530,7 +537,7 @@ export default {
                                     this.message.messages
                                         .find((s) => {
                                             if (s.id === id) {
-                                                
+
                                                 s.status = e.status
                                                 
                                             }
@@ -704,12 +711,6 @@ export default {
     beforeMount() {
         this.fetchUsers()
         this.listenEcho()
-    },
-
-    watch: {
-        search: debounce( function() {
-            this.fetchUsers()
-        }, 500)
     }
 }
 </script>
