@@ -14,11 +14,32 @@ class GroupUser extends Pivot
     protected $table = 'laratalk_group_user';
 
     /**
+     * The primary key for the model.
+     *
+     * @var null
+     */
+    protected $primaryKey = null;
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'description', 'image', 'user_id'
+        'group_id', 'user_id', 'role'
     ];
 }

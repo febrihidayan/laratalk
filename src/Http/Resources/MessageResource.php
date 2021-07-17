@@ -19,12 +19,12 @@ class MessageResource extends JsonResource
         $data = [
             'id' => $this->id,
             'content' => $this->content,
-            'content_by' => $this->from_id,
+            'content_by' => $this->by_id,
             'last_time' => Laratalk::lastTime($this->created_at, true),
             'time' => $this->created_at->format('H.i')
         ];
 
-        if (Auth::id() === $this->from_id) {
+        if (Auth::id() === $this->by_id) {
             $data['status'] = $this->statusMessage();
         }
 

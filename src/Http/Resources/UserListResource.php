@@ -20,7 +20,7 @@ class UserListResource extends JsonResource
             'avatar' => Laratalk::gravatar($this->email),
             'name' => $this->name,
             'content' => $this->content ?? '',
-            'content_by' => $this->from_id,
+            'content_by' => $this->by_id,
             'read_count' => $this->readCount(),
             'status' => $this->statusMessage(),
             'last_time' => Laratalk::lastTime($this->created_at)

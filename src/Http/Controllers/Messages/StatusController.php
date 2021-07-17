@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 use Laratalk\Events\Messages\StatusEvent;
 use Laratalk\Models\Message;
-use Laratalk\Models\MessageMeta;
+use Laratalk\Models\MessageRecipient;
 
 class StatusController extends Controller
 {
@@ -30,7 +30,7 @@ class StatusController extends Controller
             $data['read_at'] = now();
         }
 
-        MessageMeta::where([
+        MessageRecipient::where([
             ['message_id', Request::get('id')],
             ['to_id', Auth::id()]
         ])

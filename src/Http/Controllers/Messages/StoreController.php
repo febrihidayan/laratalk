@@ -11,7 +11,7 @@ use Laratalk\Events\Messages\SendEvent;
 use Laratalk\Http\Resources\MessageResource;
 use Laratalk\Laratalk;
 use Laratalk\Models\Message;
-use Laratalk\Models\MessageMeta;
+use Laratalk\Models\MessageRecipient;
 
 class StoreController extends Controller
 {
@@ -36,10 +36,10 @@ class StoreController extends Controller
 
         $message = Message::create([
             'content' => Request::get('content'),
-            'from_id' => Auth::id()
+            'by_id' => Auth::id()
         ]);
 
-        MessageMeta::create([
+        MessageRecipient::create([
             'message_id' => $message->id,
             'to_id' => Request::get('to_id')
         ]);

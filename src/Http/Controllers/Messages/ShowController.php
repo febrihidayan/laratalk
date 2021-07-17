@@ -23,7 +23,7 @@ class ShowController extends Controller
 
         $messageMeta = Message::joinMeta()
             ->whereMetaUser($id, true)
-            ->whereNull('laratalk_message_meta.read_at');
+            ->whereNull('laratalk_message_recipient.read_at');
 
         if ($messages->count() && $messageMeta->count()) {
 

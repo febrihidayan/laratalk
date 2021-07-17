@@ -4,14 +4,14 @@ namespace Laratalk\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MessageMeta extends Model
+class MessageRecipient extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'laratalk_message_meta';
+    protected $table = 'laratalk_message_recipient';
 
     /**
      * The primary key for the model.
@@ -40,6 +40,29 @@ class MessageMeta extends Model
      * @var array
      */
     protected $fillable = [
-        'message_id', 'to_id', 'accept_at', 'read_at', 'pinned'
+        'message_id', 'to_id', 'accept_at', 'read_at',
+        'pinned_by', 'pinned_to'
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'accept_at' => 'datetime',
+        'read_at' => 'datetime',
+        'pinned_by' => 'boolean',
+        'pinned_to' => 'boolean'
+    ];
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'accept_at',
+        'read_at'
     ];
 }
