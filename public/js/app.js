@@ -18023,8 +18023,10 @@ __webpack_require__.r(__webpack_exports__);
             if (_this5.message.messages) {
               (typeof e.id === 'number' ? [e.id] : e.id).forEach(function (id) {
                 _this5.message.messages.find(function (s) {
-                  return s.id === id;
-                }).status = e.status;
+                  if (s.id === id) {
+                    s.status = e.status;
+                  }
+                });
               });
             }
           }

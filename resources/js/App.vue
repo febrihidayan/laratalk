@@ -528,8 +528,13 @@ export default {
                                 )
                                 .forEach((id) => {
                                     this.message.messages
-                                        .find((s) => s.id === id)
-                                            .status = e.status
+                                        .find((s) => {
+                                            if (s.id === id) {
+                                                
+                                                s.status = e.status
+                                                
+                                            }
+                                        })
                                 })
                             }
                         }
