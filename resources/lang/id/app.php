@@ -20,4 +20,5 @@ return [
     'type_a_message' => 'Ketik pesan',
     'wednesday' => 'Rabu',
     'yesterday' => 'Kemarin',
+    'your_name' => 'Nama Anda',
 ];

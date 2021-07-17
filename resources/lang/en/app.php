@@ -20,4 +20,5 @@ return [
     'type_a_message' => 'Type a message',
     'wednesday' => 'Wednesday',
     'yesterday' => 'Yesterday',
+    'your_name' => 'Your name',
 ];

@@ -493,6 +493,9 @@ textarea::-ms-input-placeholder {
 .p-6 {
   padding: 1.5rem;
 }
+.p-8 {
+  padding: 2rem;
+}
 .px-5 {
   padding-left: 1.25rem;
   padding-right: 1.25rem;
@@ -528,6 +531,10 @@ textarea::-ms-input-placeholder {
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
+}
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 .pr-3 {
   padding-right: 0.75rem;
