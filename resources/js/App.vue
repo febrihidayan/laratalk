@@ -2,22 +2,22 @@
     <section class="flex dark:bg-dark-100 dark:text-gray-100">
         <aside
             :class="[`bg-white dark:bg-dark-300 sm:border-r-1 dark:sm:border-dark-200 fixed top-0 left-0 z-30 ease-in-out transition-all duration-300`, {
-                'min-w-100 <sm:w-full': right_detail,
-                '-left-full -left-100': !right_detail
+                'min-w-100 <sm:w-full': left_detail,
+                '-left-full -left-100': !left_detail
             }]"
         >
             <div class="flex bg-blue-500 dark:bg-dark-400 text-white p-4">
-                <a class="cursor-pointer" @click="right_detail = null">
+                <a class="cursor-pointer" @click="resetLeft">
                     <svg class="svg-icon !fill-white !stroke-white" viewBox="0 0 20 20">
                         <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
                     </svg>
                 </a>
                 <p class="text-base ml-3">
-                    {{ right_detail == 'profile' ? trans.profile : trans.new_chat }}
+                    {{ left_detail == 'profile' ? trans.profile : trans.new_chat }}
                 </p>
             </div>
-            <div class="sidebar-detail">
-                <template v-if="right_detail == 'profile'">
+            <template v-if="left_detail == 'profile'">
+                <div class="sidebar-detail">
                     <figure class="my-8">
                         <img
                             class="rounded-full h-48 w-48 mx-auto cursor-pointer"
@@ -25,8 +25,51 @@
                             alt="profile"
                         >
                     </figure>
-                </template>
-            </div>
+                </div>
+            </template>
+            <template v-if="left_detail == 'chat'">
+                <div class="bg-light-200 dark:bg-dark-200 border-b-1 dark:border-dark-50 px-4 py-2">
+                    <div class="flex rounded-full bg-white dark:bg-dark-50 p-1">
+                        <span class="flex-grow-0 flex-shrink-0">
+                            <svg class="svg-icon" viewBox="0 0 20 20">
+                                <path d="M18.125,15.804l-4.038-4.037c0.675-1.079,1.012-2.308,1.01-3.534C15.089,4.62,12.199,1.75,8.584,1.75C4.815,1.75,1.982,4.726,2,8.286c0.021,3.577,2.908,6.549,6.578,6.549c1.241,0,2.417-0.347,3.44-0.985l4.032,4.026c0.167,0.166,0.43,0.166,0.596,0l1.479-1.478C18.292,16.234,18.292,15.968,18.125,15.804 M8.578,13.99c-3.198,0-5.716-2.593-5.733-5.71c-0.017-3.084,2.438-5.686,5.74-5.686c3.197,0,5.625,2.493,5.64,5.624C14.242,11.548,11.621,13.99,8.578,13.99 M16.349,16.981l-3.637-3.635c0.131-0.11,0.721-0.695,0.876-0.884l3.642,3.639L16.349,16.981z"></path>
+                            </svg>
+                        </span>
+                        <input
+                            type="search"
+                            class="flex-grow dark:bg-dark-50 focus:outline-none ml-3" 
+                            :placeholder="trans.search"
+                            autofocus
+                            @input="searchNewChat"
+                        >
+                    </div>
+                </div>
+                <div class="sidebar-content bg-white dark:bg-dark-300 divide-y dark:divide-gray-700 divide-light-500">
+                    <div
+                        v-for="(item, index) in users_new_chat"
+                        :key="index"
+                        @click="fetchMessages(item.id);resetLeft()"
+                        class="sidebar-list flex h-18 cursor-pointer hover:bg-light-300 dark:hover:bg-true-gray-700"
+                    >
+                        <div class="flex flex-col justify-center px-3">
+                            <figure>
+                                <img
+                                    class="rounded-full h-13 w-13"
+                                    :src="item.avatar"
+                                    alt="avatar"
+                                >
+                            </figure>
+                        </div>
+                        <div class="flex flex-grow flex-col justify-center w-73 pr-3">
+                            <div class="flex">
+                                <p class="flex-grow truncate text-lg">{{
+                                    item.name
+                                }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
         </aside>
         <aside
             :class="[`flex-none min-w-100 sm:border-r-1 dark:sm:border-dark-200 <sm:w-full <lg:fixed <lg:top-0 <lg:left-0 <lg:z-20 ease-in-out transition-all duration-300`, {
@@ -36,14 +79,14 @@
             <div class="flex bg-light-600 dark:bg-dark-400 px-5 py-2">
                 <div class="flex-grow">
                     <img
-                        @click="right_detail = 'profile'"
+                        @click="left_detail = 'profile'"
                         class="rounded-full h-10 w-10 cursor-pointer"
                         :src="laratalk.profile.avatar"
                         alt="profile"
                     >
                 </div>
                 <div class="flex flex-grow-0 flex-shrink-0 my-auto">
-                    <a class="cursor-pointer mx-2" @click="right_detail = 'chat'">
+                    <a class="cursor-pointer mx-2" @click="left_detail = 'chat'">
                         <svg class="svg-icon" viewBox="0 0 20 20">
 							<path d="M17.211,3.39H2.788c-0.22,0-0.4,0.18-0.4,0.4v9.614c0,0.221,0.181,0.402,0.4,0.402h3.206v2.402c0,0.363,0.429,0.533,0.683,0.285l2.72-2.688h7.814c0.221,0,0.401-0.182,0.401-0.402V3.79C17.612,3.569,17.432,3.39,17.211,3.39M16.811,13.004H9.232c-0.106,0-0.206,0.043-0.282,0.117L6.795,15.25v-1.846c0-0.219-0.18-0.4-0.401-0.4H3.189V4.19h13.622V13.004z"></path>
 						</svg>
@@ -84,7 +127,7 @@
                 <div
                     v-for="(item, index) in users"
                     :key="index"
-                    @click="fetchMessages(item.id);isRight = true"
+                    @click="fetchMessages(item.id)"
                     :title="item.content"
                     :class="[`sidebar-list flex h-18 cursor-pointer`, {
                         'font-medium': item.read_count,
@@ -351,13 +394,14 @@ import debounce from 'lodash/debounce'
 export default {
     data() {
         return {
-            right_detail: null,
+            left_detail: null,
             isRight: false,
             isDetail: false,
             isChat: false,
             userIndex: null,
             search: '',
             users: [],
+            users_new_chat: [],
             message: {},
             message_countdown: null,
             message_second: 0,
@@ -384,6 +428,7 @@ export default {
         fetchMessages(id)
         {
             if (this.form.to_id != id) {
+                this.isRight = true
             
                 this.form.to_id = id
                 
@@ -392,8 +437,10 @@ export default {
     
                     let user = this.users.find((s) => s.id === id)
 
-                    user.read_count = 0
-                    this.message.online = user.online
+                    if (user) {
+                        user.read_count = 0
+                        this.message.online = user.online
+                    }
 
                     this.scrollToEnd()
                 })
@@ -421,9 +468,9 @@ export default {
 
             } else {
                 this.users.unshift({
-                    id: data.content_by,
-                    avatar: data.avatar,
-                    name: data.name,
+                    id: data.id,
+                    avatar: data.avatar || this.message.avatar,
+                    name: data.name || this.message.name,
                     content: data.content,
                     content_by: data.content_by,
                     read_count: 1,
@@ -516,8 +563,11 @@ export default {
                 })
                 .joining((e) => {
                     this.users
-                        .find((s) => s.id === e.id)
-                            .online = true
+                        .find((s) => {
+                            if (s.id === e.id) {
+                                s.online = true
+                            }
+                        })
                     
                     if (this.message.id === e.id) {
                         this.message.online = true
@@ -525,8 +575,11 @@ export default {
                 })
                 .leaving((e) => {
                     this.users
-                        .find((s) => s.id === e.id)
-                            .online = false
+                        .find((s) => {
+                            if (s.id === e.id) {
+                                s.online = false
+                            }
+                        })
                     
                     if (this.message.id === e.id) {
                         this.message.online = false
@@ -537,8 +590,11 @@ export default {
                 .listenForWhisper(`typing-${this.laratalk.profile.id}`, (e) => {
 
                     this.users
-                        .find((s) => s.id === e.id)
-                            .typing = e.typing
+                        .find((s) => {
+                            if (s.id === e.id) {
+                                s.typing = e.typing
+                            }
+                        })
                     
                     if (this.message.id === e.id) {
                         this.message.typing = e.typing
@@ -576,6 +632,23 @@ export default {
             }, 1000)
         },
 
+        resetLeft() {
+            this.left_detail = null
+            this.users_new_chat = []
+        },
+
+        searchNewChat: debounce(function (e) {
+            axios
+                .get('user-new-chat', {
+                    params: {
+                        q: e.target.value
+                    }
+                })
+                .then(({ data }) => {
+                    this.users_new_chat = data
+                })
+        }, 500),
+
         sendTyping(bool = null) {
             if (bool != null) {
                 this.message_typing = bool
@@ -604,6 +677,9 @@ export default {
     },
 
     watch: {
+        searchNewChat: debounce( function() {
+
+        }, 500),
         search: debounce( function() {
             this.fetchUsers()
         }, 500)

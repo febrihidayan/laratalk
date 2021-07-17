@@ -6,6 +6,7 @@ use Laratalk\Http\Controllers\Messages\StatusController;
 use Laratalk\Http\Controllers\Messages\ShowController;
 use Laratalk\Http\Controllers\Messages\StoreController;
 use Laratalk\Http\Controllers\UserController;
+use Laratalk\Http\Controllers\Users\NewChatController;
 
 Route::group([
     'prefix' => config('laratalk.path'),
@@ -17,6 +18,8 @@ Route::group([
 
         Route::get('user/{query}', UserController::class)
             ->name('user');
+
+        Route::get('user-new-chat', NewChatController::class);
             
         Route::get('message-show/{id}', ShowController::class);
 
