@@ -44,30 +44,39 @@
                         >
                     </div>
                 </div>
-                <div class="sidebar-content bg-white dark:bg-dark-300 divide-y dark:divide-gray-700 divide-light-500">
-                    <div
+                <div class="sidebar-content bg-white dark:bg-dark-300 dark:divide-gray-700 divide-light-500">
+                    <template
                         v-for="(item, index) in users_new_chat"
                         :key="index"
-                        @click="fetchMessages(item.id);resetLeft()"
-                        class="sidebar-list flex h-18 cursor-pointer hover:bg-light-300 dark:hover:bg-true-gray-700"
                     >
-                        <div class="flex flex-col justify-center px-3">
-                            <figure>
-                                <img
-                                    class="rounded-full h-13 w-13"
-                                    :src="item.avatar"
-                                    alt="avatar"
-                                >
-                            </figure>
-                        </div>
-                        <div class="flex flex-grow flex-col justify-center w-73 pr-3">
-                            <div class="flex">
-                                <p class="flex-grow truncate text-lg">{{
-                                    item.name
-                                }}</p>
+                        <div
+                            v-if="index == 0 || (users_new_chat[index-1] && users_new_chat[index-1].name.substr(0,1) != item.name.substr(0,1))"
+                            class="flex flex-grow mx-8 my-6 text-violet-600 dark:text-light-200"
+                        >{{
+                            item.name.substr(0,1)
+                        }}</div>
+                        <div
+                            @click="fetchMessages(item.id);resetLeft()"
+                            class="sidebar-list flex h-18 cursor-pointer hover:bg-light-300 dark:hover:bg-true-gray-700"
+                        >
+                            <div class="flex flex-col justify-center px-3">
+                                <figure>
+                                    <img
+                                        class="rounded-full h-13 w-13"
+                                        :src="item.avatar"
+                                        alt="avatar"
+                                    >
+                                </figure>
+                            </div>
+                            <div class="flex flex-grow flex-col justify-center w-73 pr-3">
+                                <div class="flex">
+                                    <p class="flex-grow truncate text-lg">{{
+                                        item.name
+                                    }}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </template>
                 </div>
             </template>
         </aside>
@@ -123,7 +132,7 @@
                     >
                 </div>
             </div>
-            <div class="sidebar-content bg-white dark:bg-dark-300 divide-y dark:divide-gray-700 divide-light-500">
+            <div class="sidebar-content bg-white dark:bg-dark-300 dark:divide-gray-700 divide-light-500">
                 <div
                     v-for="(item, index) in users"
                     :key="index"

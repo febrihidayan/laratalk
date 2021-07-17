@@ -35,6 +35,9 @@
     @apply overflow-y-auto overflow-x-hidden;
 }
 
+.sidebar-list {
+    @apply divide-y dark:divide-gray-500;
+}
 .sidebar-list:hover .button-dropdown {
     @apply mr-0 pl-1;
 }
