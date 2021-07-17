@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratalk\Http\Controllers;
+namespace Laratalk\Http\Controllers\Users;
 
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Routing\Controller;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Response;
 use Laratalk\Http\Resources\UserListResource;
 use Laratalk\Models\Message;
 
-class UserController extends Controller
+class UserChatController extends Controller
 {
     public function __invoke($query)
     {

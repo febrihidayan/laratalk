@@ -5,8 +5,8 @@ use Laratalk\Http\Controllers\LaratalkController;
 use Laratalk\Http\Controllers\Messages\StatusController;
 use Laratalk\Http\Controllers\Messages\ShowController;
 use Laratalk\Http\Controllers\Messages\StoreController;
-use Laratalk\Http\Controllers\UserController;
 use Laratalk\Http\Controllers\Users\NewChatController;
+use Laratalk\Http\Controllers\Users\UserChatController;
 
 Route::group([
     'prefix' => config('laratalk.path'),
@@ -16,7 +16,7 @@ Route::group([
 
     Route::prefix('api')->group( function() {
 
-        Route::get('user/{query}', UserController::class)
+        Route::get('user/{query}', UserChatController::class)
             ->name('user');
 
         Route::get('user-new-chat', NewChatController::class);
