@@ -20,43 +20,74 @@ class Message extends Model
      * @var array
      */
     protected $fillable = [
-        'from_id', 'group_id', 'content'
+        'by_id', 'group_id', 'content'
     ];
 
     /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
+     * Type message
+     * 
+     * @var number
      */
-    protected $casts = [
-        'read_at' => 'datetime',
-        'pinned' => 'boolean'
-    ];
+    public const MESSAGE = 0;
 
     /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
+     * Type add_user group
+     * 
+     * @var number
      */
-    protected $dates = [
-        'read_at',
-    ];
+    public const ADD_USER = 1;
 
+    /**
+     * Type remove_user group
+     * 
+     * @var number
+     */
+    public const REMOVE_USER = 2;
+
+    /**
+     * Type add_admin group
+     * 
+     * @var number
+     */
+    public const ADD_ADMIN = 3;
+
+    /**
+     * Type remove_admin group
+     * 
+     * @var number
+     */
+    public const REMOVE_ADMIN = 4;
+
+    /**
+     * Status send message
+     * 
+     * @var string
+     */
     public const SEND = 'send';
 
+    /**
+     * Status accept message
+     * 
+     * @var string
+     */
     public const ACCEPT = 'accept';
 
+    /**
+     * Status read message
+     * 
+     * @var string
+     */
     public const READ = 'read';
 
     public function readCount(): int
     {
         return $this->joinMeta()
-            ->join('users', 'laratalk_message_meta.to_id', '=', 'users.id')
+            ->join('users', 'laratalk_message_recipient.to_id', '=', 'users.id')
             ->where([
-                ['laratalk_messages.from_id', $this->id],
-                ['laratalk_message_meta.to_id', Auth::id()]
+                ['laratalk_messages.by_id', $this->id],
+                ['laratalk_message_recipient.to_id', Auth::id()]
             ])
-            ->whereNull('laratalk_message_meta.read_at')->count();
+            ->whereNull('laratalk_message_recipient.read_at')->count();
     }
 
     public function statusMessage(): string
@@ -75,16 +106,16 @@ class Message extends Model
     public function scopeAuthUser($query)
     {
         return $query->where(function ($q) {
-                $q->where('laratalk_messages.from_id', Auth::id())
-                    ->orWhere('laratalk_message_meta.to_id', Auth::id());
+                $q->where('laratalk_messages.by_id', Auth::id())
+                    ->orWhere('laratalk_message_recipient.to_id', Auth::id());
             });
     }
 
     public function scopeWhereMetaUser($query, $userId, $orWhere = false)
     {
         $fields = [
-            ['from_id', $orWhere ? $userId : Auth::id()],
-            ['laratalk_message_meta.to_id', !$orWhere ? $userId : Auth::id()]
+            ['by_id', $orWhere ? $userId : Auth::id()],
+            ['laratalk_message_recipient.to_id', !$orWhere ? $userId : Auth::id()]
         ];
 
         if ($orWhere) {
@@ -97,8 +128,8 @@ class Message extends Model
     public function scopeJoinMeta($query)
     {
         return $query->join(
-            'laratalk_message_meta',
-            'laratalk_message_meta.message_id',
+            'laratalk_message_recipient',
+            'laratalk_message_recipient.message_id',
             '=',
             'laratalk_messages.id'
         );
@@ -109,7 +140,7 @@ class Message extends Model
     {
         return $query->join(
             'users',
-            'laratalk_message_meta.to_id',
+            'laratalk_message_recipient.to_id',
             '=',
             'users.id'
         );
@@ -119,8 +150,8 @@ class Message extends Model
     {
         return $query->joinMeta()
             ->join('users',  function ($join) {
-                $join->on('laratalk_messages.from_id', '=', 'users.id')
-                    ->orOn('laratalk_message_meta.to_id', '=', 'users.id');
+                $join->on('laratalk_messages.by_id', '=', 'users.id')
+                    ->orOn('laratalk_message_recipient.to_id', '=', 'users.id');
             });
     }
 

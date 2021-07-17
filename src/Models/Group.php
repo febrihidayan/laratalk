@@ -3,7 +3,6 @@
 namespace Laratalk\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User;
 
 class Group extends Model
 {
@@ -20,6 +19,7 @@ class Group extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'description', 'image', 'user_id'
+        'name', 'description', 'avatar', 'user_id',
+        'pinned_message_id'
     ];
 }

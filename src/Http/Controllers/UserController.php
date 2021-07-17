@@ -20,7 +20,7 @@ class UserController extends Controller
                 ->where('users.id', '!=', Auth::id())
                 ->get([
                     'laratalk_messages.*',
-                    'laratalk_message_meta.*',
+                    'laratalk_message_recipient.*',
                     'users.id',
                     'users.name',
                     'users.email',

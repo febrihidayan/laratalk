@@ -16,15 +16,15 @@ class LaratalkController extends Controller
         $user = Auth::user();
 
         $messages = Message::joinMeta()
-            ->where('laratalk_message_meta.to_id', $user->id)
-            ->whereNull('laratalk_message_meta.accept_at');
+            ->where('laratalk_message_recipient.to_id', $user->id)
+            ->whereNull('laratalk_message_recipient.accept_at');
 
         if ($messages->count()) {
 
-            foreach ($messages->get()->unique('from_id') as $item) {
+            foreach ($messages->get()->unique('by_id') as $item) {
 
                 $idMessages = $messages->get()
-                    ->where('from_id', $item->from_id)
+                    ->where('by_id', $item->by_id)
                     ->pluck('id');
 
                 StatusEvent::dispatch(
@@ -33,7 +33,7 @@ class LaratalkController extends Controller
                         'content_to' => $item->to_id,
                         'status' => Message::ACCEPT
                     ],
-                    $item->from_id
+                    $item->by_id
                 );
                 
             }
