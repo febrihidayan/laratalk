@@ -148,7 +148,6 @@
                     v-for="(item, index) in users"
                     :key="index"
                     @click="fetchMessages(item.id)"
-                    :title="item.content"
                     :class="[`sidebar-list flex h-18 cursor-pointer`, {
                         'font-medium': item.read_count,
                         'hover:bg-light-300 dark:hover:bg-true-gray-700': form.to_id != item.id,
@@ -166,7 +165,10 @@
                     </div>
                     <div class="flex flex-grow flex-col justify-center w-73 pr-3">
                         <div class="flex">
-                            <p class="flex-grow truncate text-lg">{{
+                            <p
+                                class="flex-grow truncate text-lg"
+                                :title="item.name"
+                            >{{
                                 item.name
                             }}</p>
                             <small class="flex-none my-auto">{{
@@ -178,30 +180,35 @@
                                 trans.typing
                             }}</span>
                             <template v-else>
-                                <template
-                                    v-if="item.id != item.content_by"
+                                <div
+                                    class="flex flex-grow"
+                                    :title="item.content"
                                 >
-                                    <svg
-                                        :class="[`svg-icon svg-sm flex-none`, {
-                                            '!fill-dark-200 !stroke-dark-200 dark:!fill-light-200 dark:!stroke-light-200': item.status != 'read'
-                                        }]"
-                                        viewBox="0 0 20 20"
+                                    <template
+                                        v-if="item.id != item.content_by"
                                     >
-                                        <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
-                                    </svg>
-                                    <svg
-                                        v-if="item.status != 'send'"
-                                        :class="[`svg-icon svg-sm flex-none -ml-4`, {
-                                            '!fill-dark-200 !stroke-dark-200 dark:!fill-light-200 dark:!stroke-light-200': item.status == 'accept'
-                                        }]"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
-                                    </svg>
-                                </template>
-                                <span class="flex-grow truncate">{{
-                                    item.content
-                                }}</span>
+                                        <svg
+                                            :class="[`svg-icon svg-sm flex-none`, {
+                                                '!fill-dark-200 !stroke-dark-200 dark:!fill-light-200 dark:!stroke-light-200': item.status != 'read'
+                                            }]"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
+                                        </svg>
+                                        <svg
+                                            v-if="item.status != 'send'"
+                                            :class="[`svg-icon svg-sm flex-none -ml-4`, {
+                                                '!fill-dark-200 !stroke-dark-200 dark:!fill-light-200 dark:!stroke-light-200': item.status == 'accept'
+                                            }]"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
+                                        </svg>
+                                    </template>
+                                    <span class="flex-grow truncate">{{
+                                        item.content
+                                    }}</span>
+                                </div>
                             </template>
                             <small
                                 v-if="item.read_count"
