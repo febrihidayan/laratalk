@@ -17,14 +17,24 @@
                 </p>
             </div>
             <template v-if="left_detail == 'profile'">
-                <div class="sidebar-detail">
-                    <figure class="my-8">
+                <div class="sidebar-detail bg-light-600 dark:bg-dark-100">
+                    <div class="dark:bg-dark-300 py-8">
                         <img
                             class="rounded-full h-48 w-48 mx-auto cursor-pointer"
                             :src="laratalk.profile.avatar"
-                            alt="profile"
+                            alt="avatar"
                         >
-                    </figure>
+                    </div>
+                    <div class="bg-white dark:bg-dark-300 my-2 px-6 py-4">
+                        <small class="text-purple-800 dark:text-purple-300">{{
+                            trans.your_name
+                        }}</small>
+                        <div class="mt-4">
+                            <p>{{
+                                laratalk.profile.name
+                            }}</p>
+                        </div>
+                    </div>
                 </div>
             </template>
             <template v-if="left_detail == 'chat'">
