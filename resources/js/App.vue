@@ -50,7 +50,7 @@
                             class="flex-grow dark:bg-dark-50 focus:outline-none ml-3" 
                             :placeholder="trans.search"
                             autofocus
-                            @input="searchNewChat"
+                            @input="fetchSearchNewChat"
                         >
                     </div>
                 </div>
@@ -413,36 +413,27 @@ import debounce from 'lodash/debounce'
 export default {
     data() {
         return {
-            left_detail: null,
-            isRight: false,
-            isDetail: false,
+            form: {
+                to_id: '',
+                content: ''
+            },
             isChat: false,
-            userIndex: null,
-            search: '',
-            users: [],
-            users_new_chat: [],
+            isDetail: false,
+            isRight: false,
+            left_detail: null,
             message: {},
             message_countdown: null,
             message_second: 0,
             message_typing: false,
             profile: {},
-            form: {
-                to_id: '',
-                content: ''
-            }
+            search: '',
+            userIndex: null,
+            users: [],
+            users_new_chat: [],
         }
     },
     
     methods: {
-
-        fetchUsers()
-        {
-            let q = this.search || 'all'
-
-            axios.get('user/' + q).then(({ data }) => {
-                this.users = data
-            })
-        },
 
         fetchMessages(id)
         {
@@ -467,76 +458,61 @@ export default {
             }
         },
 
-        pushMessage(data, type = '')
-        {
-            let index = this.users.findIndex((s) => s.id === (
-                type == 'push' ? data.content_by : this.message.id
-            ))
-
-            if (index != -1) {
-                
-                this.users[index].content = data.content
-                this.users[index].content_by = data.content_by
-                this.users[index].last_time = data.time
-                this.users[index].status = 'send'
-
-                if (type == 'push' && this.message.id != data.content_by) {
-                    this.users[index].read_count++
-                }
-
-            } else {
-                this.users.unshift({
-                    id: this.message.id || data.id,
-                    avatar: this.message.avatar || data.avatar,
-                    name: this.message.name || data.name,
-                    content: data.content,
-                    content_by: data.content_by,
-                    read_count: type == 'push' ? 1 : 0,
-                    status: data.status,
-                    last_time: data.time
+        fetchSearchNewChat: debounce(function (e) {
+            axios
+                .get('user-new-chat', {
+                    params: {
+                        q: e.target.value
+                    }
                 })
-            }
-
-            if (this.message.messages) {
-
-                this.message.messages.push(data)
-            
-                this.scrollToEnd()
-
-            }
-
-            if (this.laratalk.profile.id != data.content_by) {
-
-                let status = this.message.id == data.content_by
-                    ? 'read' : 'accept'
-
-                axios.post('message-status', {
-                    id: data.id,
-                    content_by: data.content_by,
-                    status
+                .then(({ data }) => {
+                    this.users_new_chat = data
                 })
-                
-            }
-        },
+        }, 500),
 
-        sendMessage()
+        fetchUsers()
         {
-            this.sendTyping(false)
-            
-            axios.post('message-store', this.form).then(({ data }) => {
-                this.form.content = ''
-                this.search = ''
+            let q = this.search || 'all'
 
-                this.pushMessage(data)
+            axios.get('user/' + q).then(({ data }) => {
+                this.users = data
             })
         },
 
-        fetchEcho()
+        isTyping() {
+            let _this = this
+
+            if (this.message_second <= 0 && !this.message_typing) {
+
+                this.message_typing = true
+                this.sendTyping()
+
+            }
+
+            this.message_second = 3
+
+            clearInterval(this.message_countdown)
+
+            this.message_countdown = setInterval( function() {
+
+                if (--_this.message_second <= 0 && _this.message_typing) {
+
+                    clearInterval(_this.message_countdown)
+
+                    _this.message_typing = false
+                    _this.sendTyping()
+
+                }
+
+            }, 1000)
+        },
+
+        listenEcho()
         {
             Echo.channel('laratalk-user-message.' + this.laratalk.profile.id)
                 .listen('Messages\\SendEvent', (e) => {
 
-                    this.pushMessage(e, 'push')
+                    this.pushMessage(e)
 
                 })
                 .listen('Messages\\StatusEvent', (e) => {
@@ -546,21 +522,15 @@ export default {
                             s.status = e.status
     
                             if (this.message.messages) {
-                                if (typeof e.id === 'number') {
-        
+                                (
+                                    typeof e.id === 'number'
+                                        ? [e.id] : e.id
+                                )
+                                .forEach((id) => {
                                     this.message.messages
-                                        .find((s) => s.id === e.id)
+                                        .find((s) => s.id === id)
                                             .status = e.status
-    
-                                } else {
-    
-                                    e.id.forEach((id) => {
-                                        this.message.messages
-                                            .find((s) => s.id === id)
-                                                .status = e.status
-                                    })
-    
-                                }
+                                })
                             }
                         }
                     })
@@ -619,32 +589,72 @@ export default {
 
         },
 
-        isTyping() {
-            let _this = this
+        pushMessage(data)
+        {
+            const userIndex = this.users.findIndex((s) => s.id === (
+                this.laratalk.profile.id != data.content_by
+                    ? data.content_by : this.message.id
+            ))
 
-            if (this.message_second <= 0 && !this.message_typing) {
+            if (userIndex != -1) {
 
-                this.message_typing = true
-                this.sendTyping()
+                const user = this.users[userIndex]
+                
+                user.content = data.content
+                user.content_by = data.content_by
+                user.last_time = data.time
+                user.status = 'send'
+
+                if (
+                    this.laratalk.profile.id != data.content_by &&
+                    this.message.id != data.content_by
+                ) {
+                    user.read_count++
+                }
+
+                this.users.unshift(
+                    this.users.splice(userIndex, 1)[0]
+                )
+
+            } else {
+                this.users.unshift({
+                    id: this.message.id || data.content_by,
+                    avatar: this.message.avatar || data.avatar,
+                    name: this.message.name || data.name,
+                    content: data.content,
+                    content_by: data.content_by,
+                    read_count:
+                        this.laratalk.profile.id != data.content_by? 1 : 0,
+                    status: data.status,
+                    last_time: data.time
+                })
+            }
+
+            if (
+                this.message.messages && (
+                    this.laratalk.profile.id === data.content_by ||
+                    this.message.id === data.content_by
+                )
+            ) {
+
+                this.message.messages.push(data)
+            
+                this.scrollToEnd()
 
             }
 
-            this.message_second = 3
+            if (this.laratalk.profile.id != data.content_by) {
 
-            clearInterval(this.message_countdown)
+                let status = this.message.id == data.content_by
+                    ? 'read' : 'accept'
 
-            this.message_countdown = setInterval( function() {
-
-                if (--_this.message_second <= 0 && _this.message_typing) {
-
-                    clearInterval(_this.message_countdown)
-
-                    _this.message_typing = false
-                    _this.sendTyping()
-
-                }
-
-            }, 1000)
+                axios.post('message-status', {
+                    id: data.id,
+                    content_by: data.content_by,
+                    status
+                })
+                
+            }
         },
 
         resetLeft() {
@@ -652,17 +662,25 @@ export default {
             this.users_new_chat = []
         },
 
-        searchNewChat: debounce(function (e) {
-            axios
-                .get('user-new-chat', {
-                    params: {
-                        q: e.target.value
-                    }
-                })
-                .then(({ data }) => {
-                    this.users_new_chat = data
-                })
-        }, 500),
+        scrollToEnd()
+        {
+            setTimeout(() => {
+                let container = this.$el.querySelector("#main-content")
+                container.scrollTop = container.scrollHeight
+            }, 10)
+        },
+
+        sendMessage()
+        {
+            this.sendTyping(false)
+            
+            axios.post('message-store', this.form).then(({ data }) => {
+                this.form.content = ''
+                this.search = ''
+                
+                this.pushMessage(data)
+            })
+        },
 
         sendTyping(bool = null) {
             if (bool != null) {
@@ -674,27 +692,16 @@ export default {
                     id: this.laratalk.profile.id,
                     typing: bool || this.message_typing
                 })
-        },
-
-        scrollToEnd()
-        {
-            setTimeout(() => {
-                let container = this.$el.querySelector("#main-content")
-                container.scrollTop = container.scrollHeight
-            }, 10)
         }
 
     },
 
-    mounted() {
+    beforeMount() {
         this.fetchUsers()
-        this.fetchEcho()
+        this.listenEcho()
     },
 
     watch: {
-        searchNewChat: debounce( function() {
-
-        }, 500),
         search: debounce( function() {
             this.fetchUsers()
         }, 500)
