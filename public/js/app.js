@@ -17990,8 +17990,7 @@ __webpack_require__.r(__webpack_exports__);
       if (index != -1) {
         this.users[index].content = data.content;
         this.users[index].content_by = data.content_by;
-        this.users[index].last_time = data.last_time;
-        this.users[index].time = data.time;
+        this.users[index].last_time = data.time;
         this.users[index].status = 'send';
 
         if (type == 'push' && this.message.id != data.content_by) {
@@ -18004,10 +18003,9 @@ __webpack_require__.r(__webpack_exports__);
           name: this.message.name || data.name,
           content: data.content,
           content_by: data.content_by,
-          read_count: 1,
+          read_count: type == 'push' ? 1 : 0,
           status: data.status,
-          last_time: data.last_time,
-          time: data.time
+          last_time: data.time
         });
       }
 
