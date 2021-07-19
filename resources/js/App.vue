@@ -265,6 +265,12 @@
                             <p class="text-base leading-none">{{
                                 message.name
                             }}</p>
+                            <!-- 
+                                TODO: show all group participants
+                             -->
+                            <!-- <small class="text-sm leading-none">{{
+                                getUserGroup(message.users)
+                            }}</small> -->
                             <small v-if="message.typing" class="text-sm leading-none">{{
                                 trans.typing
                             }}</small>
@@ -603,6 +609,17 @@ export default {
             .then(({ data }) => {
                 this.users = data
             })
+        },
+
+        getUserGroup(data)
+        {
+            let string = ''
+
+            data.forEach(s => {
+                string += s.name + ', '
+            })
+
+            return string.substr(0, string.length - 2)
         },
 
         isTyping() {
