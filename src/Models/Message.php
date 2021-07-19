@@ -24,39 +24,109 @@ class Message extends Model
     ];
 
     /**
-     * Type message
+     * Type chat
      * 
      * @var number
      */
-    public const MESSAGE = 0;
+    public const CHAT = 0;
+
+    /**
+     * Type create group
+     * 
+     * @var number
+     */
+    public const CREATE_GROUP = 1;
+
+    /**
+     * Type change group avatar
+     * 
+     * @var number
+     */
+    public const AVATAR_GROUP = 2;
+
+    /**
+     * Type rename group
+     * 
+     * @var number
+     */
+    public const RENAME_GROUP = 3;
+
+    /**
+     * Type change group description
+     * 
+     * @var number
+     */
+    public const DESCRIPTION_GROUP = 4;
+
+    /**
+     * Type change group info for all
+     * 
+     * @var number
+     */
+    public const INFO_ALL_GROUP = 5;
+
+    /**
+     * Type change group info for admin
+     * 
+     * @var number
+     */
+    public const INFO_ADMIN_GROUP = 6;
+
+    /**
+     * Type change group chat for all
+     * 
+     * @var number
+     */
+    public const CHAT_ALL_GROUP = 7;
+
+    /**
+     * Type change group chat for admin
+     * 
+     * @var number
+     */
+    public const CHAT_ADMIN_GROUP = 8;
 
     /**
      * Type add_user group
      * 
      * @var number
      */
-    public const ADD_USER = 1;
+    public const ADD_USER_GROUP = 9;
 
     /**
      * Type remove_user group
      * 
      * @var number
      */
-    public const REMOVE_USER = 2;
+    public const REMOVE_USER_GROUP = 10;
 
     /**
      * Type add_admin group
      * 
      * @var number
      */
-    public const ADD_ADMIN = 3;
+    public const ADD_ADMIN_GROUP = 11;
 
     /**
      * Type remove_admin group
      * 
      * @var number
      */
-    public const REMOVE_ADMIN = 4;
+    public const REMOVE_ADMIN_GROUP = 12;
+
+    /**
+     * User type for message
+     * 
+     * @var string
+     */
+    public const TYPE_USER = 'user';
+
+    /**
+     * Group type for message
+     * 
+     * @var string
+     */
+    public const TYPE_GROUP = 'group';
 
     /**
      * Status send message
@@ -79,10 +149,32 @@ class Message extends Model
      */
     public const READ = 'read';
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'chat_type' => 'string',
+    ];
+
+    /**
+     * Get the type chat message.
+     *
+     * @return string
+     */
+    public function getChatTypeAttribute()
+    {
+        if ($this->group_id) {
+            return self::TYPE_GROUP;
+        }
+
+        return self::TYPE_USER;
+    }
+
     public function readCount(): int
     {
-        return $this->joinMeta()
-            ->join('users', 'laratalk_message_recipient.to_id', '=', 'users.id')
+        return $this->joinRecipientUser()
             ->where([
                 ['laratalk_messages.by_id', $this->id],
                 ['laratalk_message_recipient.to_id', Auth::id()]
@@ -125,9 +217,9 @@ class Message extends Model
         return $query->where($fields);
     }
 
-    public function scopeJoinMeta($query)
+    public function scopeJoinRecipient($query)
     {
-        return $query->join(
+        return $query->leftJoin(
             'laratalk_message_recipient',
             'laratalk_message_recipient.message_id',
             '=',
@@ -135,24 +227,46 @@ class Message extends Model
         );
     }
 
-    // TODO: Will be used for group messages
-    public function scopeJoinMetaUser($query)
+    public function scopeJoinRecipientUser($query)
     {
-        return $query->join(
-            'users',
-            'laratalk_message_recipient.to_id',
-            '=',
-            'users.id'
-        );
+        return $query->joinRecipient()
+            ->leftJoin(
+                'users',
+                'laratalk_message_recipient.to_id',
+                '=',
+                'users.id'
+            );
     }
 
-    public function scopeJoinUser($query)
+    public function scopeJoinRecipientUserOrMessageUser($query)
     {
-        return $query->joinMeta()
-            ->join('users',  function ($join) {
-                $join->on('laratalk_messages.by_id', '=', 'users.id')
-                    ->orOn('laratalk_message_recipient.to_id', '=', 'users.id');
-            });
+        return $query->joinRecipient()
+            ->leftJoin(
+                'users',
+                function ($join) {
+                    $join
+                        ->on(
+                            'laratalk_message_recipient.to_id',
+                            '=',
+                            'users.id'
+                        )
+                        ->orOn(
+                            'laratalk_messages.by_id',
+                            '=',
+                            'users.id'
+                        );
+                }
+            );
+    }
+
+    public function scopeJoinGroup($query)
+    {
+        return $query->leftJoin(
+            'laratalk_groups',
+            'laratalk_messages.group_id',
+            '=',
+            'laratalk_groups.id'
+        );
     }
 
 }
