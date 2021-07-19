@@ -43,20 +43,14 @@ return [
 
     /**
      * --------------------------------------------------------------------------
-     * User Profile
+     * Group features
      * --------------------------------------------------------------------------
      * 
-     * Jadi Anda bisa menyesuaikan isi profile yang akan di tampilkan di bila
-     * user profile. Aturan main cukup mudah perhatikan dan amati perintah ini
-     * 
-     * misalkan Anda ingin menambah field role, cukup lakukan ini
-     * 'role' => 'Role User'
-     * 
-     * key array -> field user
-     * value array -> label user
+     * Set group configuration both from max participants and group features
      * 
      */
-    'users' => [
-        'email' => 'Alamat Email'
+    'group' => [
+        'feature' => false,
+        'max_recipient' => 300
     ]
 ];
