@@ -66,7 +66,7 @@
                             item.name.substr(0,1)
                         }}</div>
                         <div
-                            @click="fetchMessages(item.id);resetLeft()"
+                            @click="fetchMessages(item.id, models.message.type_user);resetLeft()"
                             class="sidebar-list flex h-18 cursor-pointer hover:bg-light-300 dark:hover:bg-true-gray-700"
                         >
                             <div class="flex flex-col justify-center px-3">
@@ -128,6 +128,8 @@
                     </a>
                 </div>
             </div>
+
+            <!-- column search -->
             <div class="bg-light-200 dark:bg-dark-200 border-b-1 dark:border-dark-50 px-4 py-2">
                 <div class="flex rounded-full bg-white dark:bg-dark-50 p-1">
                     <span class="flex-grow-0 flex-shrink-0">
@@ -143,15 +145,19 @@
                     >
                 </div>
             </div>
+
+            <!-- list users and groups -->
             <div class="sidebar-content bg-white dark:bg-dark-300 dark:divide-gray-700 divide-light-500">
                 <div
                     v-for="(item, index) in users"
                     :key="index"
-                    @click="fetchMessages(item.id)"
+                    @click="fetchMessages(item.group_id || item.id, item.chat_type);form.active = index"
                     :class="[`sidebar-list flex h-18 cursor-pointer`, {
                         'font-medium': item.read_count,
-                        'hover:bg-light-300 dark:hover:bg-true-gray-700': form.to_id != item.id,
-                        'bg-light-500 dark:bg-true-gray-800': form.to_id == item.id
+                        'hover:bg-light-300 dark:hover:bg-true-gray-700':
+                            form.active != index,
+                        'bg-light-500 dark:bg-true-gray-800':
+                            form.active == index
                     }]"
                 >
                     <div class="flex flex-col justify-center px-3">
@@ -185,7 +191,7 @@
                                     :title="item.content"
                                 >
                                     <template
-                                        v-if="item.id != item.content_by"
+                                        v-if="laratalk.profile.id === item.content_by && item.content_type === models.message.chat"
                                     >
                                         <svg
                                             :class="[`svg-icon svg-sm flex-none`, {
@@ -196,7 +202,7 @@
                                             <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
                                         </svg>
                                         <svg
-                                            v-if="item.status != 'send'"
+                                            v-if="item.status != models.message.send"
                                             :class="[`svg-icon svg-sm flex-none -ml-4`, {
                                                 '!fill-dark-200 !stroke-dark-200 dark:!fill-light-200 dark:!stroke-light-200': item.status == 'accept'
                                             }]"
@@ -206,7 +212,8 @@
                                         </svg>
                                     </template>
                                     <span class="flex-grow truncate">{{
-                                        item.content
+                                        item.chat_type === models.message.type_user
+                                            ? item.content : getTransMessage(item)
                                     }}</span>
                                 </div>
                             </template>
@@ -261,7 +268,10 @@
                             <small v-if="message.typing" class="text-sm leading-none">{{
                                 trans.typing
                             }}</small>
-                            <small v-if="message.online && !message.typing" class="text-sm leading-none">{{
+                            <small
+                                v-if="message.online && !message.typing && message.chat_type === models.message.type_user"
+                                class="text-sm leading-none"
+                            >{{
                                 trans.online
                             }}</small>
                         </div>
@@ -288,59 +298,86 @@
                             }}</span>
                         </div>
                         <div
-                            v-if="message.id == item.content_by"
-                            class="message bg-white dark:text-dark-300 rounded-r-2xl rounded-t-2xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-3 mr-auto"
+                            v-if="item.content_type !== models.message.chat && item.chat_type === models.message.type_group"
+                            class="bg-light-400 text-dark-500 rounded-md mx-auto my-4 py-1 px-2"
                         >
-                            <div class="relative">
-                                <a class="button-dropdown cursor-pointer absolute w-10 bg-gradient-to-tr from-white/80 to-white right-0 opacity-0 transition-effect">
-                                    <svg class="svg-icon !bg-white !fill-gray-400 !stroke-gray-400 float-right transform -rotate-90" viewBox="0 0 20 20">
-                                        <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
-                                    </svg>
-                                </a>
-                            </div>
-                            <p>{{
-                                item.content
-                            }}</p>
-                            <small class="float-right">{{
-                                item.time
-                            }}</small>
+                            <span class="text-xs">{{
+                                getTransMessage(item)
+                            }}</span>
                         </div>
-                        <div
-                            v-else
-                            class="message bg-dark-500 text-white rounded-t-2xl rounded-l-2xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-3 ml-auto"
-                        >
-                            <div class="relative">
-                                <a class="button-dropdown cursor-pointer absolute w-10 bg-gradient-to-tr from-dark-500/80 to-dark-500 right-0 opacity-0 transition-effect">
-                                    <svg class="svg-icon !bg-dark-500 float-right transform -rotate-90" viewBox="0 0 20 20">
-                                        <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
+                        <template v-else>
+
+                            <!-- message right -->
+                            <div
+                                v-if="laratalk.profile.id == item.content_by"
+                                class="message bg-dark-500 text-white rounded-t-xl rounded-l-xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-3 ml-auto"
+                            >
+                                <div class="relative z-20">
+                                    <a class="button-dropdown cursor-pointer absolute w-10 bg-gradient-to-tr from-dark-500/80 to-dark-500 right-0 opacity-0 transition-effect">
+                                        <svg class="svg-icon !bg-dark-500 float-right transform -rotate-90" viewBox="0 0 20 20">
+                                            <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                                <p>
+                                    <span class="whitespace-pre-wrap">{{
+                                        item.content
+                                    }}</span>
+                                    <span class="w-18 inline-block"></span>
+                                </p>
+                                <small class="flex float-right -mt-3 -mb-5px z-30">{{
+                                    item.time
+                                }}
+                                    <svg
+                                        :class="[`svg-icon svg-sm`, {
+                                            '!fill-light-200 !stroke-light-200': item.status != 'read'
+                                        }]"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
                                     </svg>
-                                </a>
+                                    <svg
+                                        v-if="item.status != 'send'"
+                                        :class="[`svg-icon svg-sm -ml-4`, {
+                                            '!fill-light-200 !stroke-light-200': item.status == 'accept'
+                                        }]"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
+                                    </svg>
+                                </small>
                             </div>
-                            <p>{{
-                                item.content
-                            }}</p>
-                            <small class="flex float-right">{{
-                                item.time
-                            }}
-                                <svg
-                                    :class="[`svg-icon svg-sm`, {
-                                        '!fill-light-200 !stroke-light-200': item.status != 'read'
-                                    }]"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
-                                </svg>
-                                <svg
-                                    v-if="item.status != 'send'"
-                                    :class="[`svg-icon svg-sm -ml-4`, {
-                                        '!fill-light-200 !stroke-light-200': item.status == 'accept'
-                                    }]"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
-                                </svg>
-                            </small>
-                        </div>
+                            
+                            <!-- message left -->
+                            <div
+                                v-else
+                                class="message bg-white dark:text-dark-300 rounded-r-xl rounded-t-xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-2 mr-auto"
+                            >
+                                <div class="relative z-20">
+                                    <a class="button-dropdown cursor-pointer absolute w-10 bg-gradient-to-tr from-white/80 to-white right-0 opacity-0 transition-effect">
+                                        <svg class="svg-icon !bg-white !fill-gray-400 !stroke-gray-400 float-right transform -rotate-90" viewBox="0 0 20 20">
+                                            <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                                <a
+                                    @click="fetchMessages(item.user_by.id, models.message.type_user)"
+                                    v-if="item.chat_type === models.message.type_group"
+                                    class="cursor-pointer !text-cyan-500 hover:underline"
+                                >{{
+                                    item.user_by.name
+                                }}</a>
+                                <p>
+                                    <span class="whitespace-pre-wrap">{{
+                                        item.content
+                                    }}</span>
+                                    <span class="w-13 inline-block"></span>
+                                </p>
+                                <small class="float-right -mt-3 -mb-5px z-30">{{
+                                    item.time
+                                }}</small>
+                            </div>
+                        </template>
                     </template>
                 </div>
                 <div class="bg-light-600 dark:bg-dark-500 px-5 py-2">
@@ -391,17 +428,79 @@
                     <p class="text-xl">{{
                         message.name
                     }}</p>
+                    <small v-if="message.chat_type === models.message.type_group">{{
+                        `${trans.made} ${message.last_time} ${trans.at} ${message.time}`
+                    }}</small>
                 </div>
                 <div class="bg-white dark:bg-dark-300 my-2 px-6 py-4">
                     <small class="text-purple-800 dark:text-purple-300">{{
-                        trans.info_and_email_address
+                        message.chat_type === models.message.type_user
+                            ? trans.info_and_email_address
+                            : trans.description
                     }}</small>
                     <div class="mt-4">
                         <p>{{
-                            message.email
+                            message.chat_type === models.message.type_user
+                                ? message.email : message.description
                         }}</p>
                     </div>
                 </div>
+                <div
+                    v-if="message.chat_type === models.message.type_group"
+                    class="bg-white dark:bg-dark-300 my-2 py-4"
+                >
+                    <small class="text-purple-800 dark:text-purple-300 px-6">{{
+                        message.users.length + ` ${trans.participants}`
+                    }}</small>
+                    <div class="mt-4">
+                        <template
+                                v-for="(item, index) in message.users"
+                                :key="index"
+                            >
+                                <div
+                                    v-on:click="laratalk.profile.id != item.id ? fetchMessages(item.id, models.message.type_user) : ''"
+                                    :class="[`sidebar-list flex h-18`, {
+                                        'cursor-pointer hover:bg-light-300 dark:hover:bg-true-gray-700': laratalk.profile.id != item.id
+                                    }]"
+                                >
+                                    <div class="flex flex-col justify-center px-3 pl-6">
+                                        <figure>
+                                            <img
+                                                class="rounded-full h-13 w-13"
+                                                :src="item.avatar"
+                                                alt="avatar"
+                                            >
+                                        </figure>
+                                    </div>
+                                    <div class="flex flex-grow flex-col justify-center w-73 pr-6">
+                                        <div class="flex">
+                                            <p class="flex-grow truncate text-lg">{{
+                                                laratalk.profile.id != item.id
+                                                    ? item.name : trans.you
+                                            }}</p>
+                                            <small
+                                                v-if="item.role === models.group.admin"
+                                                class="flex-none bg-violet-600 text-white text-xs py-1 px-2 rounded-md"
+                                            >{{
+                                                trans.group_admin
+                                            }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                    </div>
+                </div>
+                <a
+                    v-if="message.chat_type === models.message.type_group"
+                    class="flex cursor-pointer bg-white text-red-600 dark:bg-dark-300 my-2 px-6 py-4"
+                >
+                    <svg class="svg-icon !fill-red-600 !stroke-red-600" viewBox="0 0 20 20">
+                        <path d="M8.416,3.943l1.12-1.12v9.031c0,0.257,0.208,0.464,0.464,0.464c0.256,0,0.464-0.207,0.464-0.464V2.823l1.12,1.12c0.182,0.182,0.476,0.182,0.656,0c0.182-0.181,0.182-0.475,0-0.656l-1.744-1.745c-0.018-0.081-0.048-0.16-0.112-0.224C10.279,1.214,10.137,1.177,10,1.194c-0.137-0.017-0.279,0.02-0.384,0.125C9.551,1.384,9.518,1.465,9.499,1.548L7.76,3.288c-0.182,0.181-0.182,0.475,0,0.656C7.941,4.125,8.234,4.125,8.416,3.943z M15.569,6.286h-2.32v0.928h2.32c0.512,0,0.928,0.416,0.928,0.928v8.817c0,0.513-0.416,0.929-0.928,0.929H4.432c-0.513,0-0.928-0.416-0.928-0.929V8.142c0-0.513,0.416-0.928,0.928-0.928h2.32V6.286h-2.32c-1.025,0-1.856,0.831-1.856,1.856v8.817c0,1.025,0.832,1.856,1.856,1.856h11.138c1.024,0,1.855-0.831,1.855-1.856V8.142C17.425,7.117,16.594,6.286,15.569,6.286z"></path>
+                    </svg>
+                    <span class="ml-6">{{
+                        trans.leave_the_group
+                    }}</span>
+                </a>
                 <a class="flex cursor-pointer bg-white text-red-600 dark:bg-dark-300 my-2 px-6 py-4">
                     <svg class="svg-icon !fill-red-600 !stroke-red-600" viewBox="0 0 20 20">
                         <path d="M17.114,3.923h-4.589V2.427c0-0.252-0.207-0.459-0.46-0.459H7.935c-0.252,0-0.459,0.207-0.459,0.459v1.496h-4.59c-0.252,0-0.459,0.205-0.459,0.459c0,0.252,0.207,0.459,0.459,0.459h1.51v12.732c0,0.252,0.207,0.459,0.459,0.459h10.29c0.254,0,0.459-0.207,0.459-0.459V4.841h1.511c0.252,0,0.459-0.207,0.459-0.459C17.573,4.127,17.366,3.923,17.114,3.923M8.394,2.886h3.214v0.918H8.394V2.886z M14.686,17.114H5.314V4.841h9.372V17.114z M12.525,7.306v7.344c0,0.252-0.207,0.459-0.46,0.459s-0.458-0.207-0.458-0.459V7.306c0-0.254,0.205-0.459,0.458-0.459S12.525,7.051,12.525,7.306M8.394,7.306v7.344c0,0.252-0.207,0.459-0.459,0.459s-0.459-0.207-0.459-0.459V7.306c0-0.254,0.207-0.459,0.459-0.459S8.394,7.051,8.394,7.306"></path>
@@ -422,7 +521,6 @@ export default {
     data() {
         return {
             form: {
-                to_id: '',
                 content: ''
             },
             isChat: false,
@@ -442,22 +540,36 @@ export default {
     
     methods: {
 
-        fetchMessages(id)
+        fetchMessages(id, type)
         {
-            if (this.form.to_id != id) {
+            if (this.form.to_id != id || this.form.group_id != id) {
                 this.isRight = true
-            
-                this.form.to_id = id
+
+                if (type === this.models.message.type_user) {
+                    this.form.to_id = id
+                    this.form.chat_type = this.models.message.type_user
+                    this.form.group_id = null
+                }
+
+                if (type === this.models.message.type_group) {
+                    this.form.group_id = id
+                    this.form.chat_type = this.models.message.type_group
+                    this.form.to_id = null
+                }
                 
-                axios.get(`message-show/${id}`).then(({ data }) => {
+                axios.get(`message-show/${id}`, {
+                    params: {
+                        type
+                    }
+                }).then(({ data }) => {
                     this.message = data
     
-                    let user = this.users.find((s) => s.id === id)
-
-                    if (user) {
-                        user.read_count = 0
-                        this.message.online = user.online
-                    }
+                    this.users.find((s) => {
+                        if (s.id === id && s.chat_type === this.models.message.type_user) {
+                            s.read_count = 0
+                            this.message.online = s.online
+                        }
+                    })
 
                     this.scrollToEnd()
                 })
@@ -558,9 +670,12 @@ export default {
             Echo.join('online')
                 .here((users) => {
                     users.forEach((e) => {
-                        this.users.find((user) => {
-                            if (user.id === e.id) {
-                                user.online = true
+                        this.users.find((s) => {
+                            if (
+                                s.id === e.id &&
+                                s.type_group === e.type_group
+                            ) {
+                                s.online = true
                             }
                         })
                     })
@@ -568,24 +683,36 @@ export default {
                 .joining((e) => {
                     this.users
                         .find((s) => {
-                            if (s.id === e.id) {
+                            if (
+                                s.id === e.id &&
+                                s.chat_type === e.chat_type
+                            ) {
                                 s.online = true
                             }
                         })
                     
-                    if (this.message.id === e.id) {
+                    if (
+                        this.message.id === e.id &&
+                        this.form.chat_type === e.type_user
+                    ) {
                         this.message.online = true
                     }
                 })
                 .leaving((e) => {
                     this.users
                         .find((s) => {
-                            if (s.id === e.id) {
+                            if (
+                                s.id === e.id &&
+                                s.chat_type === e.chat_type
+                            ) {
                                 s.online = false
                             }
                         })
-                    
-                    if (this.message.id === e.id) {
+
+                    if (
+                        this.message.id === e.id
+                        && this.form.chat_type === e.type_user
+                    ) {
                         this.message.online = false
                     }
                 })
@@ -610,10 +737,20 @@ export default {
 
         pushMessage(data)
         {
-            const userIndex = this.users.findIndex((s) => s.id === (
-                this.laratalk.profile.id != data.content_by
-                    ? data.content_by : this.message.id
-            ))
+            let userIndex = -1
+
+            if (data.chat_type === this.models.message.type_user) {
+                userIndex = this.users.findIndex(
+                    (s) =>  s.id === (
+                        this.laratalk.profile.id == data.content_by
+                            ? this.message.id : data.content_by )
+                )
+            }
+            else {
+                userIndex = this.users.findIndex(
+                    (e => e.chat_type === this.models.message.type_group && e.id === data.group_id)
+                )
+            }
 
             if (userIndex != -1) {
 
@@ -642,8 +779,10 @@ export default {
                     name: this.message.name || data.name,
                     content: data.content,
                     content_by: data.content_by,
+                    content_type: 0,
+                    chat_type: data.chat_type,
                     read_count:
-                        this.laratalk.profile.id != data.content_by? 1 : 0,
+                        this.laratalk.profile.id != data.content_by ? 1 : 0,
                     status: data.status,
                     last_time: data.time
                 })

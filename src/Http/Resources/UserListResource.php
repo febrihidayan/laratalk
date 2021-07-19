@@ -2,6 +2,7 @@
 
 namespace Laratalk\Http\Resources;
 
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Laratalk\Laratalk;
 
@@ -15,15 +16,42 @@ class UserListResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
-            'avatar' => Laratalk::gravatar($this->email),
-            'name' => $this->name,
+        $data = [
             'content' => $this->content ?? '',
             'content_by' => $this->by_id,
+            'content_type' => $this->type,
+            'chat_type' => $this->chat_type,
+            'last_time' => Laratalk::lastTime($this->created_at),
             'read_count' => $this->readCount(),
             'status' => $this->statusMessage(),
-            'last_time' => Laratalk::lastTime($this->created_at)
         ];
+
+        if ($this->group_id) {
+            $userBy = User::find($this->by_id);
+            $userTo = User::find($this->to_id);
+
+            $data += [
+                'avatar' => $this->group_avatar,
+                'id' => $this->group_id,
+                'name' => $this->group_name,
+                'user_by' => [
+                    'id' => $userBy->id,
+                    'name' => $userBy->name,
+                ],
+                'user_to' => [
+                    'id' => $userTo->id ?? '',
+                    'name' => $userTo->name ?? '',
+                ]
+            ];
+        }
+        else {
+            $data += [
+                'avatar' => Laratalk::gravatar($this->user_email),
+                'id' => $this->user_id,
+                'name' => $this->user_name,
+            ];
+        }
+
+        return $data;
     }
 }

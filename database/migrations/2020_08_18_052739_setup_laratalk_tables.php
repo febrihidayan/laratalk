@@ -15,8 +15,8 @@ class SetupLaratalkTables extends Migration
     {
         Schema::create('laratalk_groups', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('description')->nullable();
+            $table->string('name', 30);
+            $table->string('description', 500)->nullable();
             $table->string('avatar')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('pinned_message_id')->nullable();
@@ -34,7 +34,7 @@ class SetupLaratalkTables extends Migration
             $table->unsignedBigInteger('by_id');
             $table->unsignedBigInteger('group_id')->nullable();
             $table->text('content', 5000)->nullable();
-            $table->boolean('type')->default(0);
+            $table->boolean('type', 2)->default(0);
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->timestamps();
             $table->softDeletes();

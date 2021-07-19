@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Laratalk\Events\Messages\StatusEvent;
 use Laratalk\Laratalk;
+use Laratalk\Models\Group;
 use Laratalk\Models\Message;
 
 class LaratalkController extends Controller
@@ -15,7 +16,8 @@ class LaratalkController extends Controller
     {
         $user = Auth::user();
 
-        $messages = Message::joinMeta()
+        $messages = Message::joinRecipient()
+            ->where('laratalk_messages.type', Message::CHAT)
             ->where('laratalk_message_recipient.to_id', $user->id)
             ->whereNull('laratalk_message_recipient.accept_at');
 
@@ -53,6 +55,32 @@ class LaratalkController extends Controller
                     'avatar' => Laratalk::gravatar($user->email),
                     'name' => $user->name,
                     'email' => $user->email,
+                ],
+                'models' => [
+                    'group' => [
+                        'admin' => Group::ADMIN,
+                        'member' => Group::MEMBER
+                    ],
+                    'message' => [
+                        'chat' => Message::CHAT,
+                        'create_group' => Message::CREATE_GROUP,
+                        'avatar_group' => Message::AVATAR_GROUP,
+                        'rename_group' => Message::RENAME_GROUP,
+                        'description_group' => Message::DESCRIPTION_GROUP,
+                        'info_all_group' => Message::INFO_ALL_GROUP,
+                        'info_admin_group' => Message::INFO_ADMIN_GROUP,
+                        'chat_all_group' => Message::CHAT_ALL_GROUP,
+                        'chat_admin_group' => Message::CHAT_ADMIN_GROUP,
+                        'add_user_group' => Message::ADD_USER_GROUP,
+                        'remove_user_group' => Message::REMOVE_USER_GROUP,
+                        'add_admin_group' => Message::ADD_ADMIN_GROUP,
+                        'remove_admin_group' => Message::REMOVE_ADMIN_GROUP,
+                        'type_user' => Message::TYPE_USER,
+                        'type_group' => Message::TYPE_GROUP,
+                        'send' => Message::SEND,
+                        'accept' => Message::ACCEPT,
+                        'read' => Message::READ,
+                    ]
                 ],
                 'translations' => Laratalk::availableTranslations(),
                 'echo' => Config::get('broadcasting.connections.pusher')

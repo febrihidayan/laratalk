@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Laratalk\Events\Messages\SendEvent;
 use Laratalk\Http\Resources\MessageResource;
 use Laratalk\Laratalk;
+use Laratalk\Models\Group;
 use Laratalk\Models\Message;
 use Laratalk\Models\MessageRecipient;
 
@@ -19,40 +20,72 @@ class StoreController extends Controller
     {
         Validator::validate(Request::all(), [
             'content' => 'required|max:5000',
-            'to_id' => 'required'
+            'chat_type' => sprintf(
+                'required|in:%s,%s',
+                Message::TYPE_GROUP,
+                Message::TYPE_USER
+            ),
+            (Request::get('chat_type') === Message::TYPE_USER
+                ? 'to_id' : 'group_id')
+                    => 'required'
         ]);
-
-        $messageExists = Message::joinMeta()
-            ->whereMetaUser(Request::get('to_id'))
-            ->whereMetaUser(Request::get('to_id'), true)
-            ->exists();
-
-        if (!$messageExists) {
-            $data = [
-                'avatar' => Laratalk::gravatar(Auth::user()->email),
-                'name' => Auth::user()->name
-            ];
-        }
 
         $message = Message::create([
             'content' => Request::get('content'),
-            'by_id' => Auth::id()
+            'by_id' => Auth::id(),
+            'group_id' =>
+                Request::get('chat_type') === Message::TYPE_GROUP
+                    ? Request::get('group_id') : null
         ]);
 
-        MessageRecipient::create([
-            'message_id' => $message->id,
-            'to_id' => Request::get('to_id')
-        ]);
-
-        $message = collect(
-            new MessageResource($message)
+        $messageResource = collect(
+            new MessageResource(
+                Message::find($message->id)
+            )
         )->toArray();
 
-        SendEvent::dispatch(
-            isset($data) ? array_merge($data, $message) : $message,
-            Request::get('to_id')
-        );
+        if (Request::get('chat_type') === Message::TYPE_USER) {
 
-        return Response::json($message);
+            $messageExists = Message::joinRecipient()
+                ->whereMetaUser(Request::get('to_id'))
+                ->whereMetaUser(Request::get('to_id'), true)
+                ->exists();
+
+            if (!$messageExists) {
+                $dataProfile = [
+                    'avatar' => Laratalk::gravatar(Auth::user()->email),
+                    'name' => Auth::user()->name
+                ];
+            }
+
+            $dataUsers = [Request::get('to_id')];
+            
+        }
+
+        if (Request::get('chat_type') === Message::TYPE_GROUP) {
+
+            $dataUsers = Group::joinGroupUser()
+                ->where('laratalk_group_user.user_id', '!=', Auth::id())
+                ->pluck('laratalk_group_user.user_id');
+
+        }
+
+        foreach ($dataUsers as $toId) {
+            
+            MessageRecipient::create([
+                'message_id' => $message->id,
+                'to_id' => $toId
+            ]);
+
+            SendEvent::dispatch(
+                isset($dataProfile)
+                    ? array_merge($dataProfile, $messageResource)
+                    : $messageResource,
+                $toId
+            );
+            
+        }
+
+        return Response::json($messageResource);
     }
 }
