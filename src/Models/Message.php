@@ -176,7 +176,9 @@ class Message extends Model
     {
         return $this->joinRecipientUser()
             ->where([
+                ['laratalk_messages.type', self::CHAT],
                 ['laratalk_messages.by_id', $this->id],
+                ['laratalk_message_recipient.message_id', $this->message_id],
                 ['laratalk_message_recipient.to_id', Auth::id()]
             ])
             ->whereNull('laratalk_message_recipient.read_at')->count();
@@ -266,6 +268,16 @@ class Message extends Model
             'laratalk_messages.group_id',
             '=',
             'laratalk_groups.id'
+        );
+    }
+
+    public function scopeJoinUser($query)
+    {
+        return $query->leftJoin(
+            'users',
+            'laratalk_messages.by_id',
+            '=',
+            'users.id'
         );
     }
 
