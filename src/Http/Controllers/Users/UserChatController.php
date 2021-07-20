@@ -21,6 +21,7 @@ class UserChatController extends Controller
                 'laratalk_message_recipient.*',
                 'laratalk_groups.name as group_name',
                 'laratalk_groups.avatar as group_avatar',
+                'users.id',
                 'users.id as user_id',
                 'users.name as user_name',
                 'users.email as user_email',
@@ -30,19 +31,11 @@ class UserChatController extends Controller
             ->when($q, function($query, $q) {
                 return $query->where('name', 'like', "%{$q}%");
             })
-            ->where( function($query) {
-                return $query
-                    ->whereNull('laratalk_message_recipient.message_id')
-                    ->orWhere( function($query) {
-                        return $query
-                            ->where('users.id', '!=', Auth::id())
-                            ->whereNotNull('laratalk_message_recipient.message_id');
-                    });
+            ->where('users.id', '!=', Auth::id())
+            ->where(function ($q) {
+                $q->where('laratalk_messages.by_id', Auth::id())
+                    ->orWhere('laratalk_message_recipient.to_id', Auth::id());
             })
-            // ->where(function ($q) {
-            //     $q->where('laratalk_messages.by_id', Auth::id())
-            //         ->orWhere('laratalk_message_recipient.to_id', Auth::id());
-            // })
 
             /**
              * If the type is 11 and 12 then only the designated user sees the message

@@ -30,35 +30,34 @@ class ShowController extends Controller
         }
 
         if ($type === Message::TYPE_GROUP) {
+
             $select = [
                 'laratalk_groups.name as group_name',
                 'laratalk_groups.avatar as group_avatar',
             ];
+
+        }
+        else {
+
+            $select = [
+                'laratalk_message_recipient.*',
+            ];
+            
         }
 
         $messages = Message::select([
                 'laratalk_messages.*',
-                'laratalk_message_recipient.*',
                 'users.id as user_id',
                 'users.name as user_name',
                 'users.email as user_email',
-                ...$select ?? []
+                ...$select
             ])
-            ->leftJoin(
-                'laratalk_message_recipient',
-                'laratalk_messages.id',
-                '=',
-                'laratalk_message_recipient.message_id'
-            )
-            ->leftJoin(
-                'users',
-                'laratalk_message_recipient.to_id',
-                '=',
-                'users.id'
-            )
             ->when($type, function($query, $type) use ($id) {
+
                 if ($type === Message::TYPE_USER) {
+
                     return $query
+                        ->joinRecipientUser()
                         ->where( function($query) use($id) {
                             return $query
                                 ->whereMetaUser($id)
@@ -66,31 +65,51 @@ class ShowController extends Controller
                         })
                         ->where('laratalk_messages.type', Message::CHAT)
                         ->whereNull('laratalk_messages.group_id');
+
                 }
+
                 if ($type === Message::TYPE_GROUP) {
+
                     return $query
                         ->joinGroup()
+                        ->joinUser()
                         ->where('laratalk_groups.id', $id)
                         ->whereNotNull('laratalk_messages.group_id');
+
                 }
             })
             ->oldest('laratalk_messages.created_at')
             ->get();
-        
-        $messageMeta = Message::joinRecipient()
-            ->where('type', Message::CHAT)
-            ->whereMetaUser($id, true)
+
+        $messageRecipient = Message::joinRecipient()
+            ->when($type, function($query, $type) use ($id) {
+
+                if ($type === Message::TYPE_USER) {
+
+                    return $query->whereMetaUser($id, true);
+
+                }
+
+                if ($type === Message::TYPE_GROUP) {
+                    
+                    return $query
+                        ->where('laratalk_messages.group_id', $id)
+                        ->where('laratalk_message_recipient.to_id', Auth::id());
+
+                }
+            })
+            ->where('laratalk_messages.type', Message::CHAT)
             ->whereNull('laratalk_message_recipient.read_at');
 
-        if ($messages->count() && $messageMeta->count()) {
+        if ($messages->count() && $messageRecipient->count()) {
 
             StatusEvent::dispatch([
-                'id' => $messageMeta->pluck('id'),
+                'id' => $messageRecipient->pluck('id'),
                 'content_to' => Auth::id(),
                 'status' => Message::READ
             ], $id);
 
-            $messageMeta->update(['read_at' => now()]);
+            $messageRecipient->update(['read_at' => now()]);
                 
         }
 

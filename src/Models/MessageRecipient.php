@@ -65,4 +65,14 @@ class MessageRecipient extends Model
         'accept_at',
         'read_at'
     ];
+
+    public function scopeJoinMessage($query)
+    {
+        return $query->join(
+            'laratalk_messages',
+            'laratalk_message_recipient.message_id',
+            '=',
+            'laratalk_messages.id'
+        );
+    }
 }
