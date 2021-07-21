@@ -3,7 +3,6 @@
 namespace Laratalk\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 
 class InstallCommand extends Command
 {

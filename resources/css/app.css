@@ -1,0 +1,65 @@
+@windicss;
+
+::-webkit-scrollbar {
+    background-color: transparent;
+    height: 6px;
+    width: 6px
+}
+
+::-webkit-scrollbar-thumb {
+    transition: background .2s ease-in-out;
+    background-color: transparent;
+    border-radius: 9999px
+}
+
+::-webkit-scrollbar-corner {
+    background-color: transparent
+}
+
+:hover::-webkit-scrollbar-thumb {
+    background-color: rgb(192, 192, 192)
+}
+
+.sidebar-content {
+    height: calc(100vh - 6.5rem);
+    @apply overflow-y-auto overflow-x-hidden;
+}
+
+.sidebar-detail {
+    height: calc(100vh - 3.5rem);
+    @apply overflow-y-auto overflow-x-hidden;
+}
+
+.main-content {
+    height: calc(100vh - 7.25rem);
+    @apply overflow-y-auto overflow-x-hidden;
+}
+
+.sidebar-list {
+    @apply divide-y dark:divide-gray-500;
+}
+.sidebar-list:hover .button-dropdown {
+    @apply mr-0 pl-1;
+}
+
+.message:hover .button-dropdown {
+    @apply opacity-100;
+}
+
+.svg-icon {
+    stroke-width: .25;
+    @apply fill-purple-400 stroke-purple-400 w-6 h-6;
+}
+
+.svg-icon.svg-sm {
+    @apply !w-5 !h-5;
+}
+
+.dark .svg-icon {
+    stroke-width: .5;
+    @apply fill-true-gray-200 stroke-true-gray-200;
+}
+
+.transition-effect {
+    @apply ease-in-out transition-all duration-200;
+}

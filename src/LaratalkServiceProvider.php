@@ -15,8 +15,10 @@ class LaratalkServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->registerChannels();
         $this->registerRoutes();
         $this->registerResources();
+        $this->registerTranslations();
         $this->registerMigrations();
         $this->registerAssetPublishing();
     }
@@ -40,6 +42,16 @@ class LaratalkServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register the package channels.
+     *
+     * @return void
+     */
+    private function registerChannels()
+    {
+        $this->loadRoutesFrom(__DIR__ . '/../routes/channels.php');
+    }
+
+    /**
      * Register the package routes.
      *
      * @return void
@@ -57,6 +69,16 @@ class LaratalkServiceProvider extends ServiceProvider
     private function registerResources()
     {
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'laratalk');
+    }
+
+    /**
+     * Register the possible Ttanslations used by Laratalk.
+     *
+     * @return void
+     */
+    private function registerTranslations()
+    {
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'laratalk');
     }
 
     /**
