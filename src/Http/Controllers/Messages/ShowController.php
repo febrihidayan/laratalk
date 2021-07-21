@@ -8,10 +8,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Laratalk\Events\Messages\StatusEvent;
-use Laratalk\Http\Resources\MessageResource;
-use Laratalk\Http\Resources\UserGroupResource;
+use Laratalk\Http\Resources\Messages\ShowGroupResource;
+use Laratalk\Http\Resources\Messages\ShowUserResource;
+use Laratalk\Http\Resources\Users\UserGroupResource;
 use Laratalk\Laratalk;
 use Laratalk\Models\Group;
+use Laratalk\Models\GroupUser;
 use Laratalk\Models\Message;
 
 class ShowController extends Controller
@@ -21,81 +23,69 @@ class ShowController extends Controller
         $type = Request::get('type');
 
         if (
-            is_null($type) &&
-            !in_array($type, [
-                Message::TYPE_USER, Message::TYPE_GROUP
-            ])
+            (
+                is_null($type) &&
+                !in_array(
+                    $type,
+                    [
+                        Message::TYPE_USER, Message::TYPE_GROUP
+                    ]
+                )
+            ) ||
+            (
+                $type === Message::TYPE_GROUP &&
+                !GroupUser::where([
+                    ['user_id', Auth::id()],
+                    ['group_id', $id]
+                ])->exists()
+            )
         ) {
             return Response::json([]);
         }
 
         if ($type === Message::TYPE_GROUP) {
 
-            $select = [
-                'laratalk_groups.name as group_name',
-                'laratalk_groups.avatar as group_avatar',
-            ];
+            $messages = Message::where('group_id', $id)
+                ->oldest()
+                ->get();
+
+            $messages = ShowGroupResource::collection($messages);
 
         }
         else {
 
-            $select = [
-                'laratalk_message_recipient.*',
-            ];
+            $messages = Message::whereNull('group_id')
+                ->where( function($query) {
+                    return $query->where('by_id', Auth::id())
+                        ->orWhereHas('recipients', function($query) {
+                            return $query->where('to_id', Auth::id());
+                        });
+                })
+                ->where( function($query) use ($id) {
+                    return $query->where('by_id', $id)
+                        ->orWhereHas('recipients', function($query) use ($id) {
+                            return $query->where('to_id', $id);
+                        });
+                })
+                ->get();
+
+            $messages = ShowUserResource::collection($messages);
             
         }
 
-        $messages = Message::select([
-                'laratalk_messages.*',
-                'users.id as user_id',
-                'users.name as user_name',
-                'users.email as user_email',
-                ...$select
-            ])
-            ->when($type, function($query, $type) use ($id) {
-
-                if ($type === Message::TYPE_USER) {
-
-                    return $query
-                        ->joinRecipientUser()
-                        ->where( function($query) use($id) {
-                            return $query
-                                ->whereMetaUser($id)
-                                ->whereMetaUser($id, true);
-                        })
-                        ->where('laratalk_messages.type', Message::CHAT)
-                        ->whereNull('laratalk_messages.group_id');
-
-                }
-
-                if ($type === Message::TYPE_GROUP) {
-
-                    return $query
-                        ->joinGroup()
-                        ->joinUser()
-                        ->where('laratalk_groups.id', $id)
-                        ->whereNotNull('laratalk_messages.group_id');
-
-                }
-            })
-            ->oldest('laratalk_messages.created_at')
-            ->get();
-
         $messageRecipient = Message::joinRecipient()
-            ->when($type, function($query, $type) use ($id) {
+            ->when($type, function ($query, $type) use ($id) {
 
                 if ($type === Message::TYPE_USER) {
 
                     return $query->whereMetaUser($id, true);
-
                 }
 
                 if ($type === Message::TYPE_GROUP) {
-                    
+
                     return $query
                         ->where('laratalk_messages.group_id', $id)
                         ->where('laratalk_message_recipient.to_id', Auth::id());
-
                 }
             })
             ->where('laratalk_messages.type', Message::CHAT)
@@ -106,16 +96,16 @@ class ShowController extends Controller
             StatusEvent::dispatch([
                 'id' => $messageRecipient->pluck('id'),
                 'content_to' => Auth::id(),
-                'status' => Message::READ
+                'status' => Message::READ,
+                'chat_type' => $type
             ], $id);
 
             $messageRecipient->update(['read_at' => now()]);
-                
         }
 
         $data = [
             'chat_type' => $type,
-            'messages' => MessageResource::collection($messages)
+            'messages' => $messages
         ];
 
         if (Request::get('type') == Message::TYPE_USER) {

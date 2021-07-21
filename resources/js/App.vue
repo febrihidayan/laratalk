@@ -151,13 +151,13 @@
                 <div
                     v-for="(item, index) in users"
                     :key="index"
-                    @click="fetchMessages(item.group_id || item.id, item.chat_type);form.active = index"
+                    @click="fetchMessages(item.id, item.chat_type)"
                     :class="[`sidebar-list flex h-18 cursor-pointer`, {
                         'font-medium': item.read_count,
                         'hover:bg-light-300 dark:hover:bg-true-gray-700':
-                            form.active != index,
+                            form.type_id != getTypeId(item.chat_type, item.id),
                         'bg-light-500 dark:bg-true-gray-800':
-                            form.active == index
+                            form.type_id == getTypeId(item.chat_type, item.id)
                     }]"
                 >
                     <div class="flex flex-col justify-center px-3">
@@ -183,7 +183,9 @@
                         </div>
                         <div class="flex text-sm">
                             <span v-if="item.typing" class="flex-grow">{{
-                                trans.typing
+                                item.typing_name
+                                    ? `${item.typing_name}: ${trans.typing}`
+                                    : trans.typing
                             }}</span>
                             <template v-else>
                                 <div
@@ -265,14 +267,13 @@
                             <p class="text-base leading-none">{{
                                 message.name
                             }}</p>
-                            <!-- 
-                                TODO: show all group participants
-                             -->
-                            <!-- <small class="text-sm leading-none">{{
-                                getUserGroup(message.users)
-                            }}</small> -->
                             <small v-if="message.typing" class="text-sm leading-none">{{
-                                trans.typing
+                                message.typing_name
+                                    ? `${message.typing_name}: ${trans.typing}`
+                                    : trans.typing
+                            }}</small>
+                            <small v-if="!message.typing && message.chat_type === models.message.type_group" class="text-sm leading-none">{{
+                                getUserGroup(message.users)
                             }}</small>
                             <small
                                 v-if="message.online && !message.typing && message.chat_type === models.message.type_user"
@@ -304,7 +305,7 @@
                             }}</span>
                         </div>
                         <div
-                            v-if="item.content_type !== models.message.chat && item.chat_type === models.message.type_group"
+                            v-if="item.content_type !== models.message.chat && message.chat_type === models.message.type_group"
                             class="bg-light-400 text-dark-500 rounded-md mx-auto my-4 py-1 px-2"
                         >
                             <span class="text-xs">{{
@@ -367,11 +368,11 @@
                                     </a>
                                 </div>
                                 <a
-                                    @click="fetchMessages(item.user_by.id, models.message.type_user)"
-                                    v-if="item.chat_type === models.message.type_group"
+                                    @click="fetchMessages(item.content_by, models.message.type_user)"
+                                    v-if="message.chat_type === models.message.type_group"
                                     class="cursor-pointer !text-cyan-500 hover:underline"
                                 >{{
-                                    item.user_by.name
+                                    item.user_by_name
                                 }}</a>
                                 <p>
                                     <span class="whitespace-pre-wrap">{{
@@ -386,6 +387,8 @@
                         </template>
                     </template>
                 </div>
+
+                <!-- form chat -->
                 <div class="bg-light-600 dark:bg-dark-500 px-5 py-2">
                     <div class="rounded-full bg-white dark:bg-dark-200 mx-auto px-4 py-2">
                         <textarea 
@@ -522,8 +525,11 @@
 
 <script>
 import debounce from 'lodash/debounce'
+import HelperMixin from './Mixins/HelperMixin'
 
 export default {
+    mixins: [HelperMixin],
+
     data() {
         return {
             form: {
@@ -548,8 +554,14 @@ export default {
 
         fetchMessages(id, type)
         {
-            if (this.form.to_id != id || this.form.group_id != id) {
-                this.isRight = true
+            this.isRight = true
+
+            const type_id = this.getTypeId(type, id)
+
+            if (this.form.type_id !== type_id) {
+
+                this.form.type_id = type_id
+                this.form.content = ''
 
                 if (type === this.models.message.type_user) {
                     this.form.to_id = id
@@ -571,9 +583,13 @@ export default {
                     this.message = data
     
                     this.users.find((s) => {
-                        if (s.id === id && s.chat_type === this.models.message.type_user) {
+
+                        if (this.getTypeId(s.chat_type, s.id) === type_id) {
                             s.read_count = 0
-                            this.message.online = s.online
+
+                            if (s.chat_type === this.models.message.type_user) {
+                                this.message.online = s.online
+                            }
                         }
                     })
 
@@ -608,6 +624,14 @@ export default {
             })
             .then(({ data }) => {
                 this.users = data
+
+                data.forEach((s) => {
+                    if (s.chat_type === this.models.message.type_group) {
+                        this.listenTyping(
+                            this.getTypeId(s.chat_type, s.id)
+                        )
+                    }
+                })
             })
         },
 
@@ -616,7 +640,7 @@ export default {
             let string = ''
 
             data.forEach(s => {
-                string += s.name + ', '
+                string += this.firstName(s.name) + ', '
             })
 
             return string.substr(0, string.length - 2)
@@ -660,7 +684,11 @@ export default {
                 })
                 .listen('Messages\\StatusEvent', (e) => {
                     this.users.find((s) => {
-                        if (s.id === e.content_to) {
+
+                        if (
+                            s.id === e.content_to &&
+                            s.chat_type === e.chat_type
+                        ) {
                             
                             s.status = e.status
     
@@ -734,22 +762,35 @@ export default {
                     }
                 })
             
+            this.listenTyping(`user-` + this.laratalk.profile.id)
+
+        },
+
+        listenTyping(target)
+        {
             Echo.private('chat')
-                .listenForWhisper(`typing-${this.laratalk.profile.id}`, (e) => {
+                .listenForWhisper(`typing-${target}`, (e) => {
 
                     this.users
                         .find((s) => {
-                            if (s.id === e.id) {
+                            if (
+                                s.id === e.id &&
+                                s.chat_type === e.chat_type
+                            ) {
                                 s.typing = e.typing
+                                s.typing_name = e.typing_name || ''
                             }
                         })
                     
-                    if (this.message.id === e.id) {
+                    if (
+                        this.message.id === e.id &&
+                        this.message.chat_type === e.chat_type
+                    ) {
                         this.message.typing = e.typing
+                        this.message.typing_name = e.typing_name || ''
                     }
 
                 })
-
         },
 
         pushMessage(data)
@@ -758,29 +799,35 @@ export default {
 
             if (data.chat_type === this.models.message.type_user) {
                 userIndex = this.users.findIndex(
-                    (s) =>  s.id === (
-                        this.laratalk.profile.id == data.content_by
-                            ? this.message.id : data.content_by )
+                    (e) => e.chat_type === this.models.message.type_user &&
+                        e.id === (
+                            this.laratalk.profile.id == data.content_by
+                                ? this.message.id : data.content_by
+                        )
                 )
             }
             else {
                 userIndex = this.users.findIndex(
-                    (e => e.chat_type === this.models.message.type_group && e.id === data.group_id)
+                    (e) => 
+                        e.chat_type === this.models.message.type_group &&
+                        e.id === data.group_id
                 )
             }
-
+            
             if (userIndex != -1) {
 
                 const user = this.users[userIndex]
                 
                 user.content = data.content
                 user.content_by = data.content_by
+                user.content_type = data.content_type
+                user.user_by_name = data.user_by_name || ''
                 user.last_time = data.time
                 user.status = 'send'
 
                 if (
-                    this.laratalk.profile.id != data.content_by &&
-                    this.message.id != data.content_by
+                    this.getTypeId(user.chat_type, user.id) !==
+                        this.getTypeId(this.message.chat_type, this.message.id)
                 ) {
                     user.read_count++
                 }
@@ -790,10 +837,11 @@ export default {
                 )
 
             } else {
+
                 this.users.unshift({
-                    id: this.message.id || data.content_by,
-                    avatar: this.message.avatar || data.avatar,
-                    name: this.message.name || data.name,
+                    id: data.avatar ? data.content_by : this.message.id,
+                    avatar: data.avatar ? data.avatar : this.message.avatar,
+                    name: data.name ? data.name : this.message.name,
                     content: data.content,
                     content_by: data.content_by,
                     content_type: 0,
@@ -806,10 +854,9 @@ export default {
             }
 
             if (
-                this.message.messages && (
-                    this.laratalk.profile.id === data.content_by ||
-                    this.message.id === data.content_by
-                )
+                this.message.messages &&
+                this.getTypeId(data.chat_type, this.message.id) ===
+                    this.getTypeId(this.message.chat_type, this.message.id)
             ) {
 
                 this.message.messages.push(data)
@@ -820,8 +867,10 @@ export default {
 
             if (this.laratalk.profile.id != data.content_by) {
 
-                let status = this.message.id == data.content_by
-                    ? 'read' : 'accept'
+                let status = (
+                    this.message.chat_type === this.models.message.type_user &&
+                    this.message.id == data.content_by
+                ) ? 'read' : 'accept'
 
                 axios.post('message-status', {
                     id: data.id,
@@ -862,11 +911,21 @@ export default {
                 this.message_typing = bool
             }
 
+            const data = {
+                id: this.message.chat_type === this.models.message.type_group
+                    ? this.message.id : this.laratalk.profile.id,
+                typing: bool || this.message_typing,
+                chat_type: this.message.chat_type
+            }
+
+            if (this.message.chat_type === this.models.message.type_group) {
+                data.typing_name = this.firstName(
+                    this.laratalk.profile.name
+                )
+            }
+
             Echo.private('chat')
-                .whisper(`typing-${this.message.id}`, {
-                    id: this.laratalk.profile.id,
-                    typing: bool || this.message_typing
-                })
+                .whisper(`typing-${this.form.type_id}`, data)
         }
 
     },

@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratalk\Http\Resources;
+namespace Laratalk\Http\Resources\Users;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Laratalk\Laratalk;

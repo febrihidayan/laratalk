@@ -3,7 +3,9 @@
 namespace Laratalk\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
+use Laratalk\Laratalk;
 
 class Message extends Model
 {
@@ -172,6 +174,43 @@ class Message extends Model
         return self::TYPE_USER;
     }
 
+    public function chatType()
+    {
+        if ($this->group_id) {
+            return self::TYPE_GROUP;
+        }
+
+        return self::TYPE_USER;
+    }
+
+    public function lastTime(): string
+    {
+        return Laratalk::lastTime($this->created_at, true);
+    }
+
+    public function statusMessageRecipient()
+    {
+        $data = (
+            $this->chatType() == self::TYPE_GROUP
+        )
+            ? $this->recipients[0] : $this->recipient;
+
+        if ($data->read_at) {
+            return self::READ;
+        }
+
+        if ($data->accept_at) {
+            return self::ACCEPT;
+        }
+
+        return self::SEND;
+    }
+
+    public function time(): string
+    {
+        return $this->created_at->format('H.i');
+    }
+
     public function readCount(): int
     {
         return $this->joinRecipientUser()
@@ -278,6 +317,29 @@ class Message extends Model
             'laratalk_messages.by_id',
             '=',
             'users.id'
+        );
+    }
+
+    public function recipient()
+    {
+        return $this->hasOne(
+            MessageRecipient::class,
+            'message_id'
+        );
+    }
+
+    public function recipients()
+    {
+        return $this->hasMany(
+            MessageRecipient::class
+        );
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(
+            User::class,
+            'by_id'
         );
     }
 

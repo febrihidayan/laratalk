@@ -22,12 +22,14 @@ class StatusController extends Controller
             )
         ]);
 
-        if (Message::find(Request::get('id'))->type === Message::CHAT) {
+        $message = Message::find(Request::get('id'));
+
+        if ($message->type === Message::CHAT) {
             $data = [
                 'accept_at' => now()
             ];
     
-            if (Message::READ == Request::get('status')) {
+            if (Request::get('status') === Message::READ) {
                 $data['read_at'] = now();
             }
     
@@ -40,8 +42,9 @@ class StatusController extends Controller
             return StatusEvent::dispatch(
                 [
                     'id' => Request::get('id'),
-                    'content_to' => Auth::id(),
-                    'status' => Request::get('status')
+                    'content_to' => $message->group_id ?? Auth::id(),
+                    'status' => Request::get('status'),
+                    'chat_type' => $message->chatType()
                 ],
                 Request::get('content_by')
             );
