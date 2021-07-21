@@ -34,14 +34,9 @@ class UserListResource extends JsonResource
                 'avatar' => $this->group_avatar,
                 'id' => $this->group_id,
                 'name' => $this->group_name,
-                'user_by' => [
-                    'id' => $userBy->id,
-                    'name' => $userBy->name,
-                ],
-                'user_to' => [
-                    'id' => $userTo->id ?? '',
-                    'name' => $userTo->name ?? '',
-                ]
+                'user_by_name' => $userBy->name,
+                'content_to' => $userTo->id ?? '',
+                'user_to_name' => $userTo->name ?? '',
             ];
         }
         else {

@@ -3,6 +3,7 @@
 namespace Laratalk\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User;
 
 class MessageRecipient extends Model
 {
@@ -73,6 +74,14 @@ class MessageRecipient extends Model
             'laratalk_message_recipient.message_id',
             '=',
             'laratalk_messages.id'
+        );
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(
+            User::class,
+            'to_id'
         );
     }
 }

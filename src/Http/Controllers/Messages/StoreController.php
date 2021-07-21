@@ -40,15 +40,31 @@ class StoreController extends Controller
 
         $messageResource = collect(
             new MessageResource(
+
+                /**
+                 * If you pass the $message variable directly,
+                 * it will lose the type property
+                 */
                 Message::find($message->id)
             )
         )->toArray();
 
         if (Request::get('chat_type') === Message::TYPE_USER) {
 
-            $messageExists = Message::joinRecipient()
-                ->whereMetaUser(Request::get('to_id'))
-                ->whereMetaUser(Request::get('to_id'), true)
+            $messageExists = Message::whereNull('group_id')
+                ->where('type', Message::CHAT)
+                ->where(function ($query) {
+                    return $query->where('by_id', Request::get('to_id'))
+                        ->orWhereHas('recipient', function ($query) {
+                            return $query->where('to_id', Request::get('to_id'));
+                        });
+                })
+                ->where(function ($query) {
+                    return $query->where('by_id', Auth::id())
+                        ->orWhereHas('recipient', function ($query) {
+                            return $query->where('to_id', Auth::id());
+                        });
+                })
                 ->exists();
 
             if (!$messageExists) {

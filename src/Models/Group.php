@@ -64,6 +64,8 @@ class Group extends Model
             GroupUser::class,
             'group_id',
             'user_id',
-        )->select('*');
+        )
+        // to retrieve role column data
+        ->select('*');
     }
 }
