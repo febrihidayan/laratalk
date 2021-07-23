@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Laratalk\Http\Controllers\Groups\CreateController;
 use Laratalk\Http\Controllers\LaratalkController;
+use Laratalk\Http\Controllers\Messages\DestroyController;
 use Laratalk\Http\Controllers\Messages\StatusController;
 use Laratalk\Http\Controllers\Messages\ShowController;
 use Laratalk\Http\Controllers\Messages\StoreController;
@@ -16,9 +18,13 @@ Route::group([
 
     Route::prefix('api')->group( function() {
 
+        Route::post('group-create', CreateController::class);
+
         Route::get('user-chat', UserChatController::class);
 
         Route::get('user-new-chat', NewChatController::class);
+
+        Route::post('message-destroy', DestroyController::class);
             
         Route::get('message-show/{id}', ShowController::class);
 

@@ -29,7 +29,8 @@ class UserChatController extends Controller
             ->joinRecipientUserOrMessageUser()
             ->joinGroup()
             ->when($q, function($query, $q) {
-                return $query->where('name', 'like', "%{$q}%");
+                return $query->where('users.name', 'like', "%{$q}%")
+                    ->orWhere('laratalk_groups.name', 'like', "%{$q}%");
             })
             ->where('users.id', '!=', Auth::id())
             ->where(function ($q) {

@@ -1,7 +1,7 @@
 <template>
-    <section class="flex dark:bg-dark-100 dark:text-gray-100">
+    <section class="flex h-full dark:bg-dark-100 dark:text-gray-100">
         <aside
-            :class="[`bg-white dark:bg-dark-300 sm:border-r-1 dark:sm:border-dark-200 fixed top-0 left-0 z-30 ease-in-out transition-all duration-300`, {
+            :class="[`bg-white h-full dark:bg-dark-300 sm:border-r-1 dark:sm:border-dark-200 fixed top-0 left-0 z-30 ease-in-out transition-all duration-300`, {
                 'min-w-100 <sm:w-full': left_detail,
                 '-left-full -left-100': !left_detail
             }]"
@@ -12,31 +12,33 @@
                         <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
                     </svg>
                 </a>
-                <p class="text-base ml-3">
-                    {{ left_detail == 'profile' ? trans.profile : trans.new_chat }}
-                </p>
+                <p class="text-base ml-3">{{
+                    getTitleLeftDetail(left_detail)
+                }}</p>
             </div>
-            <template v-if="left_detail == 'profile'">
-                <div class="sidebar-detail bg-light-600 dark:bg-dark-100">
-                    <div class="dark:bg-dark-300 py-8">
-                        <img
-                            class="rounded-full h-48 w-48 mx-auto cursor-pointer"
-                            :src="laratalk.profile.avatar"
-                            alt="avatar"
-                        >
-                    </div>
-                    <div class="bg-white dark:bg-dark-300 my-2 px-6 py-4">
-                        <small class="text-purple-800 dark:text-purple-300">{{
-                            trans.your_name
-                        }}</small>
-                        <div class="mt-4">
-                            <p>{{
-                                laratalk.profile.name
-                            }}</p>
-                        </div>
+
+            <!-- my profile -->
+            <div v-if="left_detail == 'profile'" class="sidebar-detail bg-light-600 dark:bg-dark-100">
+                <div class="dark:bg-dark-300 py-8">
+                    <img
+                        class="rounded-full h-48 w-48 mx-auto cursor-pointer"
+                        :src="laratalk.profile.avatar"
+                        alt="avatar"
+                    >
+                </div>
+                <div class="bg-white dark:bg-dark-300 my-2 px-6 py-4">
+                    <small class="text-purple-800 dark:text-purple-300">{{
+                        trans.your_name
+                    }}</small>
+                    <div class="mt-4">
+                        <p>{{
+                            laratalk.profile.name
+                        }}</p>
                     </div>
                 </div>
-            </template>
+            </div>
+
+            <!-- new chat -->
             <template v-if="left_detail == 'chat'">
                 <div class="bg-light-200 dark:bg-dark-200 border-b-1 dark:border-dark-50 px-4 py-2">
                     <div class="flex rounded-full bg-white dark:bg-dark-50 p-1">
@@ -89,6 +91,138 @@
                     </template>
                 </div>
             </template>
+
+            <!-- new group -->
+            <template v-if="left_detail == 'group'">
+                <div class="flex flex-col bg-white dark:bg-dark-300" style="height: calc(100vh - 3.5rem)">
+                    <div
+                        class="min-h-7 max-h-50 relative overflow-y-auto overflow-x-hidden border-b dark:border-dark-50 ml-10 mt-7 mb-4"
+                        id="add-group-participant"
+                    >
+
+                        <div
+                            v-for="(item, index) in group_participants"
+                            :key="index"
+                            class="mb-1"
+                        >
+                            <div class="inline-flex bg-light-300 dark:bg-dark-100 rounded-full">
+                                <div class="flex-none">
+                                    <img
+                                        class="rounded-full w-7 h-7"
+                                        :src="item.avatar"
+                                        alt="profile"
+                                    >
+                                </div>
+                                <div class="flex-grow my-auto mx-1">
+                                    <p class="text-md">{{
+                                        item.name
+                                    }}</p>
+                                </div>
+                                <div class="flex-none my-auto p-1">
+                                    <a
+                                        @click="removeGroupParticipant(index)"
+                                        class="cursor-pointer"
+                                    >
+                                        <svg class="svg-icon !w-4 !h-4" viewBox="0 0 20 20">
+                                            <path d="M15.898,4.045c-0.271-0.272-0.713-0.272-0.986,0l-4.71,4.711L5.493,4.045c-0.272-0.272-0.714-0.272-0.986,0s-0.272,0.714,0,0.986l4.709,4.711l-4.71,4.711c-0.272,0.271-0.272,0.713,0,0.986c0.136,0.136,0.314,0.203,0.492,0.203c0.179,0,0.357-0.067,0.493-0.203l4.711-4.711l4.71,4.711c0.137,0.136,0.314,0.203,0.494,0.203c0.178,0,0.355-0.067,0.492-0.203c0.273-0.273,0.273-0.715,0-0.986l-4.711-4.711l4.711-4.711C16.172,4.759,16.172,4.317,15.898,4.045z"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <input
+                            type="search"
+                            class="flex-grow dark:bg-dark-300 focus:outline-none w-full" 
+                            :placeholder="trans.search_participant_name"
+                            @input="fetchSearchNewChat"
+                            autofocus
+                        >
+                    </div>
+
+                    <div class="h-full overflow-y-auto overflow-x-hidden relative bg-white dark:bg-dark-300 dark:divide-gray-700 divide-light-500">
+                        <template
+                            v-for="(item, index) in users_new_chat"
+                            :key="index"
+                        >
+                            <div
+                                v-if="index == 0 || (users_new_chat[index-1] && users_new_chat[index-1].name.substr(0,1) != item.name.substr(0,1))"
+                                class="flex flex-grow mx-8 my-6 text-violet-600 dark:text-light-200"
+                            >{{
+                                item.name.substr(0,1)
+                            }}</div>
+                            <div
+                                @click="addGroupParticipant(item)"
+                                v-if="group_participants.findIndex((s) => s.id === item.id) == -1"
+                                class="sidebar-list flex h-18 cursor-pointer hover:bg-light-300 dark:hover:bg-true-gray-700"
+                            >
+                                <div class="flex flex-col justify-center px-3">
+                                    <figure>
+                                        <img
+                                            class="rounded-full h-13 w-13"
+                                            :src="item.avatar"
+                                            alt="avatar"
+                                        >
+                                    </figure>
+                                </div>
+                                <div class="flex flex-grow flex-col justify-center w-73 pr-3">
+                                    <div class="flex">
+                                        <p class="flex-grow truncate text-lg">{{
+                                            item.name
+                                        }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="flex justify-center items-center w-full min-h-18 bg-light-600 dark:bg-dark-200 h-20 mx-auto my-auto">
+                        <a
+                            v-if="group_participants.length"
+                            class="cursor-pointer rounded-full p-3 bg-violet-600 shadow-xl"
+                        >
+                            <svg class="svg-icon !fill-white !stroke-white" viewBox="0 0 20 20">
+                                <path fill="none" d="M11.611,10.049l-4.76-4.873c-0.303-0.31-0.297-0.804,0.012-1.105c0.309-0.304,0.803-0.293,1.105,0.012l5.306,5.433c0.304,0.31,0.296,0.805-0.012,1.105L7.83,15.928c-0.152,0.148-0.35,0.223-0.547,0.223c-0.203,0-0.406-0.08-0.559-0.236c-0.303-0.309-0.295-0.803,0.012-1.104L11.611,10.049z"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </template>
+
+            <!-- settings -->
+            <template v-if="left_detail == 'settings'">
+                <div class="bg-white h-screen">
+                    <div
+                        @click="left_detail = 'profile'"
+                        class="flex cursor-pointer hover:bg-light-300"
+                    >
+                        <div class="flex-none p-4">
+                            <img
+                                @click="left_detail = 'profile'"
+                                class="rounded-full h-20 w-20 cursor-pointer"
+                                :src="laratalk.profile.avatar"
+                                alt="profile"
+                            >
+                        </div>
+                        <div class="flex-grow my-auto">
+                            <p class="text-xl">{{
+                                laratalk.profile.name
+                            }}</p>
+                        </div>
+                    </div>
+                    <div class="flex cursor-pointer hover:bg-light-300">
+                        <div class="flex-none py-4 px-6">
+                            <svg class="svg-icon" viewBox="0 0 20 20">
+                                <path d="M10,0.625c-5.178,0-9.375,4.197-9.375,9.375S4.822,19.375,10,19.375s9.375-4.197,9.375-9.375S15.178,0.625,10,0.625 M10,18.522V1.478c4.707,0,8.522,3.815,8.522,8.522S14.707,18.522,10,18.522"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-grow my-auto">
+                            <p class="text-md">{{
+                                trans.theme
+                            }}</p>
+                        </div>
+                    </div>
+                </div>
+            </template>
         </aside>
         <aside
             :class="[`flex-none min-w-100 sm:border-r-1 dark:sm:border-dark-200 <sm:w-full <lg:fixed <lg:top-0 <lg:left-0 <lg:z-20 ease-in-out transition-all duration-300`, {
@@ -116,12 +250,40 @@
 							<path v-else d="M10.544,8.717l1.166-0.855l1.166,0.855l-0.467-1.399l1.012-0.778h-1.244L11.71,5.297l-0.466,1.244H10l1.011,0.778L10.544,8.717z M15.986,9.572l-0.467,1.244h-1.244l1.011,0.777l-0.467,1.4l1.167-0.855l1.165,0.855l-0.466-1.4l1.011-0.777h-1.244L15.986,9.572z M7.007,6.552c0-2.259,0.795-4.33,2.117-5.955C4.34,1.042,0.594,5.07,0.594,9.98c0,5.207,4.211,9.426,9.406,9.426c2.94,0,5.972-1.354,7.696-3.472c-0.289,0.026-0.987,0.044-1.283,0.044C11.219,15.979,7.007,11.759,7.007,6.552 M10,18.55c-4.715,0-8.551-3.845-8.551-8.57c0-3.783,2.407-6.999,5.842-8.131C6.549,3.295,6.152,4.911,6.152,6.552c0,5.368,4.125,9.788,9.365,10.245C13.972,17.893,11.973,18.55,10,18.55 M19.406,2.304h-1.71l-0.642-1.71l-0.642,1.71h-1.71l1.39,1.069l-0.642,1.924l1.604-1.176l1.604,1.176l-0.642-1.924L19.406,2.304z"></path>
 						</svg>
                     </a>
-                    <a class="cursor-pointer mx-2">
-                        <svg class="svg-icon transform rotate-90" viewBox="0 0 20 20">
-							<path d="M3.936,7.979c-1.116,0-2.021,0.905-2.021,2.021s0.905,2.021,2.021,2.021S5.957,11.116,5.957,10 S5.052,7.979,3.936,7.979z M3.936,11.011c-0.558,0-1.011-0.452-1.011-1.011s0.453-1.011,1.011-1.011S4.946,9.441,4.946,10 S4.494,11.011,3.936,11.011z M16.064,7.979c-1.116,0-2.021,0.905-2.021,2.021s0.905,2.021,2.021,2.021s2.021-0.905,2.021-2.021 S17.181,7.979,16.064,7.979z M16.064,11.011c-0.559,0-1.011-0.452-1.011-1.011s0.452-1.011,1.011-1.011S17.075,9.441,17.075,10 S16.623,11.011,16.064,11.011z M10,7.979c-1.116,0-2.021,0.905-2.021,2.021S8.884,12.021,10,12.021s2.021-0.905,2.021-2.021 S11.116,7.979,10,7.979z M10,11.011c-0.558,0-1.011-0.452-1.011-1.011S9.442,8.989,10,8.989S11.011,9.441,11.011,10 S10.558,11.011,10,11.011z"></path>
-						</svg>
-                    </a>
-                    <a class="cursor-pointer mx-2 -mr-2 lg:hidden" @click="isRight = !isRight">
+                    <div class="dropdown mx-2">
+                        <a class="dropdown-button">
+                            <svg class="svg-icon transform rotate-90" viewBox="0 0 20 20">
+                                <path d="M3.936,7.979c-1.116,0-2.021,0.905-2.021,2.021s0.905,2.021,2.021,2.021S5.957,11.116,5.957,10 S5.052,7.979,3.936,7.979z M3.936,11.011c-0.558,0-1.011-0.452-1.011-1.011s0.453-1.011,1.011-1.011S4.946,9.441,4.946,10 S4.494,11.011,3.936,11.011z M16.064,7.979c-1.116,0-2.021,0.905-2.021,2.021s0.905,2.021,2.021,2.021s2.021-0.905,2.021-2.021 S17.181,7.979,16.064,7.979z M16.064,11.011c-0.559,0-1.011-0.452-1.011-1.011s0.452-1.011,1.011-1.011S17.075,9.441,17.075,10 S16.623,11.011,16.064,11.011z M10,7.979c-1.116,0-2.021,0.905-2.021,2.021S8.884,12.021,10,12.021s2.021-0.905,2.021-2.021 S11.116,7.979,10,7.979z M10,11.011c-0.558,0-1.011-0.452-1.011-1.011S9.442,8.989,10,8.989S11.011,9.441,11.011,10 S10.558,11.011,10,11.011z"></path>
+                            </svg>
+                        </a>
+                        <div class="dropdown-menu">
+                            <a
+                                @click="left_detail = 'group'"
+                                class="dropdown-item"
+                            >{{
+                                trans.new_group
+                            }}</a>
+                            <a
+                                @click="left_detail = 'profile'"
+                                class="dropdown-item"
+                            >{{
+                                trans.profile
+                            }}</a>
+                            <a
+                                @click="left_detail = 'settings'"
+                                class="dropdown-item"
+                            >{{
+                                trans.settings
+                            }}</a>
+                            <a
+                                href="/"
+                                class="dropdown-item"
+                            >{{
+                                trans.exit
+                            }}</a>
+                        </div>
+                    </div>
+                    <a v-if="message.messages" class="cursor-pointer mx-2 -mr-2 lg:hidden" @click="isRight = !isRight">
                         <svg class="svg-icon" viewBox="0 0 20 20">
 							<path d="M15.898,4.045c-0.271-0.272-0.713-0.272-0.986,0l-4.71,4.711L5.493,4.045c-0.272-0.272-0.714-0.272-0.986,0s-0.272,0.714,0,0.986l4.709,4.711l-4.71,4.711c-0.272,0.271-0.272,0.713,0,0.986c0.136,0.136,0.314,0.203,0.492,0.203c0.179,0,0.357-0.067,0.493-0.203l4.711-4.711l4.71,4.711c0.137,0.136,0.314,0.203,0.494,0.203c0.178,0,0.355-0.067,0.492-0.203c0.273-0.273,0.273-0.715,0-0.986l-4.711-4.711l4.711-4.711C16.172,4.759,16.172,4.317,15.898,4.045z"></path>
 						</svg>
@@ -151,7 +313,6 @@
                 <div
                     v-for="(item, index) in users"
                     :key="index"
-                    @click="fetchMessages(item.id, item.chat_type)"
                     :class="[`sidebar-list flex h-18 cursor-pointer`, {
                         'font-medium': item.read_count,
                         'hover:bg-light-300 dark:hover:bg-true-gray-700':
@@ -160,17 +321,21 @@
                             form.type_id == getTypeId(item.chat_type, item.id)
                     }]"
                 >
-                    <div class="flex flex-col justify-center px-3">
-                        <figure>
-                            <img
-                                class="rounded-full h-13 w-13"
-                                :src="item.avatar"
-                                alt="avatar"
-                            >
-                        </figure>
+                    <div
+                        @click="fetchMessages(item.id, item.chat_type)"
+                        class="flex flex-col justify-center px-3"
+                    >
+                        <img
+                            class="rounded-full h-13 w-13"
+                            :src="item.avatar"
+                            alt="avatar"
+                        >
                     </div>
                     <div class="flex flex-grow flex-col justify-center w-73 pr-3">
-                        <div class="flex">
+                        <div
+                            @click="fetchMessages(item.id, item.chat_type)"
+                            class="flex"
+                        >
                             <p
                                 class="flex-grow truncate text-lg"
                                 :title="item.name"
@@ -182,14 +347,19 @@
                             }}</small>
                         </div>
                         <div class="flex text-sm">
-                            <span v-if="item.typing" class="flex-grow">{{
+                            <span
+                                v-if="item.typing"
+                                @click="fetchMessages(item.id, item.chat_type)"
+                                class="flex-grow"
+                            >{{
                                 item.typing_name
                                     ? `${item.typing_name}: ${trans.typing}`
                                     : trans.typing
                             }}</span>
                             <template v-else>
                                 <div
-                                    class="flex flex-grow"
+                                    @click="fetchMessages(item.id, item.chat_type)"
+                                    class="contents flex-grow"
                                     :title="item.content"
                                 >
                                     <template
@@ -220,20 +390,26 @@
                                 </div>
                             </template>
                             <small
+                                @click="fetchMessages(item.id, item.chat_type)"
                                 v-if="item.read_count"
                                 class="flex-none bg-purple-600 text-white w-5 h-5 leading-5 text-center rounded-full"
                             >{{
                                 item.read_count
                             }}</small>
-                            <div class="button-dropdown flex-none relative font-normal -mr-9 pl-3 transition-effect">
-                                <a class="cursor-pointer" aria-haspopup="true" aria-controls="dropdown-menu">
+                            <div class="dropdown -mr-9 pl-3 transition-effect opacity-0">
+                                <a class="dropdown-button">
                                     <svg class="svg-icon transform -rotate-90" viewBox="0 0 20 20">
                                         <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
                                     </svg>
                                 </a>
-                                <div class="bg-white hidden dark:bg-dark-300 absolute right-0 mt-5 py-2 w-48 rounded-md shadow-lg" id="dropdown-menu" role="menu">
-                                    <a href="#" class="text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-light-700 dark:hover:bg-dark-100 dark:hover:text-light-100 block px-4 py-2 text-sm">Delete Chat</a>
-                                    <a href="#" class="text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-light-700 dark:hover:bg-dark-100 dark:hover:text-light-100 block px-4 py-2 text-sm">Exit Group</a>
+                                <div class="dropdown-menu">
+                                    <a
+                                        @click="deleteChat(item.id, item.chat_type)"
+                                        class="dropdown-item"
+                                    >{{
+                                        item.chat_type === models.message.type_user
+                                            ? trans.delete_chat : trans.leave_the_group
+                                    }}</a>
                                 </div>
                             </div>
                         </div>
@@ -247,24 +423,26 @@
             }]"
         >
             <template v-if="message.messages">
-                <div class="bg-light-600 dark:bg-dark-400 px-5 py-2 <lg:px-2">
+
+                <!-- profile user or group -->
+                <div class="bg-light-600 dark:bg-dark-400 px-2">
                     <div class="flex">
-                        <div class="flex-none mr-3 my-auto lg:hidden">
+                        <div class="flex-none p-2 my-auto lg:hidden">
                             <a class="cursor-pointer" @click="isRight = !isRight">
                                 <svg class="svg-icon" viewBox="0 0 20 20">
                                     <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
                                 </svg>
                             </a>
                         </div>
-                        <div class="flex-grow-0 flex-shrink-0 cursor-pointer" @click="isDetail = true">
+                        <div class="flex-none p-2 cursor-pointer" @click="isDetail = true">
                             <img
                                 class="rounded-full h-10 w-10"
                                 :src="message.avatar"
                                 alt="avatar"
                             >
                         </div>
-                        <div class="flex-grow cursor-pointer ml-4 my-auto" @click="isDetail = true">
-                            <p class="text-base leading-none">{{
+                        <div class="flex-grow grid cursor-pointer my-auto" @click="isDetail = true">
+                            <p class="text-base">{{
                                 message.name
                             }}</p>
                             <small v-if="message.typing" class="text-sm leading-none">{{
@@ -272,7 +450,11 @@
                                     ? `${message.typing_name}: ${trans.typing}`
                                     : trans.typing
                             }}</small>
-                            <small v-if="!message.typing && message.chat_type === models.message.type_group" class="text-sm leading-none">{{
+                            <small 
+                                v-if="!message.typing && message.chat_type === models.message.type_group"
+                                class="text-sm leading-none truncate"
+                                :title="getUserGroup(message.users)"
+                            >{{
                                 getUserGroup(message.users)
                             }}</small>
                             <small
@@ -282,15 +464,42 @@
                                 trans.online
                             }}</small>
                         </div>
-                        <div class="flex flex-grow-0 flex-shrink-0 my-auto">
-                            <a class="cursor-pointer mx-2">
-                                <svg class="svg-icon transform rotate-90" viewBox="0 0 20 20">
-                                    <path d="M3.936,7.979c-1.116,0-2.021,0.905-2.021,2.021s0.905,2.021,2.021,2.021S5.957,11.116,5.957,10 S5.052,7.979,3.936,7.979z M3.936,11.011c-0.558,0-1.011-0.452-1.011-1.011s0.453-1.011,1.011-1.011S4.946,9.441,4.946,10 S4.494,11.011,3.936,11.011z M16.064,7.979c-1.116,0-2.021,0.905-2.021,2.021s0.905,2.021,2.021,2.021s2.021-0.905,2.021-2.021 S17.181,7.979,16.064,7.979z M16.064,11.011c-0.559,0-1.011-0.452-1.011-1.011s0.452-1.011,1.011-1.011S17.075,9.441,17.075,10 S16.623,11.011,16.064,11.011z M10,7.979c-1.116,0-2.021,0.905-2.021,2.021S8.884,12.021,10,12.021s2.021-0.905,2.021-2.021 S11.116,7.979,10,7.979z M10,11.011c-0.558,0-1.011-0.452-1.011-1.011S9.442,8.989,10,8.989S11.011,9.441,11.011,10 S10.558,11.011,10,11.011z"></path>
-                                </svg>
-                            </a>
+                        <div class="flex flex-none p-2 my-auto">
+                            <div class="dropdown">
+                                <a class="dropdown-button">
+                                    <svg class="svg-icon transform rotate-90" viewBox="0 0 20 20">
+                                        <path d="M3.936,7.979c-1.116,0-2.021,0.905-2.021,2.021s0.905,2.021,2.021,2.021S5.957,11.116,5.957,10 S5.052,7.979,3.936,7.979z M3.936,11.011c-0.558,0-1.011-0.452-1.011-1.011s0.453-1.011,1.011-1.011S4.946,9.441,4.946,10 S4.494,11.011,3.936,11.011z M16.064,7.979c-1.116,0-2.021,0.905-2.021,2.021s0.905,2.021,2.021,2.021s2.021-0.905,2.021-2.021 S17.181,7.979,16.064,7.979z M16.064,11.011c-0.559,0-1.011-0.452-1.011-1.011s0.452-1.011,1.011-1.011S17.075,9.441,17.075,10 S16.623,11.011,16.064,11.011z M10,7.979c-1.116,0-2.021,0.905-2.021,2.021S8.884,12.021,10,12.021s2.021-0.905,2.021-2.021 S11.116,7.979,10,7.979z M10,11.011c-0.558,0-1.011-0.452-1.011-1.011S9.442,8.989,10,8.989S11.011,9.441,11.011,10 S10.558,11.011,10,11.011z"></path>
+                                    </svg>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a
+                                         @click="isDetail = true"
+                                        class="dropdown-item"
+                                    >{{
+                                        message.chat_type === models.message.type_user
+                                            ? trans.contact_info : trans.group_info
+                                    }}</a>
+                                    <a
+                                        v-if="message.chat_type === models.message.type_user"
+                                        @click="deleteChat(message.id, message.chat_type)"
+                                        class="dropdown-item"
+                                    >{{
+                                        trans.delete_chat
+                                    }}</a>
+                                    <a
+                                        @click="deleteChat(message.id, message.chat_type)"
+                                        v-if="message.chat_type === models.message.type_group"
+                                        class="dropdown-item"
+                                    >{{
+                                        trans.leave_the_group
+                                    }}</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- all messages -->
                 <div class="main-content bg-light-200 dark:bg-dark-100 flex flex-col px-24 <sm:px-5 <md:px-10" id="main-content">
                     <template
                         v-for="(item, index) in message.messages"
@@ -389,15 +598,27 @@
                 </div>
 
                 <!-- form chat -->
-                <div class="bg-light-600 dark:bg-dark-500 px-5 py-2">
-                    <div class="rounded-full bg-white dark:bg-dark-200 mx-auto px-4 py-2">
-                        <textarea 
-                            v-model="form.content"
-                            class="dark:bg-dark-200 focus:outline-none w-full h-6 break-words border-none resize-none"
-                            :placeholder="trans.type_a_message"
-                            @keydown="isTyping"
-                            @keyup.enter="sendMessage"
-                        />
+                <div class="flex bg-light-600 dark:bg-dark-500">
+                    <div class="flex-grow pl-4 pr-2 py-2">
+                        <div class="rounded-full bg-white dark:bg-dark-200 mx-auto px-4 py-2">
+                            <textarea 
+                                v-model="form.content"
+                                class="dark:bg-dark-200 focus:outline-none w-full h-6 break-words border-none resize-none"
+                                :placeholder="trans.type_a_message"
+                                @keydown="isTyping"
+                                @keyup.enter="sendMessage"
+                            />
+                        </div>
+                    </div>
+                    <div class="flex-none my-auto pl-2 pr-4">
+                        <a
+                            @click="sendMessage"
+                            class="cursor-pointer"
+                        >
+                            <svg class="svg-icon" viewBox="0 0 20 20">
+                                <path d="M17.218,2.268L2.477,8.388C2.13,8.535,2.164,9.05,2.542,9.134L9.33,10.67l1.535,6.787c0.083,0.377,0.602,0.415,0.745,0.065l6.123-14.74C17.866,2.46,17.539,2.134,17.218,2.268 M3.92,8.641l11.772-4.89L9.535,9.909L3.92,8.641z M11.358,16.078l-1.268-5.613l6.157-6.157L11.358,16.078z"></path>
+                            </svg>
+                        </a>
                     </div>
                 </div>
             </template>
@@ -412,6 +633,8 @@
                 </div>
             </template>
         </main>
+
+        <!-- detail info contact or group -->
         <aside :class="[`flex-none bg-light-600 dark:bg-dark-100 w-0 <xl:fixed <xl:top-0 <xl:right-0 z-10 ease-in-out transition-all duration-300`, {
             'w-100 <sm:w-full md:border-l-1 dark:md:border-dark-200': isDetail
         }]">
@@ -422,7 +645,8 @@
                     </svg>
                 </a>
                 <p class="text-base ml-3">{{
-                    trans.contact_info
+                    message.chat_type === models.message.type_user
+                        ? trans.contact_info : trans.group_info
                 }}</p>
             </div>
             <div class="sidebar-detail">
@@ -500,27 +724,76 @@
                     </div>
                 </div>
                 <a
-                    v-if="message.chat_type === models.message.type_group"
+                    @click="deleteChat(message.id, message.chat_type)"
                     class="flex cursor-pointer bg-white text-red-600 dark:bg-dark-300 my-2 px-6 py-4"
                 >
                     <svg class="svg-icon !fill-red-600 !stroke-red-600" viewBox="0 0 20 20">
-                        <path d="M8.416,3.943l1.12-1.12v9.031c0,0.257,0.208,0.464,0.464,0.464c0.256,0,0.464-0.207,0.464-0.464V2.823l1.12,1.12c0.182,0.182,0.476,0.182,0.656,0c0.182-0.181,0.182-0.475,0-0.656l-1.744-1.745c-0.018-0.081-0.048-0.16-0.112-0.224C10.279,1.214,10.137,1.177,10,1.194c-0.137-0.017-0.279,0.02-0.384,0.125C9.551,1.384,9.518,1.465,9.499,1.548L7.76,3.288c-0.182,0.181-0.182,0.475,0,0.656C7.941,4.125,8.234,4.125,8.416,3.943z M15.569,6.286h-2.32v0.928h2.32c0.512,0,0.928,0.416,0.928,0.928v8.817c0,0.513-0.416,0.929-0.928,0.929H4.432c-0.513,0-0.928-0.416-0.928-0.929V8.142c0-0.513,0.416-0.928,0.928-0.928h2.32V6.286h-2.32c-1.025,0-1.856,0.831-1.856,1.856v8.817c0,1.025,0.832,1.856,1.856,1.856h11.138c1.024,0,1.855-0.831,1.855-1.856V8.142C17.425,7.117,16.594,6.286,15.569,6.286z"></path>
+                        <path v-if="message.chat_type === models.message.type_group" d="M8.416,3.943l1.12-1.12v9.031c0,0.257,0.208,0.464,0.464,0.464c0.256,0,0.464-0.207,0.464-0.464V2.823l1.12,1.12c0.182,0.182,0.476,0.182,0.656,0c0.182-0.181,0.182-0.475,0-0.656l-1.744-1.745c-0.018-0.081-0.048-0.16-0.112-0.224C10.279,1.214,10.137,1.177,10,1.194c-0.137-0.017-0.279,0.02-0.384,0.125C9.551,1.384,9.518,1.465,9.499,1.548L7.76,3.288c-0.182,0.181-0.182,0.475,0,0.656C7.941,4.125,8.234,4.125,8.416,3.943z M15.569,6.286h-2.32v0.928h2.32c0.512,0,0.928,0.416,0.928,0.928v8.817c0,0.513-0.416,0.929-0.928,0.929H4.432c-0.513,0-0.928-0.416-0.928-0.929V8.142c0-0.513,0.416-0.928,0.928-0.928h2.32V6.286h-2.32c-1.025,0-1.856,0.831-1.856,1.856v8.817c0,1.025,0.832,1.856,1.856,1.856h11.138c1.024,0,1.855-0.831,1.855-1.856V8.142C17.425,7.117,16.594,6.286,15.569,6.286z"></path>
+                        <path v-else d="M17.114,3.923h-4.589V2.427c0-0.252-0.207-0.459-0.46-0.459H7.935c-0.252,0-0.459,0.207-0.459,0.459v1.496h-4.59c-0.252,0-0.459,0.205-0.459,0.459c0,0.252,0.207,0.459,0.459,0.459h1.51v12.732c0,0.252,0.207,0.459,0.459,0.459h10.29c0.254,0,0.459-0.207,0.459-0.459V4.841h1.511c0.252,0,0.459-0.207,0.459-0.459C17.573,4.127,17.366,3.923,17.114,3.923M8.394,2.886h3.214v0.918H8.394V2.886z M14.686,17.114H5.314V4.841h9.372V17.114z M12.525,7.306v7.344c0,0.252-0.207,0.459-0.46,0.459s-0.458-0.207-0.458-0.459V7.306c0-0.254,0.205-0.459,0.458-0.459S12.525,7.051,12.525,7.306M8.394,7.306v7.344c0,0.252-0.207,0.459-0.459,0.459s-0.459-0.207-0.459-0.459V7.306c0-0.254,0.207-0.459,0.459-0.459S8.394,7.051,8.394,7.306"></path>
                     </svg>
                     <span class="ml-6">{{
-                        trans.leave_the_group
-                    }}</span>
-                </a>
-                <a class="flex cursor-pointer bg-white text-red-600 dark:bg-dark-300 my-2 px-6 py-4">
-                    <svg class="svg-icon !fill-red-600 !stroke-red-600" viewBox="0 0 20 20">
-                        <path d="M17.114,3.923h-4.589V2.427c0-0.252-0.207-0.459-0.46-0.459H7.935c-0.252,0-0.459,0.207-0.459,0.459v1.496h-4.59c-0.252,0-0.459,0.205-0.459,0.459c0,0.252,0.207,0.459,0.459,0.459h1.51v12.732c0,0.252,0.207,0.459,0.459,0.459h10.29c0.254,0,0.459-0.207,0.459-0.459V4.841h1.511c0.252,0,0.459-0.207,0.459-0.459C17.573,4.127,17.366,3.923,17.114,3.923M8.394,2.886h3.214v0.918H8.394V2.886z M14.686,17.114H5.314V4.841h9.372V17.114z M12.525,7.306v7.344c0,0.252-0.207,0.459-0.46,0.459s-0.458-0.207-0.458-0.459V7.306c0-0.254,0.205-0.459,0.458-0.459S12.525,7.051,12.525,7.306M8.394,7.306v7.344c0,0.252-0.207,0.459-0.459,0.459s-0.459-0.207-0.459-0.459V7.306c0-0.254,0.207-0.459,0.459-0.459S8.394,7.051,8.394,7.306"></path>
-                    </svg>
-                    <span class="ml-6">{{
-                        trans.delete_chat
+                        message.chat_type === models.message.type_user
+                            ? trans.delete_chat : trans.leave_the_group
                     }}</span>
                 </a>
             </div>
-        </aside>
+        </aside> <!-- end detail info contact or group -->
     </section>
+
+    <!-- modal -->
+    <div
+        :class="[`fixed z-100 inset-0 overflow-y-auto`, {
+            'hidden': !isModal
+        }]"
+    >
+        <div class="flex items-end flex-col justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div
+                :class="[`fixed inset-0 bg-light-50 bg-opacity-75 transition-opacity`, {
+                    'opacity-0': !isModal
+                }]"
+            />
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+            <div
+                :class="[`inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full`, {
+                    'opacity-0': !isModal
+                }]"
+            >
+                <!-- modal content -->
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3
+                                v-if="modal_type == 'delete-user'"
+                                class="text-lg leading-6 font-medium text-gray-900"
+                            >{{
+                                trans.delete_this_chat
+                            }}</h3>
+                            <h3
+                                v-if="modal_type == 'delete-group'"
+                                class="text-lg leading-6 font-medium text-gray-900"
+                            >{{
+                                trans.leave_this_group
+                            }}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- modal footer -->
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">{{
+                        trans.ok
+                    }}</button>
+                    <button
+                        @click="isModal=false;modal_type=null"
+                        type="button"
+                        class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                    >{{
+                        trans.cancel
+                    }}</button>
+                </div>
+            </div>
+        </div>
+    </div> <!-- end modal -->
 </template>
 
 <script>
@@ -535,14 +808,17 @@ export default {
             form: {
                 content: ''
             },
+            group_participants: [],
             isChat: false,
             isDetail: false,
+            isModal: false,
             isRight: false,
             left_detail: null,
             message: {},
             message_countdown: null,
             message_second: 0,
             message_typing: false,
+            modal_type: null,
             profile: {},
             userIndex: null,
             users: [],
@@ -551,6 +827,26 @@ export default {
     },
     
     methods: {
+        addGroupParticipant(user)
+        {
+            this.group_participants.push(user)
+
+            setTimeout(() => {
+                let container = document.getElementById("add-group-participant")
+                container.scrollTop = container.scrollHeight
+            }, 1)
+        },
+
+        deleteChat(id, chat_type)
+        {
+            // this.modal_type = 'delete-' + chat_type
+            // this.isModal = true
+
+            axios.post('message-destroy', {
+                id,
+                chat_type
+            })
+        },
 
         fetchMessages(id, type)
         {
@@ -881,9 +1177,15 @@ export default {
             }
         },
 
+        removeGroupParticipant(index)
+        {
+            this.group_participants.splice(index, 1)
+        },
+
         resetLeft() {
             this.left_detail = null
             this.users_new_chat = []
+            this.group_participants = []
         },
 
         scrollToEnd()
