@@ -798,10 +798,14 @@
 
 <script>
 import debounce from 'lodash/debounce'
+import GlobalMixin from './Mixins/GlobalMixin'
 import HelperMixin from './Mixins/HelperMixin'
 
 export default {
-    mixins: [HelperMixin],
+    mixins: [
+        GlobalMixin,
+        HelperMixin
+    ],
 
     data() {
         return {

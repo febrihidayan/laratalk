@@ -13,9 +13,7 @@
 </head>
 <body class="overflow-hidden">
 
-    <div id="laratalk">
-        <router-view></router-view>
-    </div>
+    <div id="laratalk"></div>
 
     <script>
         window.laratalk = @json($scripts);
