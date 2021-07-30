@@ -22,7 +22,7 @@ class Message extends Model
      * @var array
      */
     protected $fillable = [
-        'by_id', 'group_id', 'content'
+        'by_id', 'group_id', 'content', 'type', 'parent_id'
     ];
 
     /**

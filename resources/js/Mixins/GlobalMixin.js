@@ -138,5 +138,11 @@ export default {
 
     mounted() {
         this.setDarkMode(localStorage.getItem('dark_mode'))
+    },
+
+    watch: {
+        dark_mode: function(e) {
+            this.setDarkMode(e)
+        }
     }
 }

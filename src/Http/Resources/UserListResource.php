@@ -31,7 +31,7 @@ class UserListResource extends JsonResource
             $userTo = User::find($this->to_id);
 
             $data += [
-                'avatar' => $this->group_avatar,
+                'avatar' => $this->group_avatar ?? Laratalk::gravatar(''),
                 'id' => $this->group_id,
                 'name' => $this->group_name,
                 'user_by_name' => $userBy->name,
