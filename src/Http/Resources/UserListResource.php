@@ -20,7 +20,7 @@ class UserListResource extends JsonResource
             'content' => $this->content ?? '',
             'content_by' => $this->by_id,
             'content_type' => $this->type,
-            'chat_type' => $this->chat_type,
+            'chat_type' => $this->chatType(),
             'last_time' => Laratalk::lastTime($this->created_at),
             'read_count' => $this->readCount(),
             'status' => $this->statusMessage(),

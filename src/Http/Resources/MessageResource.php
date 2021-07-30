@@ -20,7 +20,7 @@ class MessageResource extends JsonResource
             'content' => $this->content,
             'content_by' => $this->by_id,
             'content_type' => $this->type,
-            'chat_type' => $this->chat_type,
+            'chat_type' => $this->chatType(),
             'last_time' => $this->lastTime(),
             'time' => $this->time()
         ];
