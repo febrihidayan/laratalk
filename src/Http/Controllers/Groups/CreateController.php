@@ -7,8 +7,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
+use Laratalk\Events\Groups\NewGroupEvent;
+use Laratalk\Http\Resources\UserListResource;
 use Laratalk\Models\Group;
 use Laratalk\Models\GroupUser;
+use Laratalk\Models\Message;
 
 class CreateController extends Controller
 {
@@ -25,13 +28,50 @@ class CreateController extends Controller
 
         $group = Group::create(Request::all());
 
-        GroupUser::create([
-            'user_id' => Auth::id(),
-            'group_id' => $group->id,
-            'role' => 1
-        ]);
+        $users = collect(Request::get('users'))
+            ->prepend(Auth::id())
+            ->unique();
 
-        $group->users()->sync(Request::get('users'));
+        foreach ($users as $id) {
+
+            GroupUser::create([
+                'user_id' => $id,
+                'group_id' => $group->id,
+                'role' => Auth::id() === $id
+                    ? Group::ADMIN : Group::MEMBER
+            ]);
+
+            $messageCreate = Message::create([
+                'by_id' => Auth::id(),
+                'group_id' => $group->id,
+                'type' => Auth::id() === $id
+                    ? Message::CREATE_GROUP
+                    : Message::ADD_USER_GROUP
+            ]);
+
+            if (Auth::id() !== $id) {
+                $messageCreate->recipient()->create([
+                    'to_id' => $id
+                ]);
+            }
+
+
+            $messageCreate = new UserListResource(
+                $messageCreate->select([
+                        '*',
+                        'laratalk_groups.avatar as group_avatar',
+                        'laratalk_groups.name as group_name',
+                    ])
+                    ->joinGroup()
+                    ->joinRecipient()
+                    ->first()
+            );
+
+            event( new NewGroupEvent(
+                collect($messageCreate)->toArray(),
+                $id
+            ));
+        }
 
         return Response::json($group);
     }

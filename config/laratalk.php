@@ -43,6 +43,28 @@ return [
 
     /**
      * --------------------------------------------------------------------------
+     * Set attachments
+     * --------------------------------------------------------------------------
+     * 
+     * Add file format or change directory to your liking
+     * 
+     * Please note the file format does not need to add an image format.
+     * Because it will be added automatically, don't duplicate it
+     * 
+     */
+    'attachment' => [
+        'folder' => 'attachments',
+        'size' => 2048,
+        'images' => [
+            'gif', 'jpeg', 'jpg', 'png'
+        ],
+        'files' => [
+            'docs', 'mp4', 'pdf', 'rar', 'txt', 'zip'
+        ],
+    ],
+
+    /**
+     * --------------------------------------------------------------------------
      * Group features
      * --------------------------------------------------------------------------
      * 
@@ -50,6 +72,7 @@ return [
      * 
      */
     'group' => [
+        'avatar' => '',
         'feature' => false,
         'max_recipient' => 300
     ]

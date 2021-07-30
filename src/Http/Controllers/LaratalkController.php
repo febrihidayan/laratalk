@@ -32,6 +32,7 @@ class LaratalkController extends Controller
                 StatusEvent::dispatch(
                     [
                         'id' => $idMessages,
+                        'chat_type' => $item->chatType(),
                         'content_to' => $item->to_id,
                         'status' => Message::ACCEPT
                     ],
