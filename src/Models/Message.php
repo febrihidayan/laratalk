@@ -159,29 +159,11 @@ class Message extends Model
     public const READ = 'read';
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'chat_type' => 'string',
-    ];
-
-    /**
      * Get the type chat message.
      *
      * @return string
      */
-    public function getChatTypeAttribute()
-    {
-        if ($this->group_id) {
-            return self::TYPE_GROUP;
-        }
-
-        return self::TYPE_USER;
-    }
-
-    public function chatType()
+    public function chatType(): string
     {
         if ($this->group_id) {
             return self::TYPE_GROUP;
@@ -195,7 +177,7 @@ class Message extends Model
         return Laratalk::lastTime($this->created_at, true);
     }
 
-    public function statusMessageRecipient()
+    public function statusMessageRecipient(): string
     {
         $data = (
             $this->chatType() == self::TYPE_GROUP
