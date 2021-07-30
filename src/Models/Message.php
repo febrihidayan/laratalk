@@ -117,6 +117,13 @@ class Message extends Model
     public const REMOVE_ADMIN_GROUP = 12;
 
     /**
+     * Type user leave group
+     * 
+     * @var number
+     */
+    public const LEAVE_GROUP = 13;
+
+    /**
      * User type for message
      * 
      * @var string

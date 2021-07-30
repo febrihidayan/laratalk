@@ -3,6 +3,7 @@
 namespace Laratalk\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Support\Facades\Auth;
 
 class GroupUser extends Pivot
 {
@@ -42,4 +43,12 @@ class GroupUser extends Pivot
     protected $fillable = [
         'group_id', 'user_id', 'role'
     ];
+
+    public function scopeUserGroup($query, $groupId, $userId = null)
+    {
+        return $query->where([
+            ['group_id', $groupId],
+            ['user_id', $userId ?? Auth::id()]
+        ]);
+    }
 }

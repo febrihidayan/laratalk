@@ -32,6 +32,8 @@ return [
         'description_group' => 'has changed the group description. Tap to view it.',
         'info_admin_group' => 'changed after group to allow only admins to edit this group info.',
         'info_all_group' => 'have changed group settings to allow all participants to edit this group info.',
+        'leave_group' => 'has left this group',
+        'leave_group_by' => 'You have left this group',
         'remove_admin_group' => 'You are not admin anymore',
         'remove_user_group' => 'has issued',
         'remove_user_group_by' => 'You have issued',
