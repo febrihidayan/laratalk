@@ -5,6 +5,10 @@ namespace Laratalk;
 use Illuminate\Support\ServiceProvider;
 use Laratalk\Console\InstallCommand;
 use Laratalk\Console\PublishCommand;
+use Laratalk\Models\Group;
+use Laratalk\Models\Message;
+use Laratalk\Observers\GroupObserver;
+use Laratalk\Observers\MessageObserver;
 
 class LaratalkServiceProvider extends ServiceProvider
 {
@@ -15,12 +19,13 @@ class LaratalkServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->registerChannels();
-        $this->registerRoutes();
-        $this->registerResources();
-        $this->registerTranslations();
-        $this->registerMigrations();
         $this->registerAssetPublishing();
+        $this->registerChannels();
+        $this->registerMigrations();
+        $this->registerObservers();
+        $this->registerResources();
+        $this->registerRoutes();
+        $this->registerTranslations();
     }
 
     /**
@@ -42,58 +47,6 @@ class LaratalkServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the package channels.
-     *
-     * @return void
-     */
-    private function registerChannels()
-    {
-        $this->loadRoutesFrom(__DIR__ . '/../routes/channels.php');
-    }
-
-    /**
-     * Register the package routes.
-     *
-     * @return void
-     */
-    private function registerRoutes()
-    {
-        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
-    }
-
-    /**
-     * Register the possible views used by Laratalk.
-     *
-     * @return void
-     */
-    private function registerResources()
-    {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'laratalk');
-    }
-
-    /**
-     * Register the possible Ttanslations used by Laratalk.
-     *
-     * @return void
-     */
-    private function registerTranslations()
-    {
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'laratalk');
-    }
-
-    /**
-     * Register the package's migrations.
-     *
-     * @return void
-     */
-    private function registerMigrations()
-    {
-        if ($this->app->runningInConsole()) {
-            $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        }
-    }
-
-    /**
      * Register the package's publishable resources.
      *
      * @return void
@@ -109,5 +62,66 @@ class LaratalkServiceProvider extends ServiceProvider
                 __DIR__ . '/../config/laratalk.php' => config_path('laratalk.php'),
             ], 'laratalk-config');
         }
+    }
+
+    /**
+     * Register the package channels.
+     *
+     * @return void
+     */
+    private function registerChannels()
+    {
+        $this->loadRoutesFrom(__DIR__ . '/../routes/channels.php');
+    }
+
+    /**
+     * Register the package's migrations.
+     *
+     * @return void
+     */
+    private function registerMigrations()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        }
+    }
+
+    /**
+     * Register the service provider observers
+     */
+    private function registerObservers()
+    {
+        Group::observe(GroupObserver::class);
+        Message::observe(MessageObserver::class);
+    }
+
+    /**
+     * Register the possible views used by Laratalk.
+     *
+     * @return void
+     */
+    private function registerResources()
+    {
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'laratalk');
+    }
+
+    /**
+     * Register the package routes.
+     *
+     * @return void
+     */
+    private function registerRoutes()
+    {
+        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+    }
+
+    /**
+     * Register the possible Ttanslations used by Laratalk.
+     *
+     * @return void
+     */
+    private function registerTranslations()
+    {
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'laratalk');
     }
 }
