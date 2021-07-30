@@ -133,6 +133,13 @@ export default {
             if (_type === _.remove_admin_group && this.laratalk.profile.id === item.content_to) {
                 return _t.remove_admin_group
             }
+            
+            // type: 13
+            if (_type === _.leave_group) {
+                return myUser
+                    ? _t.leave_group_by
+                    : this._setVal(item.user_by_name, _t.leave_group)
+            }
         }
     },
 

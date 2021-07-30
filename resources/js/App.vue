@@ -438,7 +438,7 @@
                                 </a>
                                 <div class="dropdown-menu">
                                     <a
-                                        @click="deleteChat(item.id, item.chat_type)"
+                                        @click="deleteChatorLeaveGroup(item.id, item.chat_type)"
                                         class="dropdown-item"
                                     >{{
                                         item.chat_type === models.message.type_user
@@ -515,13 +515,13 @@
                                     }}</a>
                                     <a
                                         v-if="message.chat_type === models.message.type_user"
-                                        @click="deleteChat(message.id, message.chat_type)"
+                                        @click="deleteChatorLeaveGroup(message.id, message.chat_type)"
                                         class="dropdown-item"
                                     >{{
                                         trans.delete_chat
                                     }}</a>
                                     <a
-                                        @click="deleteChat(message.id, message.chat_type)"
+                                        @click="deleteChatorLeaveGroup(message.id, message.chat_type)"
                                         v-if="message.chat_type === models.message.type_group"
                                         class="dropdown-item"
                                     >{{
@@ -758,7 +758,7 @@
                     </div>
                 </div>
                 <a
-                    @click="deleteChat(message.id, message.chat_type)"
+                    @click="deleteChatorLeaveGroup(message.id, message.chat_type)"
                     class="flex cursor-pointer bg-white text-red-600 dark:bg-dark-300 my-2 px-6 py-4"
                 >
                     <svg class="svg-icon !fill-red-600 !stroke-red-600" viewBox="0 0 20 20">
@@ -773,16 +773,6 @@
             </div>
         </aside> <!-- end detail info contact or group -->
     </section>
-
-    <!-- modal -->
-    <modal
-        v-model="isModal"
-        @success="deleteFetchChat"
-    >
-        <h3 class="text-lg leading-6 font-medium text-gray-900">{{
-            trans.delete_this_chat
-        }}</h3>
-    </modal>
 
     <!-- modal setting theme -->
     <modal
@@ -823,27 +813,12 @@
             </div>
         </div>
     </modal>
-
-    <!-- <modal
-        :active="isModal"
-        v-if="modal_type == 'delete-group'"
-    >
-        <h3 class="text-lg leading-6 font-medium text-gray-900">{{
-            trans.leave_this_group
-        }}</h3>
-    </modal> -->
 </template>
 
 <script>
 import debounce from 'lodash/debounce'
-import Modal from './components/modules/Modal.vue'
-import BoxAside from './components/modules/BoxAside.vue'
 
 export default {
-    components: {
-        Modal,
-        BoxAside
-    },
     data() {
         return {
             form: {
@@ -858,16 +833,13 @@ export default {
             isBoxNewGroup: false,
             isBoxProfile: false,
             isBoxSetting: false,
-            isChat: false,
             isDetail: false,
-            isModal: false,
             isRight: false,
             isSettingTheme: false,
             message: {},
             message_countdown: null,
             message_second: 0,
             message_typing: false,
-            modal_type: null,
             profile: {},
             userIndex: null,
             users: [],
@@ -886,19 +858,40 @@ export default {
             }, 1)
         },
 
-        deleteChat(id, chat_type)
+        deleteChatorLeaveGroup(id, chat_type)
         {
-            this.modal_type = 'delete-' + chat_type
-            this.isModal = !this.isModal
+            const text = chat_type === this.models.message.type_user
+                ? this.trans.delete_this_chat
+                : this.trans.leave_this_group
 
-            // axios.post('message-destroy', {
-            //     id,
-            //     chat_type
-            // })
-        },
+            this.$modal({
+                content: text,
+                onConfirm: () => {
+                    axios
+                        .post('message-destroy', {
+                            id,
+                            chat_type
+                        })
+                        .then(() => {
+                            const index = this.users.findIndex(
+                                    (e) =>
+                                        e.chat_type === chat_type &&
+                                        e.id === id
+                                )
+                            
+                            this.users.splice(index, 1)
 
-        deleteFetchChat() {
-            console.log('apa')
+                            if (
+                                this.message.id === id &&
+                                this.message.chat_type === chat_type
+                            ) {
+
+                                this.message = {}
+                                console.log(this.message)
+                            }
+                        })
+                }
+            })
         },
 
         fetchMessages(id, type)

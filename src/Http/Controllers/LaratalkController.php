@@ -76,6 +76,7 @@ class LaratalkController extends Controller
                         'remove_user_group' => Message::REMOVE_USER_GROUP,
                         'add_admin_group' => Message::ADD_ADMIN_GROUP,
                         'remove_admin_group' => Message::REMOVE_ADMIN_GROUP,
+                        'leave_group' => Message::LEAVE_GROUP,
                         'type_user' => Message::TYPE_USER,
                         'type_group' => Message::TYPE_GROUP,
                         'send' => Message::SEND,

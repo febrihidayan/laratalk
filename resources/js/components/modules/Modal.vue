@@ -17,7 +17,16 @@
                     <div class="bg-white dark:bg-dark-300 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div class="sm:flex sm:items-start">
                             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                <slot/>
+
+                                <template v-if="content">
+                                    <div
+                                        v-html="content"
+                                        class="text-lg leading-6 font-medium text-gray-900 dark:text-light-700"
+                                    />
+                                </template>
+
+                                <slot v-else/>
+
                             </div>
                         </div>
                     </div>
@@ -49,11 +58,17 @@
 <script>
 export default {
     props: {
+        content: String,
         modelValue: Boolean,
         onCancel: {
             type: Boolean,
             default: true
-        }
+        },
+        onConfirm: {
+            type: Function,
+            default: () => {}
+        },
+        programmatic: Boolean
     },
     data() {
         return {
@@ -74,7 +89,12 @@ export default {
         success() {
             this.isActive = false
             this.$emit('success', true)
+            this.onConfirm(this)
         }
+    },
+    mounted() {
+        if (this.programmatic)
+            this.isActive = true
     }
 }
 </script>
