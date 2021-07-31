@@ -36,8 +36,8 @@ class SetupLaratalkTables extends Migration
             $table->text('content', 5000)->nullable();
             $table->boolean('type', 2)->default(0);
             $table->unsignedBigInteger('parent_id')->nullable();
+            $table->unsignedBigInteger('delete_user_id')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::create('laratalk_message_recipient', function (Blueprint $table) {

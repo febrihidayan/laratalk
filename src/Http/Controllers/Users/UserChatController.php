@@ -33,6 +33,10 @@ class UserChatController extends Controller
                     ->orWhere('laratalk_groups.name', 'like', "%{$q}%");
             })
             ->where('users.id', '!=', Auth::id())
+            ->where( function($q) {
+                $q->where('delete_user_id', '!=', Auth::id())
+                    ->orWhereNull('delete_user_id');
+            })
             ->where(function ($q) {
                 $q->where('laratalk_messages.by_id', Auth::id())
                     ->orWhere('laratalk_message_recipient.to_id', Auth::id());
@@ -72,9 +76,9 @@ class UserChatController extends Controller
             $collect = collect($resourceUsers);
 
             if (
-                ($user->chat_type === Message::TYPE_GROUP && !$collect->where('group_id', $user->group_id)->count())
+                ($user->chatType() === Message::TYPE_GROUP && !$collect->where('group_id', $user->group_id)->count())
                 ||
-                ($user->chat_type === Message::TYPE_USER && !$collect->where('group_id', null)->where('user_id', $user->user_id)->count())
+                ($user->chatType() === Message::TYPE_USER && !$collect->where('group_id', null)->where('user_id', $user->user_id)->count())
             ) {
                 $resourceUsers[] = $user;
             }

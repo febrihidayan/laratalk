@@ -67,6 +67,10 @@ class ShowController extends Controller
                             return $query->where('to_id', $id);
                         });
                 })
+                ->where( function($query) {
+                    $query->where('delete_user_id', '!=', Auth::id())
+                    ->orWhereNull('delete_user_id');
+                })
                 ->get();
 
             $messages = ShowUserResource::collection($messages);

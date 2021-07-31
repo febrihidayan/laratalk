@@ -46,7 +46,7 @@ input[type="search"]::-webkit-search-cancel-button {
     @apply mr-0 pl-1 opacity-100;
 }
 
-.message:hover .button-dropdown {
+.message:hover .dropdown-button {
     @apply opacity-100;
 }
 

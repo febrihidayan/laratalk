@@ -19,6 +19,7 @@ class ShowUserResource extends JsonResource
             'id' => $this->id,
             'content' => $this->content ?? '',
             'content_by' => $this->by_id,
+            'content_type' => $this->type,
             'last_time' => $this->lastTime(),
             'time' => $this->time()
         ];

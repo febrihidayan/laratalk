@@ -64,6 +64,7 @@ class LaratalkController extends Controller
                     ],
                     'message' => [
                         'chat' => Message::CHAT,
+                        'pull_message' => Message::PULL_MESSAGE,
                         'create_group' => Message::CREATE_GROUP,
                         'avatar_group' => Message::AVATAR_GROUP,
                         'rename_group' => Message::RENAME_GROUP,

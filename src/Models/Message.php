@@ -22,7 +22,8 @@ class Message extends Model
      * @var array
      */
     protected $fillable = [
-        'by_id', 'group_id', 'content', 'type', 'parent_id'
+        'by_id', 'group_id', 'content',
+        'type', 'parent_id', 'delete_user_id'
     ];
 
     /**
@@ -33,95 +34,102 @@ class Message extends Model
     public const CHAT = 0;
 
     /**
+     * Type pull message
+     * 
+     * @var number
+     */
+    public const PULL_MESSAGE = 1;
+
+    /**
      * Type create group
      * 
      * @var number
      */
-    public const CREATE_GROUP = 1;
+    public const CREATE_GROUP = 2;
 
     /**
      * Type change group avatar
      * 
      * @var number
      */
-    public const AVATAR_GROUP = 2;
+    public const AVATAR_GROUP = 3;
 
     /**
      * Type rename group
      * 
      * @var number
      */
-    public const RENAME_GROUP = 3;
+    public const RENAME_GROUP = 4;
 
     /**
      * Type change group description
      * 
      * @var number
      */
-    public const DESCRIPTION_GROUP = 4;
+    public const DESCRIPTION_GROUP = 5;
 
     /**
      * Type change group info for all
      * 
      * @var number
      */
-    public const INFO_ALL_GROUP = 5;
+    public const INFO_ALL_GROUP = 6;
 
     /**
      * Type change group info for admin
      * 
      * @var number
      */
-    public const INFO_ADMIN_GROUP = 6;
+    public const INFO_ADMIN_GROUP = 7;
 
     /**
      * Type change group chat for all
      * 
      * @var number
      */
-    public const CHAT_ALL_GROUP = 7;
+    public const CHAT_ALL_GROUP = 8;
 
     /**
      * Type change group chat for admin
      * 
      * @var number
      */
-    public const CHAT_ADMIN_GROUP = 8;
+    public const CHAT_ADMIN_GROUP = 9;
 
     /**
      * Type add_user group
      * 
      * @var number
      */
-    public const ADD_USER_GROUP = 9;
+    public const ADD_USER_GROUP = 10;
 
     /**
      * Type remove_user group
      * 
      * @var number
      */
-    public const REMOVE_USER_GROUP = 10;
+    public const REMOVE_USER_GROUP = 11;
 
     /**
      * Type add_admin group
      * 
      * @var number
      */
-    public const ADD_ADMIN_GROUP = 11;
+    public const ADD_ADMIN_GROUP = 12;
 
     /**
      * Type remove_admin group
      * 
      * @var number
      */
-    public const REMOVE_ADMIN_GROUP = 12;
+    public const REMOVE_ADMIN_GROUP = 13;
 
     /**
      * Type user leave group
      * 
      * @var number
      */
-    public const LEAVE_GROUP = 13;
+    public const LEAVE_GROUP = 14;
 
     /**
      * User type for message
