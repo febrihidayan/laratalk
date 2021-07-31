@@ -266,7 +266,7 @@
 
         <aside
             :class="[`flex-none min-w-100 sm:border-r-1 dark:sm:border-dark-200 <sm:w-full <lg:fixed <lg:top-0 <lg:left-0 <lg:z-20 ease-in-out transition-all duration-300`, {
-                '<sm:-left-full <lg:-left-100': isRight
+                '<sm:-left-full <lg:-left-100': !isContactChat
             }]"
         >
             <div class="flex bg-light-600 dark:bg-dark-400 px-5 py-2">
@@ -317,7 +317,7 @@
                             }}</a>
                         </div>
                     </div>
-                    <a v-if="message.messages" class="cursor-pointer mx-2 -mr-2 lg:hidden" @click="isRight = !isRight">
+                    <a v-if="message.messages" class="cursor-pointer mx-2 -mr-2 lg:hidden" @click="isContactChat = !isContactChat">
                         <svg class="svg-icon" viewBox="0 0 20 20">
 							<path d="M15.898,4.045c-0.271-0.272-0.713-0.272-0.986,0l-4.71,4.711L5.493,4.045c-0.272-0.272-0.714-0.272-0.986,0s-0.272,0.714,0,0.986l4.709,4.711l-4.71,4.711c-0.272,0.271-0.272,0.713,0,0.986c0.136,0.136,0.314,0.203,0.492,0.203c0.179,0,0.357-0.067,0.493-0.203l4.711-4.711l4.71,4.711c0.137,0.136,0.314,0.203,0.494,0.203c0.178,0,0.355-0.067,0.492-0.203c0.273-0.273,0.273-0.715,0-0.986l-4.711-4.711l4.711-4.711C16.172,4.759,16.172,4.317,15.898,4.045z"></path>
 						</svg>
@@ -462,20 +462,20 @@
                 <div class="bg-light-600 dark:bg-dark-400 px-2">
                     <div class="flex">
                         <div class="flex-none p-2 my-auto lg:hidden">
-                            <a class="cursor-pointer" @click="isRight = !isRight">
+                            <a class="cursor-pointer" @click="isContactChat = !isContactChat">
                                 <svg class="svg-icon" viewBox="0 0 20 20">
                                     <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
                                 </svg>
                             </a>
                         </div>
-                        <div class="flex-none p-2 cursor-pointer" @click="isDetail = true">
+                        <div class="flex-none p-2 cursor-pointer" @click="isDetailUser = true">
                             <img
                                 class="rounded-full h-10 w-10"
                                 :src="message.avatar"
                                 alt="avatar"
                             >
                         </div>
-                        <div class="flex-grow grid cursor-pointer my-auto" @click="isDetail = true">
+                        <div class="flex-grow grid cursor-pointer my-auto" @click="isDetailUser = true">
                             <p class="text-base">{{
                                 message.name
                             }}</p>
@@ -507,7 +507,7 @@
                                 </a>
                                 <div class="dropdown-menu">
                                     <a
-                                         @click="isDetail = true"
+                                         @click="isDetailUser = true"
                                         class="dropdown-item"
                                     >{{
                                         message.chat_type === models.message.type_user
@@ -707,10 +707,10 @@
 
         <!-- detail info contact or group -->
         <aside :class="[`flex-none bg-light-600 dark:bg-dark-100 w-0 <xl:fixed <xl:top-0 <xl:right-0 z-10 ease-in-out transition-all duration-300`, {
-            'w-100 <sm:w-full md:border-l-1 dark:md:border-dark-200': isDetail
+            'w-100 <sm:w-full md:border-l-1 dark:md:border-dark-200': isDetailUser
         }]">
             <div class="flex bg-blue-500 dark:bg-dark-400 text-white p-4">
-                <a class="cursor-pointer" @click="isDetail = !isDetail">
+                <a class="cursor-pointer" @click="isDetailUser = !isDetailUser">
                     <svg class="svg-icon !fill-white !stroke-white" viewBox="0 0 20 20">
                         <path d="M15.898,4.045c-0.271-0.272-0.713-0.272-0.986,0l-4.71,4.711L5.493,4.045c-0.272-0.272-0.714-0.272-0.986,0s-0.272,0.714,0,0.986l4.709,4.711l-4.71,4.711c-0.272,0.271-0.272,0.713,0,0.986c0.136,0.136,0.314,0.203,0.492,0.203c0.179,0,0.357-0.067,0.493-0.203l4.711-4.711l4.71,4.711c0.137,0.136,0.314,0.203,0.494,0.203c0.178,0,0.355-0.067,0.492-0.203c0.273-0.273,0.273-0.715,0-0.986l-4.711-4.711l4.711-4.711C16.172,4.759,16.172,4.317,15.898,4.045z"></path>
                     </svg>
@@ -871,8 +871,8 @@ export default {
             isBoxNewGroup: false,
             isBoxProfile: false,
             isBoxSetting: false,
-            isDetail: false,
-            isRight: false,
+            isContactChat: true,
+            isDetailUser: false,
             isSettingTheme: false,
             message: {},
             message_countdown: null,
@@ -914,6 +914,9 @@ export default {
                             chat_type
                         })
                         .then(() => {
+                            this.isContactChat = true
+                            this.isDetailUser = false
+
                             const index = this.users.findIndex(
                                     (e) =>
                                         e.chat_type === chat_type &&
@@ -937,7 +940,7 @@ export default {
 
         fetchMessages(id, type)
         {
-            this.isRight = true
+            this.isContactChat = false
 
             const type_id = this.getTypeId(type, id)
 

@@ -17977,8 +17977,8 @@ __webpack_require__.r(__webpack_exports__);
       isBoxNewGroup: false,
       isBoxProfile: false,
       isBoxSetting: false,
-      isDetail: false,
-      isRight: false,
+      isContactChat: true,
+      isDetailUser: false,
       isSettingTheme: false,
       message: {},
       message_countdown: null,
@@ -18012,6 +18012,9 @@ __webpack_require__.r(__webpack_exports__);
             id: id,
             chat_type: chat_type
           }).then(function () {
+            _this2.isContactChat = true;
+            _this2.isDetailUser = false;
+
             var index = _this2.users.findIndex(function (e) {
               return e.chat_type === chat_type && e.id === id;
             });
@@ -18028,7 +18031,7 @@ __webpack_require__.r(__webpack_exports__);
     fetchMessages: function fetchMessages(id, type) {
       var _this3 = this;
 
-      this.isRight = true;
+      this.isContactChat = false;
       var type_id = this.getTypeId(type, id);
 
       if (this.form.type_id !== type_id) {
@@ -19268,7 +19271,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* PROPS */
   , ["modelValue", "name"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("aside", {
     "class": ["flex-none min-w-100 sm:border-r-1 dark:sm:border-dark-200 <sm:w-full <lg:fixed <lg:top-0 <lg:left-0 <lg:z-20 ease-in-out transition-all duration-300", {
-      '<sm:-left-full <lg:-left-100': $data.isRight
+      '<sm:-left-full <lg:-left-100': !$data.isContactChat
     }]
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_42, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_43, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("img", {
     onClick: _cache[13] || (_cache[13] = function ($event) {
@@ -19311,7 +19314,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     key: 0,
     "class": "cursor-pointer mx-2 -mr-2 lg:hidden",
     onClick: _cache[18] || (_cache[18] = function ($event) {
-      return $data.isRight = !$data.isRight;
+      return $data.isContactChat = !$data.isContactChat;
     })
   }, [_hoisted_50])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" column search "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_51, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_52, [_hoisted_53, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
     type: "search",
@@ -19426,12 +19429,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" profile user or group "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_64, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_65, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_66, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("a", {
     "class": "cursor-pointer",
     onClick: _cache[20] || (_cache[20] = function ($event) {
-      return $data.isRight = !$data.isRight;
+      return $data.isContactChat = !$data.isContactChat;
     })
   }, [_hoisted_67])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", {
     "class": "flex-none p-2 cursor-pointer",
     onClick: _cache[21] || (_cache[21] = function ($event) {
-      return $data.isDetail = true;
+      return $data.isDetailUser = true;
     })
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("img", {
     "class": "rounded-full h-10 w-10",
@@ -19442,7 +19445,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   , ["src"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", {
     "class": "flex-grow grid cursor-pointer my-auto",
     onClick: _cache[22] || (_cache[22] = function ($event) {
-      return $data.isDetail = true;
+      return $data.isDetailUser = true;
     })
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("p", _hoisted_68, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.message.name), 1
   /* TEXT */
@@ -19458,7 +19461,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* TEXT */
   )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_71, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_72, [_hoisted_73, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_74, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("a", {
     onClick: _cache[23] || (_cache[23] = function ($event) {
-      return $data.isDetail = true;
+      return $data.isDetailUser = true;
     }),
     "class": "dropdown-item"
   }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.message.chat_type === _ctx.models.message.type_user ? _ctx.trans.contact_info : _ctx.trans.group_info), 1
@@ -19578,12 +19581,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* CLASS */
   ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" detail info contact or group "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("aside", {
     "class": ["flex-none bg-light-600 dark:bg-dark-100 w-0 <xl:fixed <xl:top-0 <xl:right-0 z-10 ease-in-out transition-all duration-300", {
-      'w-100 <sm:w-full md:border-l-1 dark:md:border-dark-200': $data.isDetail
+      'w-100 <sm:w-full md:border-l-1 dark:md:border-dark-200': $data.isDetailUser
     }]
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_102, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("a", {
     "class": "cursor-pointer",
     onClick: _cache[30] || (_cache[30] = function ($event) {
-      return $data.isDetail = !$data.isDetail;
+      return $data.isDetailUser = !$data.isDetailUser;
     })
   }, [_hoisted_103]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("p", _hoisted_104, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.message.chat_type === _ctx.models.message.type_user ? _ctx.trans.contact_info : _ctx.trans.group_info), 1
   /* TEXT */
