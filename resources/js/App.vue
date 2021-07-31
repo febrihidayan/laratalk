@@ -548,7 +548,13 @@
                             }}</span>
                         </div>
                         <div
-                            v-if="item.content_type !== models.message.chat && message.chat_type === models.message.type_group"
+                            v-if="
+                                !includes(
+                                    [models.message.chat, models.message.pull_message],
+                                    item.content_type
+                                ) &&
+                                message.chat_type === models.message.type_group
+                            "
                             class="bg-light-400 text-dark-500 rounded-md mx-auto my-4 py-1 px-2"
                         >
                             <span class="text-xs">{{
@@ -562,39 +568,58 @@
                                 v-if="laratalk.profile.id == item.content_by"
                                 class="message bg-dark-500 text-white rounded-t-xl rounded-l-xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-3 ml-auto"
                             >
-                                <div class="relative z-20">
-                                    <a class="button-dropdown cursor-pointer absolute w-10 bg-gradient-to-tr from-dark-500/80 to-dark-500 right-0 opacity-0 transition-effect">
+                                <div
+                                    v-if="item.content_type === models.message.chat"
+                                    class="dropdown z-20"
+                                >
+                                    <a class="dropdown-button absolute w-10 bg-gradient-to-tr from-dark-500/80 to-dark-500 right-0 opacity-0 transition-effect">
                                         <svg class="svg-icon !bg-dark-500 float-right transform -rotate-90" viewBox="0 0 20 20">
                                             <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
                                         </svg>
                                     </a>
+                                    <div class="dropdown-menu !mt-6 !w-36">
+                                        <a
+                                            @click="sendPullMessage(item.id, message)"
+                                            class="dropdown-item"
+                                        >{{
+                                            trans.pull_message
+                                        }}</a>
+                                    </div>
                                 </div>
                                 <p>
-                                    <span class="whitespace-pre-wrap">{{
-                                        item.content
+                                    <span
+                                        :class="[`whitespace-pre-wrap`, {
+                                            'italic': item.content_type !== models.message.chat
+                                        }]"
+                                    >{{
+                                        item.content_type === models.message.chat
+                                            ? item.content
+                                            : getTransMessage(item)
                                     }}</span>
                                     <span class="w-18 inline-block"></span>
                                 </p>
                                 <small class="flex float-right -mt-3 -mb-5px z-30">{{
                                     item.time
                                 }}
-                                    <svg
-                                        :class="[`svg-icon svg-sm`, {
-                                            '!fill-light-200 !stroke-light-200': item.status != 'read'
-                                        }]"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
-                                    </svg>
-                                    <svg
-                                        v-if="item.status != 'send'"
-                                        :class="[`svg-icon svg-sm -ml-4`, {
-                                            '!fill-light-200 !stroke-light-200': item.status == 'accept'
-                                        }]"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
-                                    </svg>
+                                    <template v-if="item.content_type === models.message.chat">
+                                        <svg
+                                            :class="[`svg-icon svg-sm`, {
+                                                '!fill-light-200 !stroke-light-200': item.status != 'read'
+                                            }]"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
+                                        </svg>
+                                        <svg
+                                            v-if="item.status != 'send'"
+                                            :class="[`svg-icon svg-sm -ml-4`, {
+                                                '!fill-light-200 !stroke-light-200': item.status == 'accept'
+                                            }]"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"></path>
+                                        </svg>
+                                    </template>
                                 </small>
                             </div>
                             
@@ -603,12 +628,18 @@
                                 v-else
                                 class="message bg-white dark:text-dark-300 rounded-r-xl rounded-t-xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-2 mr-auto"
                             >
-                                <div class="relative z-20">
-                                    <a class="button-dropdown cursor-pointer absolute w-10 bg-gradient-to-tr from-white/80 to-white right-0 opacity-0 transition-effect">
+                                <div
+                                    v-if="item.content_type === models.message.chat"
+                                    class="dropdown z-20"
+                                >
+                                    <a class="dropdown-button absolute w-10 bg-gradient-to-tr from-white/80 to-white right-0 opacity-0 transition-effect">
                                         <svg class="svg-icon !bg-white !fill-gray-400 !stroke-gray-400 float-right transform -rotate-90" viewBox="0 0 20 20">
                                             <path d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
                                         </svg>
                                     </a>
+                                    <div class="dropdown-menu !mt-6 !w-36">
+                                        <!-- <a class="dropdown-item"></a> -->
+                                    </div>
                                 </div>
                                 <a
                                     @click="fetchMessages(item.content_by, models.message.type_user)"
@@ -618,8 +649,14 @@
                                     item.user_by_name
                                 }}</a>
                                 <p>
-                                    <span class="whitespace-pre-wrap">{{
-                                        item.content
+                                    <span
+                                        :class="[`whitespace-pre-wrap`, {
+                                            'italic': item.content_type !== models.message.chat
+                                        }]"
+                                    >{{
+                                        item.content_type === models.message.chat
+                                            ? item.content
+                                            : getTransMessage(item)
                                     }}</span>
                                     <span class="w-13 inline-block"></span>
                                 </p>
@@ -817,6 +854,7 @@
 
 <script>
 import debounce from 'lodash/debounce'
+import includes from 'lodash/includes'
 
 export default {
     data() {
@@ -848,6 +886,9 @@ export default {
         }
     },
     methods: {
+        // lodash includes
+        includes,
+
         addGroupParticipant(user)
         {
             this.users_add_Groups.push(user)
@@ -887,7 +928,7 @@ export default {
                             ) {
 
                                 this.message = {}
-                                console.log(this.message)
+                                
                             }
                         })
                 }
@@ -1053,6 +1094,11 @@ export default {
                         }
                     })
                 })
+                .listen('Messages\\PullMessageEvent', (e) => {
+
+                    this.pullMessage(e)
+
+                })
                 .listen('Groups\\NewGroupEvent', (e) => {
                     this.users.unshift(e)
 
@@ -1142,6 +1188,32 @@ export default {
                 })
         },
 
+        pullMessage(data)
+        {
+            if (
+                this.message &&
+                this.message.id === data.target_user_id &&
+                this.message.chat_type === data.chat_type
+            ) {
+                this.message.messages.filter((message) => {
+                    if (message.id === data.id) {
+                        message.content = ''
+                        message.content_type = data.content_type
+                    }
+                })
+            }
+            
+            this.users.filter((user) => {
+                if (
+                    user.id === data.target_user_id &&
+                    user.chat_type === data.chat_type
+                ) {
+                    user.content = ''
+                    user.content_type = data.content_type
+                }
+            })
+        },
+
         pushMessage(data)
         {
             let userIndex = -1
@@ -1228,6 +1300,21 @@ export default {
                 })
                 
             }
+        },
+
+        sendPullMessage(id, user)
+        {
+            axios
+                .post('message-pull', {
+                    id,
+                    user_id: user.id,
+                    chat_type: user.chat_type
+                })
+                .then(({ data }) => {
+
+                    this.pullMessage(data)
+
+                })
         },
 
         removeGroupParticipant(index)

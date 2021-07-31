@@ -45,20 +45,26 @@ export default {
                     item.content
                 )
             }
-
+            
             // type: 1
+            if (_type === _.pull_message) {
+                return myUser
+                    ? _t.pull_message_by : _t.pull_message
+            }
+
+            // type: 2
             if (_type === _.create_group) {
                 return myUser
                     ? _t.create_group_by
                     : this._setVal(item.user_by_name, _t.create_group)
             }
 
-            // type: 2
+            // type: 3
             if (_type === _.avatar_group) {
                 return this._setVal(item.user_by_name, _t.avatar_group)
             }
 
-            // type: 3
+            // type: 4
             if (_type === _.rename_group) {
                 return this._setVal(
                     item.user_by_name,
@@ -67,32 +73,32 @@ export default {
                 )
             }
 
-            // type: 4
+            // type: 5
             if (_type === _.description_group) {
                 return this._setVal(item.user_by_name, _t.description_group)
             }
 
-            // type: 5
+            // type: 6
             if (_type === _.info_all_group) {
                 return this._setVal(item.user_by_name, _t.info_all_group)
             }
 
-            // type: 6
+            // type: 7
             if (_type === _.info_admin_group) {
                 return this._setVal(item.user_by_name, _t.info_admin_group)
             }
 
-            // type: 7
+            // type: 8
             if (_type === _.chat_all_group) {
                 return this._setVal(item.user_by_name, _t.chat_all_group)
             }
 
-            // type: 8
+            // type: 9
             if (_type === _.chat_admin_group) {
                 return this._setVal(item.user_by_name, _t.chat_admin_group)
             }
 
-            // type: 9
+            // type: 10
             if (_type === _.add_user_group) {
                 if (myUser) {
                     return this._setVal(_t.add_user_group_by, item.user_to_name)
@@ -108,7 +114,7 @@ export default {
                 )
             }
 
-            // type: 10
+            // type: 11
             if (_type === _.remove_user_group) {
                 if (myUser) {
                     return this._setVal(_t.remove_user_group_by, item.user_to_name)
@@ -124,17 +130,17 @@ export default {
                 )
             }
 
-            // type: 11
+            // type: 12
             if (_type === _.add_admin_group && this.laratalk.profile.id === item.content_to) {
                 return _t.add_admin_group
             }
 
-            // type: 12
+            // type: 13
             if (_type === _.remove_admin_group && this.laratalk.profile.id === item.content_to) {
                 return _t.remove_admin_group
             }
             
-            // type: 13
+            // type: 14
             if (_type === _.leave_group) {
                 return myUser
                     ? _t.leave_group_by

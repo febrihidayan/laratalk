@@ -568,6 +568,9 @@ textarea::-ms-input-placeholder {
 .mt-3 {
   margin-top: 0.75rem;
 }
+.\!mt-6 {
+  margin-top: 1.5rem !important;
+}
 .max-h-50 {
   max-height: 12.5rem;
 }
@@ -875,6 +878,9 @@ textarea::-ms-input-placeholder {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.italic {
+  font-style: italic;
+}
 .uppercase {
   text-transform: uppercase;
 }
@@ -920,6 +926,12 @@ textarea::-ms-input-placeholder {
 }
 .w-0 {
   width: 0px;
+}
+.w-36 {
+  width: 9rem;
+}
+.\!w-36 {
+  width: 9rem !important;
 }
 .w-13 {
   width: 3.25rem;
@@ -1174,7 +1186,7 @@ input[type="search"]::-webkit-search-cancel-button {
   padding-left: 0.25rem;
 }
 
-.message:hover .button-dropdown {
+.message:hover .dropdown-button {
   opacity: 1;
 }
 
