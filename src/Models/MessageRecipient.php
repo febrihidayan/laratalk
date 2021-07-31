@@ -3,7 +3,7 @@
 namespace Laratalk\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User;
+use Laratalk\Config;
 
 class MessageRecipient extends Model
 {
@@ -12,7 +12,7 @@ class MessageRecipient extends Model
      *
      * @var string
      */
-    protected $table = 'laratalk_message_recipient';
+    protected $table;
 
     /**
      * The primary key for the model.
@@ -67,20 +67,32 @@ class MessageRecipient extends Model
         'read_at'
     ];
 
+    /**
+     * Creates a new instance of the model.
+     *
+     * @param  array  $attributes
+     * @return void
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->table = Config::messageRecipient();
+    }
+
     public function scopeJoinMessage($query)
     {
         return $query->join(
-            'laratalk_messages',
-            'laratalk_message_recipient.message_id',
+            Config::messages(),
+            Config::messageRecipient('message_id'),
             '=',
-            'laratalk_messages.id'
+            Config::messages('id')
         );
     }
 
     public function user()
     {
         return $this->belongsTo(
-            User::class,
+            Config::userModel(),
             'to_id'
         );
     }

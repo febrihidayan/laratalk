@@ -43,6 +43,64 @@ return [
 
     /**
      * --------------------------------------------------------------------------
+     * Laratalk User Configuration
+     * --------------------------------------------------------------------------
+     * 
+     * Set user configuration from Gravatar avatar, model, table name,
+     * to migration to add column to users table, and provide relationship
+     * to all laratalk tables.
+     * 
+     */
+    'users' => [
+        /**
+         * By default it will use the avatar from Gravatar, it will
+         * ignore the avatar field from the user table.
+         */
+        'gravatar' => true,
+
+        'model' => \App\Models\User::class,
+
+        'migration' => [
+            'table' => 'users',
+
+            'columns' => [
+                'avatar' => 'avatar',
+                'dark_mode' => 'dark_mode',
+                'locale' => 'locale',
+            ],
+
+            /**
+             * Please set this configuration according to the primary key
+             * of your users table. This will be used in all Laratalk tables
+             * for relationships between tables.
+             */
+            'foreign_key' => [
+                'type' => 'unsignedBigInteger',
+                'length' => null
+            ]
+        ],
+    ],
+
+    /**
+     * --------------------------------------------------------------------------
+     * Laratalk Tables
+     * --------------------------------------------------------------------------
+     * 
+     * These are all tables used by Laratalk to store all authorization data.
+     * 
+     */
+    'tables' => [
+        'groups' => 'groups',
+
+        'group_user' => 'group_user',
+
+        'messages' => 'messages',
+
+        'message_recipient' => 'message_recipient',
+    ],
+
+    /**
+     * --------------------------------------------------------------------------
      * Set attachments
      * --------------------------------------------------------------------------
      * 

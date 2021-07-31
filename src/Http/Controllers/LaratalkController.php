@@ -4,7 +4,7 @@ namespace Laratalk\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
+use Laratalk\Config;
 use Laratalk\Events\Messages\StatusEvent;
 use Laratalk\Laratalk;
 use Laratalk\Models\Group;
@@ -17,9 +17,9 @@ class LaratalkController extends Controller
         $user = Auth::user();
 
         $messages = Message::joinRecipient()
-            ->where('laratalk_messages.type', Message::CHAT)
-            ->where('laratalk_message_recipient.to_id', $user->id)
-            ->whereNull('laratalk_message_recipient.accept_at');
+            ->where(Config::messages('type'), Message::CHAT)
+            ->where(Config::messageRecipient('to_id'), $user->id)
+            ->whereNull(Config::messageRecipient('accept_at'));
 
         if ($messages->count()) {
 
@@ -49,8 +49,8 @@ class LaratalkController extends Controller
 
         return view('laratalk::layout')
             ->withScripts([
-                'title' => Config::get('laratalk.name'),
-                'path' => Config::get('laratalk.path'),
+                'title' => Config::name(),
+                'path' => Config::path(),
                 'profile' => [
                     'id' => $user->id,
                     'avatar' => Laratalk::gravatar($user->email),
@@ -86,7 +86,7 @@ class LaratalkController extends Controller
                     ]
                 ],
                 'translations' => Laratalk::availableTranslations(),
-                'echo' => Config::get('broadcasting.connections.pusher')
+                'echo' => Config::pusher()
             ]);
     }
 }

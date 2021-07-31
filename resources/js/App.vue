@@ -1213,6 +1213,10 @@ export default {
                 ) {
                     user.content = ''
                     user.content_type = data.content_type
+
+                    if (user.read_count) {
+                        user.read_count--
+                    }
                 }
             })
         },

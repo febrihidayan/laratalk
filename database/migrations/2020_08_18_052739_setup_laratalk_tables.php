@@ -2,10 +2,37 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Config as FacadesConfig;
 use Illuminate\Support\Facades\Schema;
+use Laratalk\Config;
 
 class SetupLaratalkTables extends Migration
 {
+    /**
+     * Foreign key type name
+     * 
+     * @var string
+     */
+    private $foreignType;
+
+    /**
+     *  Foreign key length
+     * 
+     * @var string
+     */
+    private $foreignLength;
+    
+    /**
+     * __construct
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->foreignType = FacadesConfig::get('laratalk.users.migration.foreign_key.type');
+        $this->foreignLength = FacadesConfig::get('laratalk.users.migration.foreign_key.length');
+    }
+
     /**
      * Run the migrations.
      *
@@ -13,25 +40,25 @@ class SetupLaratalkTables extends Migration
      */
     public function up()
     {
-        Schema::create('laratalk_groups', function (Blueprint $table) {
+        Schema::create(Config::groups(), function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name', 30);
             $table->string('description', 500)->nullable();
             $table->string('avatar')->nullable();
-            $table->unsignedBigInteger('user_id');
+            $table->{$this->foreignType}('user_id', $this->foreignLength);
             $table->unsignedBigInteger('pinned_message_id')->nullable();
             $table->timestamps();
         });
 
-        Schema::create('laratalk_group_user', function (Blueprint $table) {
+        Schema::create(Config::groupUser(), function (Blueprint $table) {
             $table->unsignedBigInteger('group_id');
-            $table->unsignedBigInteger('user_id');
+            $table->{$this->foreignType}('user_id', $this->foreignLength);
             $table->boolean('role')->default(0);
         });
 
-        Schema::create('laratalk_messages', function (Blueprint $table) {
+        Schema::create(Config::messages(), function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('by_id');
+            $table->{$this->foreignType}('by_id', $this->foreignLength);
             $table->unsignedBigInteger('group_id')->nullable();
             $table->text('content', 5000)->nullable();
             $table->boolean('type', 2)->default(0);
@@ -40,13 +67,29 @@ class SetupLaratalkTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create('laratalk_message_recipient', function (Blueprint $table) {
+        Schema::create(Config::messageRecipient(), function (Blueprint $table) {
             $table->unsignedBigInteger('message_id');
-            $table->unsignedBigInteger('to_id');
+            $table->{$this->foreignType}('to_id', $this->foreignLength);
             $table->timestamp('accept_at')->nullable();
             $table->timestamp('read_at')->nullable();
             $table->boolean('pinned_by')->nullable();
             $table->boolean('pinned_to')->nullable();
+        });
+
+        Schema::table(Config::users(), function (Blueprint $table) {
+            
+            if (!Schema::hasColumn(Config::users(), Config::avatar())) {
+                $table->string(Config::avatar())->nullable();
+            }
+            
+            if (!Schema::hasColumn(Config::users(), Config::darkMode())) {
+                $table->boolean(Config::darkMode())->nullable();
+            }
+            
+            if (!Schema::hasColumn(Config::users(), Config::locale())) {
+                $table->string(Config::locale())->nullable();
+            }
+            
         });
     }
 
@@ -57,8 +100,16 @@ class SetupLaratalkTables extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('laratalk_group_user');
-        Schema::dropIfExists('laratalk_groups');
-        Schema::dropIfExists('laratalk_messages');
+        Schema::dropIfExists(Config::groups());
+        Schema::dropIfExists(Config::groupUser());
+        Schema::dropIfExists(Config::messages());
+        Schema::dropIfExists(Config::messageRecipient());
+
+        Schema::table(Config::users(), function (Blueprint $table) {
+            $table->drop([
+                Config::darkMode(),
+                Config::locale()
+            ]);
+        });
     }
 }

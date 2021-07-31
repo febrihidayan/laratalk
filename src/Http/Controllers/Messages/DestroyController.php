@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Laratalk\Events\Messages\SendEvent;
 use Laratalk\Http\Resources\MessageResource;
-use Laratalk\Laratalk;
-use Laratalk\Models\Group;
 use Laratalk\Models\GroupUser;
 use Laratalk\Models\Message;
 

@@ -6,6 +6,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Laratalk\Config;
 use Laratalk\Http\Resources\UserListResource;
 use Laratalk\Models\Message;
 
@@ -17,47 +18,47 @@ class UserChatController extends Controller
 
         $users = Message::select(
             [
-                'laratalk_messages.*',
-                'laratalk_message_recipient.*',
-                'laratalk_groups.name as group_name',
-                'laratalk_groups.avatar as group_avatar',
-                'users.id',
-                'users.id as user_id',
-                'users.name as user_name',
-                'users.email as user_email',
+                Config::messages('*'),
+                Config::messageRecipient('*'),
+                Config::groups('name as group_name'),
+                Config::groups('avatar as group_avatar'),
+                Config::users('id'),
+                Config::users('id as user_id'),
+                Config::users('name as user_name'),
+                Config::users('email as user_email'),
             ])
             ->joinRecipientUserOrMessageUser()
             ->joinGroup()
             ->joinGroupUser()
-            ->where('users.id', '!=', Auth::id())
+            ->where(Config::users('id'), '!=', Auth::id())
 
             // search user chat
             ->when($q, function($query, $q) {
-                return $query->where('users.name', 'like', "%{$q}%")
-                    ->orWhere('laratalk_groups.name', 'like', "%{$q}%");
+                return $query->where(Config::users('name'), 'like', "%{$q}%")
+                    ->orWhere(Config::groups('id'), 'like', "%{$q}%");
             })
             
             // check if the user is still a member of the group
             ->where( function($query) {
                 $query->where( function($query) {
-                        $query->whereNull('laratalk_messages.group_id');
+                        $query->whereNull(Config::messages('group_id'));
                     })
                     ->orWhere( function($query) {
-                        $query->whereNotNull('laratalk_messages.group_id')
-                            ->where('laratalk_group_user.user_id', Auth::id());
+                        $query->whereNotNull(Config::messages('group_id'))
+                            ->where(Config::groupUser('user_id'), Auth::id());
                     });
             })
 
             // feature delete chat (private)
             ->where( function($q) {
-                $q->where('delete_user_id', '!=', Auth::id())
-                    ->orWhereNull('delete_user_id');
+                $q->where(Config::messages('delete_user_id'), '!=', Auth::id())
+                    ->orWhereNull(Config::messages('delete_user_id'));
             })
 
             // retrieve messages from the recipient (to_id) or yourself (by_id)
             ->where(function ($q) {
-                $q->where('laratalk_messages.by_id', Auth::id())
-                    ->orWhere('laratalk_message_recipient.to_id', Auth::id());
+                $q->where(Config::messages('by_id'), Auth::id())
+                    ->orWhere(Config::messageRecipient('to_id'), Auth::id());
             })
 
             /**
@@ -74,19 +75,19 @@ class UserChatController extends Controller
                 ];
                 return $query
                     ->whereNotIn(
-                        'laratalk_messages.type',
+                        Config::messages('type'),
                         $dataWhere
                     )
                     ->orWhere( function($query) use($dataWhere) {
                         return $query
                             ->whereIn(
-                                'laratalk_messages.type',
+                                Config::messages('type'),
                                 $dataWhere
                             )
-                            ->where('laratalk_message_recipient.to_id', Auth::id());
+                            ->where(Config::messageRecipient('to_id'), Auth::id());
                     });
             })
-            ->latest('laratalk_messages.created_at')
+            ->latest(Config::messages('created_at'))
             ->get();
 
         $resourceUsers = [];

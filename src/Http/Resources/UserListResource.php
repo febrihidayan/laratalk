@@ -2,8 +2,8 @@
 
 namespace Laratalk\Http\Resources;
 
-use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Laratalk\Config;
 use Laratalk\Laratalk;
 
 class UserListResource extends JsonResource
@@ -27,8 +27,8 @@ class UserListResource extends JsonResource
         ];
 
         if ($this->group_id) {
-            $userBy = User::find($this->by_id);
-            $userTo = User::find($this->to_id);
+            $userBy = Config::userModel()::find($this->by_id);
+            $userTo = Config::userModel()::find($this->to_id);
 
             $data += [
                 'avatar' => $this->group_avatar ?? Laratalk::gravatar(''),

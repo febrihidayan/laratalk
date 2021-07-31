@@ -3,6 +3,7 @@
 namespace Laratalk\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Laratalk\Config;
 
 class Group extends Model
 {
@@ -11,7 +12,7 @@ class Group extends Model
      *
      * @var string
      */
-    protected $table = 'laratalk_groups';
+    protected $table;
 
     /**
      * The attributes that are mass assignable.
@@ -47,20 +48,32 @@ class Group extends Model
         self::ADMIN
     ];
 
+    /**
+     * Creates a new instance of the model.
+     *
+     * @param  array  $attributes
+     * @return void
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->table = Config::groups();
+    }
+
     public function scopeJoinGroupUser($query)
     {
         return $query->leftJoin(
-            'laratalk_group_user',
-            'laratalk_groups.id',
+            Config::groupUser(),
+            "{$this->table}.id",
             '=',
-            'laratalk_group_user.group_id'
+            Config::groupUser('group_id')
         );
     }
 
     public function users()
     {
         return $this->belongsToMany(
-            \Illuminate\Foundation\Auth\User::class,
+            Config::userModel(),
             GroupUser::class,
             'group_id',
             'user_id',

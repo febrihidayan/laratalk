@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
+use Laratalk\Config;
 use Laratalk\Events\Groups\NewGroupEvent;
 use Laratalk\Http\Resources\UserListResource;
 use Laratalk\Models\Group;
@@ -59,8 +60,8 @@ class CreateController extends Controller
             $messageCreate = new UserListResource(
                 $messageCreate->select([
                         '*',
-                        'laratalk_groups.avatar as group_avatar',
-                        'laratalk_groups.name as group_name',
+                        Config::groups('avatar as group_avatar'),
+                        Config::groups('name as group_name'),
                     ])
                     ->joinGroup()
                     ->joinRecipient()
