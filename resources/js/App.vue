@@ -418,7 +418,7 @@
                                         </svg>
                                     </template>
                                     <span class="flex-grow truncate">{{
-                                        item.chat_type === models.message.type_user
+                                        item.content_type === models.message.chat
                                             ? item.content : getTransMessage(item)
                                     }}</span>
                                 </div>
