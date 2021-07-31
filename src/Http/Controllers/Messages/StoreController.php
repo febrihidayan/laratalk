@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
+use Laratalk\Config;
 use Laratalk\Events\Messages\SendEvent;
 use Laratalk\Http\Resources\MessageResource;
 use Laratalk\Laratalk;
@@ -81,8 +82,8 @@ class StoreController extends Controller
         if (Request::get('chat_type') === Message::TYPE_GROUP) {
 
             $dataUsers = Group::joinGroupUser()
-                ->where('laratalk_group_user.user_id', '!=', Auth::id())
-                ->pluck('laratalk_group_user.user_id');
+                ->where(Config::groupUser('user_id'), '!=', Auth::id())
+                ->pluck(Config::groupUser('user_id'));
 
         }
 

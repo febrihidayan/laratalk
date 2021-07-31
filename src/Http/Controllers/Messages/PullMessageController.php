@@ -27,8 +27,7 @@ class PullMessageController extends Controller
             ])
             ->update([
                 'content' => null,
-                'type' => Message::PULL_MESSAGE,
-                'deleted_at' => now()
+                'type' => Message::PULL_MESSAGE
             ]);
 
         if (Request::get('chat_type') === Message::TYPE_GROUP) {

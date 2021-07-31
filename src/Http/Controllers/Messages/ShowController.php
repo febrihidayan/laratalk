@@ -2,11 +2,11 @@
 
 namespace Laratalk\Http\Controllers\Messages;
 
-use Illuminate\Foundation\Auth\User;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Laratalk\Config;
 use Laratalk\Events\Messages\StatusEvent;
 use Laratalk\Http\Resources\Messages\ShowGroupResource;
 use Laratalk\Http\Resources\Messages\ShowUserResource;
@@ -88,12 +88,12 @@ class ShowController extends Controller
                 if ($type === Message::TYPE_GROUP) {
 
                     return $query
-                        ->where('laratalk_messages.group_id', $id)
-                        ->where('laratalk_message_recipient.to_id', Auth::id());
+                        ->where(Config::messages('group_id'), $id)
+                        ->where(Config::messageRecipient('to_id'), Auth::id());
                 }
             })
-            ->where('laratalk_messages.type', Message::CHAT)
-            ->whereNull('laratalk_message_recipient.read_at');
+            ->where(Config::messages('type'), Message::CHAT)
+            ->whereNull(Config::messageRecipient('read_at'));
 
         if ($messages->count() && $messageRecipient->count()) {
 
@@ -113,7 +113,7 @@ class ShowController extends Controller
         ];
 
         if (Request::get('type') == Message::TYPE_USER) {
-            $first = User::find($id);
+            $first = Config::userModel()::find($id);
 
             $data += [
                 'id' => $first->id,

@@ -4,6 +4,7 @@ namespace Laratalk\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Facades\Auth;
+use Laratalk\Config;
 
 class GroupUser extends Pivot
 {
@@ -12,7 +13,7 @@ class GroupUser extends Pivot
      *
      * @var string
      */
-    protected $table = 'laratalk_group_user';
+    protected $table;
 
     /**
      * The primary key for the model.
@@ -43,6 +44,18 @@ class GroupUser extends Pivot
     protected $fillable = [
         'group_id', 'user_id', 'role'
     ];
+
+    /**
+     * Creates a new instance of the model.
+     *
+     * @param  array  $attributes
+     * @return void
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->table = Config::groupUser();
+    }
 
     public function scopeUserGroup($query, $groupId, $userId = null)
     {

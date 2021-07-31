@@ -3,8 +3,8 @@
 namespace Laratalk\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
+use Laratalk\Config;
 use Laratalk\Laratalk;
 
 class Message extends Model
@@ -14,7 +14,7 @@ class Message extends Model
      *
      * @var string
      */
-    protected $table = 'laratalk_messages';
+    protected $table;
     
     /**
      * The attributes that are mass assignable.
@@ -167,6 +167,18 @@ class Message extends Model
     public const READ = 'read';
 
     /**
+     * Creates a new instance of the model.
+     *
+     * @param  array  $attributes
+     * @return void
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->table = Config::messages();
+    }
+
+    /**
      * Get the type chat message.
      *
      * @return string
@@ -212,12 +224,12 @@ class Message extends Model
     {
         return $this->joinRecipientUser()
             ->where([
-                ['laratalk_messages.type', self::CHAT],
-                ['laratalk_messages.by_id', $this->id],
-                ['laratalk_message_recipient.message_id', $this->message_id],
-                ['laratalk_message_recipient.to_id', Auth::id()]
+                [Config::messages('type'), self::CHAT],
+                [Config::messages('by_id'), $this->id],
+                [Config::messageRecipient('message_id'), $this->message_id],
+                [Config::messageRecipient('to_id'), Auth::id()]
             ])
-            ->whereNull('laratalk_message_recipient.read_at')->count();
+            ->whereNull(Config::messageRecipient('read_at'))->count();
     }
 
     public function statusMessage(): string
@@ -236,16 +248,16 @@ class Message extends Model
     public function scopeAuthUser($query)
     {
         return $query->where(function ($q) {
-                $q->where('laratalk_messages.by_id', Auth::id())
-                    ->orWhere('laratalk_message_recipient.to_id', Auth::id());
+                $q->where(Config::messages('by_id'), Auth::id())
+                    ->orWhere(Config::messageRecipient('to_id'), Auth::id());
             });
     }
 
     public function scopeWhereMetaUser($query, $userId, $orWhere = false)
     {
         $fields = [
-            ['by_id', $orWhere ? $userId : Auth::id()],
-            ['laratalk_message_recipient.to_id', !$orWhere ? $userId : Auth::id()]
+            [Config::messages('by_id'), $orWhere ? $userId : Auth::id()],
+            [Config::messageRecipient('to_id'), !$orWhere ? $userId : Auth::id()]
         ];
 
         if ($orWhere) {
@@ -258,10 +270,10 @@ class Message extends Model
     public function scopeJoinRecipient($query)
     {
         return $query->leftJoin(
-            'laratalk_message_recipient',
-            'laratalk_message_recipient.message_id',
+            Config::messageRecipient(),
+            Config::messageRecipient('message_id'),
             '=',
-            'laratalk_messages.id'
+            Config::messages('id')
         );
     }
 
@@ -269,10 +281,10 @@ class Message extends Model
     {
         return $query->joinRecipient()
             ->leftJoin(
-                'users',
-                'laratalk_message_recipient.to_id',
+                Config::users(),
+                Config::messageRecipient('to_id'),
                 '=',
-                'users.id'
+                Config::users('id')
             );
     }
 
@@ -280,18 +292,18 @@ class Message extends Model
     {
         return $query->joinRecipient()
             ->leftJoin(
-                'users',
+                Config::users(),
                 function ($join) {
                     $join
                         ->on(
-                            'laratalk_message_recipient.to_id',
+                            Config::messageRecipient('to_id'),
                             '=',
-                            'users.id'
+                            Config::users('id')
                         )
                         ->orOn(
-                            'laratalk_messages.by_id',
+                            Config::messages('by_id'),
                             '=',
-                            'users.id'
+                            Config::users('id')
                         );
                 }
             );
@@ -300,30 +312,30 @@ class Message extends Model
     public function scopeJoinGroup($query)
     {
         return $query->leftJoin(
-            'laratalk_groups',
-            'laratalk_messages.group_id',
+            Config::groups(),
+            Config::messages('group_id'),
             '=',
-            'laratalk_groups.id'
+            Config::groups('id')
         );
     }
 
     public function scopeJoinGroupUser($query)
     {
         return $query->leftJoin(
-            'laratalk_group_user',
-            'laratalk_groups.id',
+            Config::groupUser(),
+            Config::groups('id'),
             '=',
-            'laratalk_group_user.group_id'
+            Config::groupUser('group_id')
         );
     }
 
     public function scopeJoinUser($query)
     {
         return $query->leftJoin(
-            'users',
-            'laratalk_messages.by_id',
+            Config::users(),
+            Config::messages('by_id'),
             '=',
-            'users.id'
+            Config::users('id')
         );
     }
 
@@ -345,7 +357,7 @@ class Message extends Model
     public function user()
     {
         return $this->belongsTo(
-            User::class,
+            Config::userModel(),
             'by_id'
         );
     }
