@@ -1,4 +1,4 @@
-const laratalk = window.Laratalk
+const laratalk = window.laratalk
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -22,9 +22,9 @@ import Echo from 'laravel-echo';
 window.Pusher = require('pusher-js');
 
 window.Echo = new Echo({
-    broadcaster: 'pusher',
+    broadcaster: laratalk.echo.driver,
     key: laratalk.echo.key,
-    cluster: laratalk.echo.cluster,
-    forceTLS: true,
+    cluster: laratalk.echo.options.cluster,
+    forceTLS: laratalk.echo.options.useTLS,
     namespace: 'Laratalk.Events'
 });

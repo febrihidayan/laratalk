@@ -4,6 +4,8 @@ namespace Laratalk\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Auth;
+use Laratalk\Laratalk;
 
 class Message extends Model
 {
@@ -13,43 +15,339 @@ class Message extends Model
      * @var string
      */
     protected $table = 'laratalk_messages';
+    
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'from_id', 'to_id', 'group_id', 'content', 'read_at',
-        'pinned', 'parent_id'
+        'by_id', 'group_id', 'content',
+        'type', 'parent_id', 'delete_user_id'
     ];
 
     /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
+     * Type chat
+     * 
+     * @var number
      */
-    protected $casts = [
-        'read_at' => 'datetime',
-        'pinned' => 'boolean'
-    ];
+    public const CHAT = 0;
 
     /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
+     * Type pull message
+     * 
+     * @var number
      */
-    protected $dates = [
-        'read_at',
-    ];
+    public const PULL_MESSAGE = 1;
 
-    public function userFrom()
+    /**
+     * Type create group
+     * 
+     * @var number
+     */
+    public const CREATE_GROUP = 2;
+
+    /**
+     * Type change group avatar
+     * 
+     * @var number
+     */
+    public const AVATAR_GROUP = 3;
+
+    /**
+     * Type rename group
+     * 
+     * @var number
+     */
+    public const RENAME_GROUP = 4;
+
+    /**
+     * Type change group description
+     * 
+     * @var number
+     */
+    public const DESCRIPTION_GROUP = 5;
+
+    /**
+     * Type change group info for all
+     * 
+     * @var number
+     */
+    public const INFO_ALL_GROUP = 6;
+
+    /**
+     * Type change group info for admin
+     * 
+     * @var number
+     */
+    public const INFO_ADMIN_GROUP = 7;
+
+    /**
+     * Type change group chat for all
+     * 
+     * @var number
+     */
+    public const CHAT_ALL_GROUP = 8;
+
+    /**
+     * Type change group chat for admin
+     * 
+     * @var number
+     */
+    public const CHAT_ADMIN_GROUP = 9;
+
+    /**
+     * Type add_user group
+     * 
+     * @var number
+     */
+    public const ADD_USER_GROUP = 10;
+
+    /**
+     * Type remove_user group
+     * 
+     * @var number
+     */
+    public const REMOVE_USER_GROUP = 11;
+
+    /**
+     * Type add_admin group
+     * 
+     * @var number
+     */
+    public const ADD_ADMIN_GROUP = 12;
+
+    /**
+     * Type remove_admin group
+     * 
+     * @var number
+     */
+    public const REMOVE_ADMIN_GROUP = 13;
+
+    /**
+     * Type user leave group
+     * 
+     * @var number
+     */
+    public const LEAVE_GROUP = 14;
+
+    /**
+     * User type for message
+     * 
+     * @var string
+     */
+    public const TYPE_USER = 'user';
+
+    /**
+     * Group type for message
+     * 
+     * @var string
+     */
+    public const TYPE_GROUP = 'group';
+
+    /**
+     * Status send message
+     * 
+     * @var string
+     */
+    public const SEND = 'send';
+
+    /**
+     * Status accept message
+     * 
+     * @var string
+     */
+    public const ACCEPT = 'accept';
+
+    /**
+     * Status read message
+     * 
+     * @var string
+     */
+    public const READ = 'read';
+
+    /**
+     * Get the type chat message.
+     *
+     * @return string
+     */
+    public function chatType(): string
     {
-        return $this->belongsTo(User::class, 'from_id');
+        if ($this->group_id) {
+            return self::TYPE_GROUP;
+        }
+
+        return self::TYPE_USER;
     }
 
-    public function userTo()
+    public function lastTime(): string
     {
-        return $this->belongsTo(User::class, 'to_id');
+        return Laratalk::lastTime($this->created_at, true);
+    }
+
+    public function statusMessageRecipient(): string
+    {
+        $data = (
+            $this->chatType() == self::TYPE_GROUP
+        )
+            ? $this->recipients[0] : $this->recipient;
+
+        if ($data->read_at) {
+            return self::READ;
+        }
+
+        if ($data->accept_at) {
+            return self::ACCEPT;
+        }
+
+        return self::SEND;
+    }
+
+    public function time(): string
+    {
+        return $this->created_at->format('H.i');
+    }
+
+    public function readCount(): int
+    {
+        return $this->joinRecipientUser()
+            ->where([
+                ['laratalk_messages.type', self::CHAT],
+                ['laratalk_messages.by_id', $this->id],
+                ['laratalk_message_recipient.message_id', $this->message_id],
+                ['laratalk_message_recipient.to_id', Auth::id()]
+            ])
+            ->whereNull('laratalk_message_recipient.read_at')->count();
+    }
+
+    public function statusMessage(): string
+    {
+        if ($this->read_at) {
+            return self::READ;
+        }
+
+        if ($this->accept_at) {
+            return self::ACCEPT;
+        }
+
+        return self::SEND;
+    }
+
+    public function scopeAuthUser($query)
+    {
+        return $query->where(function ($q) {
+                $q->where('laratalk_messages.by_id', Auth::id())
+                    ->orWhere('laratalk_message_recipient.to_id', Auth::id());
+            });
+    }
+
+    public function scopeWhereMetaUser($query, $userId, $orWhere = false)
+    {
+        $fields = [
+            ['by_id', $orWhere ? $userId : Auth::id()],
+            ['laratalk_message_recipient.to_id', !$orWhere ? $userId : Auth::id()]
+        ];
+
+        if ($orWhere) {
+            return $query->orWhere($fields);
+        }
+
+        return $query->where($fields);
+    }
+
+    public function scopeJoinRecipient($query)
+    {
+        return $query->leftJoin(
+            'laratalk_message_recipient',
+            'laratalk_message_recipient.message_id',
+            '=',
+            'laratalk_messages.id'
+        );
+    }
+
+    public function scopeJoinRecipientUser($query)
+    {
+        return $query->joinRecipient()
+            ->leftJoin(
+                'users',
+                'laratalk_message_recipient.to_id',
+                '=',
+                'users.id'
+            );
+    }
+
+    public function scopeJoinRecipientUserOrMessageUser($query)
+    {
+        return $query->joinRecipient()
+            ->leftJoin(
+                'users',
+                function ($join) {
+                    $join
+                        ->on(
+                            'laratalk_message_recipient.to_id',
+                            '=',
+                            'users.id'
+                        )
+                        ->orOn(
+                            'laratalk_messages.by_id',
+                            '=',
+                            'users.id'
+                        );
+                }
+            );
+    }
+
+    public function scopeJoinGroup($query)
+    {
+        return $query->leftJoin(
+            'laratalk_groups',
+            'laratalk_messages.group_id',
+            '=',
+            'laratalk_groups.id'
+        );
+    }
+
+    public function scopeJoinGroupUser($query)
+    {
+        return $query->leftJoin(
+            'laratalk_group_user',
+            'laratalk_groups.id',
+            '=',
+            'laratalk_group_user.group_id'
+        );
+    }
+
+    public function scopeJoinUser($query)
+    {
+        return $query->leftJoin(
+            'users',
+            'laratalk_messages.by_id',
+            '=',
+            'users.id'
+        );
+    }
+
+    public function recipient()
+    {
+        return $this->hasOne(
+            MessageRecipient::class,
+            'message_id'
+        );
+    }
+
+    public function recipients()
+    {
+        return $this->hasMany(
+            MessageRecipient::class
+        );
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(
+            User::class,
+            'by_id'
+        );
     }
 
 }

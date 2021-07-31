@@ -3,7 +3,7 @@
 namespace Laratalk\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Laratalk\Models\Message;
+use Illuminate\Support\Facades\Auth;
 
 class MessageResource extends JsonResource
 {
@@ -15,27 +15,29 @@ class MessageResource extends JsonResource
      */
     public function toArray($request)
     {
-        $count = Message::where([
-            ['from_id', $this->from_id],
-            ['to_id', $this->to_id],
-        ])->whereNull('read_at')->count();
+        $data = [
+            'id' => $this->id,
+            'content' => $this->content,
+            'content_by' => $this->by_id,
+            'content_type' => $this->type,
+            'chat_type' => $this->chatType(),
+            'last_time' => $this->lastTime(),
+            'time' => $this->time()
+        ];
 
-        $addField = [];
-
-        foreach (array_keys(config('laratalk.users')) as $value) {
-            $addField[$value] = $this->$value;
+        if ($this->group_id) {
+            $data += [
+                'group_id' => $this->group_id,
+                'content_to' => $this->recipient->to_id ?? '',
+                'user_by_name' => $this->user->name,
+                'user_to_name' => $this->recipient->user->name ?? ''
+            ];
         }
 
-        return [
-            'id' => $this->userFrom->id,
-            'name' => $this->userFrom->name,
-            'avatar' => $this->userFrom->avatar,
-            'from_id' => $this->from_id,
-            'to_id' => $this->to_id,
-            'content' => $this->content,
-            'created_at' => $this->created_at,
-            'count' => $count,
-            'field' => $addField
-        ];
+        if (Auth::id() === $this->by_id) {
+            $data['status'] = $this->statusMessage();
+        }
+
+        return $data;
     }
 }

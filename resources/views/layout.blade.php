@@ -8,20 +8,15 @@
     
     <title>{{ config('laratalk.name') }}</title>
 
-    <link rel="stylesheet" type="text/css" href="{{ mix('css/app.css', 'vendor/laratalk') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.2.0/css/all.min.css">
-
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Karla|Merriweather:400,700">
+    <link rel="stylesheet" type="text/css" href="{{ mix('css/app.css', 'vendor/laratalk') }}">
 </head>
-<body>
+<body class="overflow-hidden">
 
-    <div id="laratalk">
-        <router-view></router-view>
-    </div>
+    <div id="laratalk"></div>
 
     <script>
-        window.Laratalk = @json($scripts);
+        window.laratalk = @json($scripts);
     </script>
     
     <script type="text/javascript" src="{{ mix('js/app.js', 'vendor/laratalk') }}"></script>
