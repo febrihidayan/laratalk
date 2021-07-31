@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
+use Laratalk\Events\Messages\SendEvent;
+use Laratalk\Http\Resources\MessageResource;
 use Laratalk\Laratalk;
 use Laratalk\Models\Group;
 use Laratalk\Models\GroupUser;
@@ -28,11 +30,31 @@ class DestroyController extends Controller
         if (Request::get('chat_type') === Message::TYPE_GROUP) {
             GroupUser::userGroup(Request::get('id'))->delete();
 
-            Message::create([
+            $message = Message::create([
                 'by_id' => Auth::id(),
                 'group_id' => Request::get('id'),
                 'type' => Message::LEAVE_GROUP
             ]);
+
+            $userGroups = GroupUser::where('group_id', Request::get('id'))
+                ->get()
+                ->pluck('user_id');
+
+            $messageResource = collect(
+                new MessageResource(
+                    Message::find($message->id)
+                )
+            )->toArray();
+            
+            foreach ($userGroups as $id) {
+
+                SendEvent::dispatch(
+                    $messageResource,
+                    $id
+                );
+                
+            }
+
         }
         else {
             Message::whereHas('recipient', function ($query) {

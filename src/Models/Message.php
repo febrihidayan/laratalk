@@ -307,6 +307,16 @@ class Message extends Model
         );
     }
 
+    public function scopeJoinGroupUser($query)
+    {
+        return $query->leftJoin(
+            'laratalk_group_user',
+            'laratalk_groups.id',
+            '=',
+            'laratalk_group_user.group_id'
+        );
+    }
+
     public function scopeJoinUser($query)
     {
         return $query->leftJoin(

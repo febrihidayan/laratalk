@@ -28,22 +28,41 @@ class UserChatController extends Controller
             ])
             ->joinRecipientUserOrMessageUser()
             ->joinGroup()
+            ->joinGroupUser()
+            ->where('users.id', '!=', Auth::id())
+
+            // search user chat
             ->when($q, function($query, $q) {
                 return $query->where('users.name', 'like', "%{$q}%")
                     ->orWhere('laratalk_groups.name', 'like', "%{$q}%");
             })
-            ->where('users.id', '!=', Auth::id())
+            
+            // check if the user is still a member of the group
+            ->where( function($query) {
+                $query->where( function($query) {
+                        $query->whereNull('laratalk_messages.group_id');
+                    })
+                    ->orWhere( function($query) {
+                        $query->whereNotNull('laratalk_messages.group_id')
+                            ->where('laratalk_group_user.user_id', Auth::id());
+                    });
+            })
+
+            // feature delete chat (private)
             ->where( function($q) {
                 $q->where('delete_user_id', '!=', Auth::id())
                     ->orWhereNull('delete_user_id');
             })
+
+            // retrieve messages from the recipient (to_id) or yourself (by_id)
             ->where(function ($q) {
                 $q->where('laratalk_messages.by_id', Auth::id())
                     ->orWhere('laratalk_message_recipient.to_id', Auth::id());
             })
 
             /**
-             * If the type is 11 and 12 then only the designated user sees the message
+             * If the type is 11 and 12 then only the designated user sees
+             * the message.
              * 
              * type 11: Message::ADD_ADMIN_GROUP
              * type 12: Message::REMOVE_ADMIN_GROUP
