@@ -1,0 +1,86 @@
+@windicss;
+
+::-webkit-scrollbar {
+    background-color: transparent;
+    height: 6px;
+    width: 6px
+}
+
+::-webkit-scrollbar-thumb {
+    transition: background .2s ease-in-out;
+    background-color: transparent;
+    border-radius: 9999px
+}
+
+::-webkit-scrollbar-corner {
+    background-color: transparent
+}
+
+:hover::-webkit-scrollbar-thumb {
+    background-color: rgb(192, 192, 192)
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+    display: none;
+}
+
+.sidebar-content {
+    height: calc(100vh - 6.5rem);
+    @apply overflow-y-auto overflow-x-hidden;
+}
+
+.sidebar-detail {
+    height: calc(100vh - 3.5rem);
+    @apply overflow-y-auto overflow-x-hidden;
+}
+
+.main-content {
+    height: calc(100vh - 7.25rem);
+    @apply overflow-y-auto overflow-x-hidden;
+}
+
+.sidebar-list {
+    @apply divide-y dark:divide-gray-500;
+}
+.sidebar-list:hover .dropdown {
+    @apply mr-0 pl-1 opacity-100;
+}
+
+.message:hover .dropdown-button {
+    @apply opacity-100;
+}
+
+.svg-icon {
+    stroke-width: .25;
+    @apply fill-purple-400 stroke-purple-400 w-6 h-6;
+}
+
+.svg-icon.svg-sm {
+    @apply !w-5 !h-5;
+}
+
+.dark .svg-icon {
+    stroke-width: .5;
+    @apply fill-true-gray-200 stroke-true-gray-200;
+}
+
+.transition-effect {
+    @apply ease-in-out transition-all duration-200;
+}
+
+/* Dropdown */
+.dropdown {
+    @apply flex-none relative font-normal;
+}
+.dropdown-button {
+    @apply cursor-pointer;
+}
+.dropdown:hover .dropdown-menu {
+    @apply !block;
+}
+.dropdown-menu {
+    @apply bg-white hidden dark:bg-dark-300 absolute right-0 -mr-1 py-2 w-48 rounded-md shadow-lg;
+}
+.dropdown-item {
+    @apply cursor-pointer text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-light-700 dark:hover:bg-dark-100 dark:hover:text-light-100 block px-4 py-2 text-sm;
+}
