@@ -8,6 +8,25 @@ import HelperMixin from './Mixins/HelperMixin'
 import Modal from './components/modules/Modal.vue'
 import BoxAside from './components/modules/BoxAside.vue'
 
+import {
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    LogoutIcon,
+    SunIcon
+} from '@heroicons/vue/outline'
+
+import {
+    AnnotationIcon,
+    CheckIcon,
+    ChevronDownIcon,
+    DotsVerticalIcon,
+    MoonIcon,
+    SearchIcon,
+    TranslateIcon,
+    TrashIcon,
+    XIcon
+} from '@heroicons/vue/solid'
+
 const app = createApp({
     mixins: [
         GlobalMixin,
@@ -15,7 +34,22 @@ const app = createApp({
     ],
     components: {
         Modal,
-        BoxAside
+        BoxAside,
+
+        // icons
+        AnnotationIcon,
+        CheckIcon,
+        ChevronDownIcon,
+        ChevronLeftIcon,
+        ChevronRightIcon,
+        DotsVerticalIcon,
+        LogoutIcon,
+        MoonIcon,
+        SearchIcon,
+        SunIcon,
+        TranslateIcon,
+        TrashIcon,
+        XIcon
     },
     ...App
 })
