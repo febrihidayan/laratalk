@@ -212,9 +212,9 @@
                     @click="sendGroup"
                     class="cursor-pointer"
                 >
-                    <div class="bg-blue-700 rounded-full p-2">
+                    <div class="bg-violet-600 rounded-full p-2">
                         <CheckIcon
-                            class="svg-icon !h-7 !w-7"
+                            class="svg-icon !text-white !h-7 !w-7"
                         />
                     </div>
                 </a>
@@ -369,7 +369,9 @@
                     :key="index"
                     :class="[{
                         'font-medium': item.read_count,
-                        '!bg-light-500 dark:!bg-true-gray-800':
+                        'hover:bg-light-300 dark:hover:bg-true-gray-700':
+                            form.type_id != getTypeId(item.chat_type, item.id),
+                        'bg-light-500 dark:bg-true-gray-800':
                             form.type_id == getTypeId(item.chat_type, item.id)
                     }]"
                 >
@@ -761,40 +763,37 @@
                     }}</small>
                     <div class="mt-4">
                         <template
-                                v-for="(item, index) in message.users"
-                                :key="index"
+                            v-for="(item, index) in message.users"
+                            :key="index"
+                        >
+                            <Media
+                                v-on:click="laratalk.profile.id != item.id ? fetchMessages(item.id, models.message.type_user) : ''"
+                                :cursor="laratalk.profile.id != item.id"
                             >
-                                <div
-                                    v-on:click="laratalk.profile.id != item.id ? fetchMessages(item.id, models.message.type_user) : ''"
-                                    :class="[`sidebar-list flex h-18`, {
-                                        'cursor-pointer hover:bg-light-300 dark:hover:bg-true-gray-700': laratalk.profile.id != item.id
-                                    }]"
-                                >
-                                    <div class="flex flex-col justify-center px-3 pl-6">
-                                        <figure>
-                                            <img
-                                                class="rounded-full h-13 w-13"
-                                                :src="item.avatar"
-                                                alt="avatar"
-                                            >
-                                        </figure>
-                                    </div>
-                                    <div class="flex flex-grow flex-col justify-center w-73 pr-6">
-                                        <div class="flex">
-                                            <p class="flex-grow truncate text-lg">{{
-                                                laratalk.profile.id != item.id
-                                                    ? item.name : trans.you
-                                            }}</p>
-                                            <small
-                                                v-if="item.role === models.group.admin"
-                                                class="flex-none bg-violet-600 text-white text-xs py-1 px-2 rounded-md"
-                                            >{{
-                                                trans.group_admin
-                                            }}</small>
-                                        </div>
-                                    </div>
+                                <template #left>
+                                    <figure class="pl-6">
+                                        <img
+                                            class="rounded-full h-13 w-13"
+                                            :src="item.avatar"
+                                            alt="avatar"
+                                        >
+                                    </figure>
+                                </template>
+
+                                <div class="flex pr-6">
+                                    <p class="flex-grow truncate text-lg">{{
+                                        laratalk.profile.id != item.id
+                                            ? item.name : trans.you
+                                    }}</p>
+                                    <small
+                                        v-if="item.role === models.group.admin"
+                                        class="flex-none bg-violet-600 text-white text-xs py-1 px-2 rounded-md"
+                                    >{{
+                                        trans.group_admin
+                                    }}</small>
                                 </div>
-                            </template>
+                            </Media>
+                        </template>
                     </div>
                 </div>
                 <a
