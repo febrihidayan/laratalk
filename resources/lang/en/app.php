@@ -3,6 +3,7 @@
 return [
     'at' => 'at',
     'cancel' => 'Cancel',
+    'change_language' => 'Change language',
     'contact_info' => 'Contact info',
     'dark' => 'Dark',
     'delete_chat' => 'Delete chat',
@@ -13,6 +14,7 @@ return [
     'group_info' => 'Group info',
     'group_name' => 'Group name',
     'info_and_email_address' => 'Info and email address',
+    'language' => 'Languages',
     'laratalk_description' => 'Laratalk provides Laravel based chat between users and groups',
     'laratalk_title' => 'Laratalk Messenger',
     'leave_the_group' => 'Leave the group',

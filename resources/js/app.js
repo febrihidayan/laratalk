@@ -3,16 +3,28 @@ require('./plugins')
 import { createVNode, createApp, render } from 'vue'
 import App from './App.vue'
 
+/**
+ * Mixins
+ */
 import GlobalMixin from './Mixins/GlobalMixin'
 import HelperMixin from './Mixins/HelperMixin'
-import Modal from './components/modules/Modal.vue'
-import BoxAside from './components/modules/BoxAside.vue'
 
+/**
+ * Components
+ */
+import BoxAside from './components/modules/BoxAside.vue'
+import Media from './components/modules/Media.vue'
+import Modal from './components/modules/Modal.vue'
+
+/**
+ * Svg icons
+ */
 import {
     ChevronLeftIcon,
     ChevronRightIcon,
     LogoutIcon,
-    SunIcon
+    SunIcon,
+    TranslateIcon
 } from '@heroicons/vue/outline'
 
 import {
@@ -22,7 +34,6 @@ import {
     DotsVerticalIcon,
     MoonIcon,
     SearchIcon,
-    TranslateIcon,
     TrashIcon,
     XIcon
 } from '@heroicons/vue/solid'
@@ -33,8 +44,9 @@ const app = createApp({
         HelperMixin
     ],
     components: {
-        Modal,
         BoxAside,
+        Media,
+        Modal,
 
         // icons
         AnnotationIcon,

@@ -52,33 +52,31 @@
                     v-for="(item, index) in users_new_chat"
                     :key="index"
                 >
-                    <div
+                    <Media
                         v-if="index == 0 || (users_new_chat[index-1] && users_new_chat[index-1].name.substr(0,1) != item.name.substr(0,1))"
-                        class="flex flex-grow mx-8 my-6 text-violet-600 dark:text-light-200"
+                        class="mx-8 text-violet-600 dark:text-light-200"
+                        :cursor="false"
                     >{{
                         item.name.substr(0,1)
-                    }}</div>
-                    <div
+                    }}</Media>
+
+                    <Media
                         @click="fetchMessages(item.id, models.message.type_user);isBoxChat=false"
-                        class="sidebar-list flex h-18 cursor-pointer hover:bg-light-300 dark:hover:bg-true-gray-700"
                     >
-                        <div class="flex flex-col justify-center px-3">
-                            <figure>
-                                <img
-                                    class="rounded-full h-13 w-13"
-                                    :src="item.avatar"
-                                    alt="avatar"
-                                >
-                            </figure>
+                        <template #left>
+                            <img
+                                class="rounded-full h-13 w-13"
+                                :src="item.avatar"
+                                alt="avatar"
+                            >
+                        </template>
+
+                        <div class="flex">
+                            <p class="flex-grow truncate text-lg">{{
+                                item.name
+                            }}</p>
                         </div>
-                        <div class="flex flex-grow flex-col justify-center w-73 pr-3">
-                            <div class="flex">
-                                <p class="flex-grow truncate text-lg">{{
-                                    item.name
-                                }}</p>
-                            </div>
-                        </div>
-                    </div>
+                    </Media>
                 </template>
             </div>
         </BoxAside>
@@ -139,34 +137,32 @@
                         v-for="(item, index) in users_new_chat"
                         :key="index"
                     >
-                        <div
+                        <Media
                             v-if="index == 0 || (users_new_chat[index-1] && users_new_chat[index-1].name.substr(0,1) != item.name.substr(0,1))"
-                            class="flex flex-grow mx-8 my-6 text-violet-600 dark:text-light-200"
+                            class="mx-8 text-violet-600 dark:text-light-200"
+                            :cursor="false"
                         >{{
                             item.name.substr(0,1)
-                        }}</div>
-                        <div
+                        }}</Media>
+
+                        <Media
                             @click="addGroupParticipant(item)"
                             v-if="users_add_Groups.findIndex((s) => s.id === item.id) == -1"
-                            class="sidebar-list flex h-18 cursor-pointer hover:bg-light-300 dark:hover:bg-true-gray-700"
                         >
-                            <div class="flex flex-col justify-center px-3">
-                                <figure>
-                                    <img
-                                        class="rounded-full h-13 w-13"
-                                        :src="item.avatar"
-                                        alt="avatar"
-                                    >
-                                </figure>
+                            <template #left>
+                                <img
+                                    class="rounded-full h-13 w-13"
+                                    :src="item.avatar"
+                                    alt="avatar"
+                                >
+                            </template>
+
+                            <div class="flex">
+                                <p class="flex-grow truncate text-lg">{{
+                                    item.name
+                                }}</p>
                             </div>
-                            <div class="flex flex-grow flex-col justify-center w-73 pr-3">
-                                <div class="flex">
-                                    <p class="flex-grow truncate text-lg">{{
-                                        item.name
-                                    }}</p>
-                                </div>
-                            </div>
-                        </div>
+                        </Media>
                     </template>
                 </div>
                 <div class="flex justify-center items-center w-full min-h-18 bg-light-600 dark:bg-dark-200 h-20 mx-auto my-auto">
@@ -247,26 +243,45 @@
                     }}</p>
                 </div>
             </div>
-            <div
+            <Media
                 @click="isSettingTheme=true"
-                class="flex cursor-pointer hover:bg-light-300 dark:hover:bg-dark-100"
+                class="!h-15"
             >
-                <div class="flex-none py-4 px-6">
-                    <MoonIcon
-                        v-if="dark_mode"
-                        class="svg-icon"
-                    />
-                    <SunIcon
-                        v-else
-                        class="svg-icon"
-                    />
-                </div>
-                <div class="flex-grow my-auto">
-                    <p class="text-md">{{
-                        trans.theme
-                    }}</p>
-                </div>
-            </div>
+                <template #left>
+                    <div class="py-4 px-3">
+                        <MoonIcon
+                            v-if="dark_mode"
+                            class="svg-icon"
+                        />
+                        <SunIcon
+                            v-else
+                            class="svg-icon"
+                        />
+                    </div>
+                </template>
+
+                <p class="text-md">{{
+                    trans.theme
+                }}</p>
+
+            </Media>
+            <Media
+                @click="isSettingLang=true"
+                class="!h-15"
+            >
+                <template #left>
+                    <div class="py-4 px-3">
+                        <TranslateIcon
+                            class="svg-icon"
+                        />
+                    </div>
+                </template>
+
+                <p class="text-md">{{
+                    trans.language
+                }}</p>
+
+            </Media>
         </BoxAside>
 
         <aside
@@ -349,105 +364,100 @@
 
             <!-- list users and groups -->
             <div class="sidebar-content bg-white dark:bg-dark-300 dark:divide-gray-700 divide-light-500">
-                <div
+                <Media
                     v-for="(item, index) in users"
                     :key="index"
-                    :class="[`sidebar-list flex h-18 cursor-pointer`, {
+                    :class="[{
                         'font-medium': item.read_count,
-                        'hover:bg-light-300 dark:hover:bg-true-gray-700':
-                            form.type_id != getTypeId(item.chat_type, item.id),
-                        'bg-light-500 dark:bg-true-gray-800':
+                        '!bg-light-500 dark:!bg-true-gray-800':
                             form.type_id == getTypeId(item.chat_type, item.id)
                     }]"
                 >
-                    <div
-                        @click="fetchMessages(item.id, item.chat_type)"
-                        class="flex flex-col justify-center px-3"
-                    >
+                    <template #left>
                         <img
+                            @click="fetchMessages(item.id, item.chat_type)"
                             class="rounded-full h-13 w-13"
                             :src="item.avatar"
                             alt="avatar"
                         >
+                    </template>
+
+                    <div
+                        @click="fetchMessages(item.id, item.chat_type)"
+                        class="flex"
+                    >
+                        <p
+                            class="flex-grow truncate text-lg"
+                            :title="item.name"
+                        >{{
+                            item.name
+                        }}</p>
+                        <small class="flex-none my-auto">{{
+                            item.last_time
+                        }}</small>
                     </div>
-                    <div class="flex flex-grow flex-col justify-center w-73 pr-3">
-                        <div
+                    <div class="flex text-sm">
+                        <span
+                            v-if="item.typing"
                             @click="fetchMessages(item.id, item.chat_type)"
-                            class="flex"
-                        >
-                            <p
-                                class="flex-grow truncate text-lg"
-                                :title="item.name"
-                            >{{
-                                item.name
-                            }}</p>
-                            <small class="flex-none my-auto">{{
-                                item.last_time
-                            }}</small>
-                        </div>
-                        <div class="flex text-sm">
-                            <span
-                                v-if="item.typing"
+                            class="flex-grow"
+                        >{{
+                            item.typing_name
+                                ? `${item.typing_name}: ${trans.typing}`
+                                : trans.typing
+                        }}</span>
+                        <template v-else>
+                            <div
                                 @click="fetchMessages(item.id, item.chat_type)"
-                                class="flex-grow"
-                            >{{
-                                item.typing_name
-                                    ? `${item.typing_name}: ${trans.typing}`
-                                    : trans.typing
-                            }}</span>
-                            <template v-else>
-                                <div
-                                    @click="fetchMessages(item.id, item.chat_type)"
-                                    class="contents flex-grow"
-                                    :title="item.content"
+                                class="contents flex-grow"
+                                :title="item.content"
+                            >
+                                <template
+                                    v-if="laratalk.profile.id === item.content_by && item.content_type === models.message.chat"
                                 >
-                                    <template
-                                        v-if="laratalk.profile.id === item.content_by && item.content_type === models.message.chat"
-                                    >
-                                        <CheckIcon
-                                            :class="[`svg-icon svg-sm flex-none`, {
-                                                'text-dark-200 dark:!text-light-200': item.status != 'read'
-                                            }]"
-                                        />
-                                        <CheckIcon
-                                            v-if="item.status != models.message.send"
-                                            :class="[`svg-icon svg-sm flex-none`, {
-                                                'text-dark-200 dark:!text-light-200': item.status == 'accept'
-                                            }]"
-                                        />
-                                    </template>
-                                    <span class="flex-grow truncate">{{
-                                        item.content_type === models.message.chat
-                                            ? item.content : getTransMessage(item)
-                                    }}</span>
-                                </div>
-                            </template>
-                            <small
-                                @click="fetchMessages(item.id, item.chat_type)"
-                                v-if="item.read_count"
-                                class="flex-none bg-purple-600 text-white w-5 h-5 leading-5 text-center rounded-full"
-                            >{{
-                                item.read_count
-                            }}</small>
-                            <div class="dropdown -mr-9 pl-3 transition-effect opacity-0">
-                                <a class="dropdown-button">
-                                    <ChevronDownIcon
-                                        class="svg-icon"
+                                    <CheckIcon
+                                        :class="[`svg-icon svg-sm flex-none`, {
+                                            'text-dark-200 dark:!text-light-200': item.status != 'read'
+                                        }]"
                                     />
-                                </a>
-                                <div class="dropdown-menu">
-                                    <a
-                                        @click="deleteChatorLeaveGroup(item.id, item.chat_type)"
-                                        class="dropdown-item"
-                                    >{{
-                                        item.chat_type === models.message.type_user
-                                            ? trans.delete_chat : trans.leave_the_group
-                                    }}</a>
-                                </div>
+                                    <CheckIcon
+                                        v-if="item.status != models.message.send"
+                                        :class="[`svg-icon svg-sm flex-none`, {
+                                            'text-dark-200 dark:!text-light-200': item.status == 'accept'
+                                        }]"
+                                    />
+                                </template>
+                                <span class="flex-grow truncate">{{
+                                    item.content_type === models.message.chat
+                                        ? item.content : getTransMessage(item)
+                                }}</span>
+                            </div>
+                        </template>
+                        <small
+                            @click="fetchMessages(item.id, item.chat_type)"
+                            v-if="item.read_count"
+                            class="flex-none bg-purple-600 text-white w-5 h-5 leading-5 text-center rounded-full"
+                        >{{
+                            item.read_count
+                        }}</small>
+                        <div class="dropdown -mr-9 pl-3 transition-effect opacity-0">
+                            <a class="dropdown-button">
+                                <ChevronDownIcon
+                                    class="svg-icon"
+                                />
+                            </a>
+                            <div class="dropdown-menu">
+                                <a
+                                    @click="deleteChatorLeaveGroup(item.id, item.chat_type)"
+                                    class="dropdown-item"
+                                >{{
+                                    item.chat_type === models.message.type_user
+                                        ? trans.delete_chat : trans.leave_the_group
+                                }}</a>
                             </div>
                         </div>
                     </div>
-                </div>
+                </Media>
             </div>
         </aside>
         <main
@@ -847,6 +857,35 @@
             </div>
         </div>
     </modal>
+
+    <!-- modal setting language -->
+    <modal
+        v-model="isSettingLang"
+        :onCancel="false"
+    >
+        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-light-700">{{
+            trans.change_language
+        }}</h3>
+        <div class="block mt-5 dark:text-light-700">
+            <div
+                v-for="(lang, key) in laratalk.languages"
+                :key="key"
+            >
+                <label class="inline-flex items-center cursor-pointer">
+                    <input
+                        v-model="locale"
+                        type="radio"
+                        class="form-radio cursor-pointer"
+                        :value="key"
+                        @change="sendLanguage"
+                    >
+                    <span class="ml-2">{{
+                        lang
+                    }}</span>
+                </label>
+            </div>
+        </div>
+    </modal>
 </template>
 
 <script>
@@ -870,6 +909,7 @@ export default {
             isBoxSetting: false,
             isContactChat: true,
             isDetailUser: false,
+            isSettingLang: false,
             isSettingTheme: false,
             message: {},
             message_countdown: null,
@@ -1339,6 +1379,17 @@ export default {
                 let container = document.getElementById('main-content')
                 container.scrollTop = container.scrollHeight
             }, 10)
+        },
+
+        sendLanguage({ target})
+        {
+            axios
+                .post('user-language', {
+                    locale: target.value
+                })
+                .then(({ data }) => {
+                    this.trans = data
+                })
         },
 
         sendMessage()

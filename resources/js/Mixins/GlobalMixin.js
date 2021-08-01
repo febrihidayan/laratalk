@@ -2,6 +2,7 @@ export default {
     data: {
         dark_mode: false,
         laratalk: window.laratalk,
+        locale: window.laratalk.profile.locale,
         models: window.laratalk.models,
         trans: window.laratalk.translations,
     },
@@ -16,6 +17,10 @@ export default {
                 bool = !bool
             }
 
+            axios.post('user-darkmode', {
+                    darkmode: bool
+                })
+
             if (bool) {
                 document.documentElement.classList.add('dark')
             }
@@ -23,7 +28,6 @@ export default {
                 document.documentElement.classList.remove('dark')
             }
 
-            localStorage.setItem('dark_mode', bool)
             this.dark_mode = bool
         },
 
@@ -150,7 +154,7 @@ export default {
     },
 
     mounted() {
-        this.setDarkMode(localStorage.getItem('dark_mode'))
+        this.setDarkMode(this.laratalk.profile.dark_mode)
     },
 
     watch: {

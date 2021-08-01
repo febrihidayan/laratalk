@@ -53,10 +53,15 @@ class LaratalkController extends Controller
                 'path' => Config::path(),
                 'profile' => [
                     'id' => $user->id,
-                    'avatar' => Laratalk::gravatar($user->email),
+                    'avatar' => Config::userGravatar()
+                        ? Laratalk::gravatar($user->email)
+                        : $user->{Config::avatar()},
                     'name' => $user->name,
                     'email' => $user->email,
+                    'locale' => $user->{Config::locale()},
+                    'dark_mode' => (bool)$user->{Config::darkMode()}
                 ],
+                'languages' => Laratalk::$languages,
                 'models' => [
                     'group' => [
                         'admin' => Group::ADMIN,
@@ -85,7 +90,9 @@ class LaratalkController extends Controller
                         'read' => Message::READ,
                     ]
                 ],
-                'translations' => Laratalk::availableTranslations(),
+                'translations' => Laratalk::availableTranslations(
+                    $user->{Config::locale()}
+                ),
                 'echo' => Config::pusher()
             ]);
     }
