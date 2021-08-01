@@ -1,15 +1,17 @@
 <template>
     <transition name="zoom-out">
         <div v-show="isActive" class="fixed z-100 inset-0 overflow-y-auto">
-            <div class="flex items-end flex-col justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 <div
                     :class="[`fixed inset-0 bg-light-50 dark:bg-dark-50 !bg-opacity-75 transition-opacity`, {
                         'opacity-0': !isActive
                     }]"
                 />
+
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
                 <div
-                    :class="[`inline-block align-bottom bg-white dark:bg-dark-50 rounded-lg text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full`, {
+                    :class="[`inline-block align-bottom bg-white dark:bg-dark-50 rounded-lg text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle w-full sm:max-w-lg`, {
                         'opacity-0': !isActive
                     }]"
                 >
@@ -30,7 +32,7 @@
                             </div>
                         </div>
                     </div>
-        
+
                     <!-- modal footer -->
                     <div class="bg-gray-50 dark:bg-dark-400 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         <button

@@ -20,6 +20,7 @@ import Modal from './components/modules/Modal.vue'
  * Svg icons
  */
 import {
+    CheckIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
     LogoutIcon,
@@ -29,7 +30,6 @@ import {
 
 import {
     AnnotationIcon,
-    CheckIcon,
     ChevronDownIcon,
     DotsVerticalIcon,
     MoonIcon,
