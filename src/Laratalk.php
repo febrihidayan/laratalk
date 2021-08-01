@@ -2,10 +2,21 @@
 
 namespace Laratalk;
 
-use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config as FacadesConfig;
 
 class Laratalk
 {
+    /**
+     * ISO-639 language codes
+     *
+     * @var array
+     */
+    public static $languages = [
+        'en' => 'English',
+        'id' => 'Indonesian',
+    ];
+
     /**
      * Return an encoded string of app translations.
      *
@@ -14,7 +25,7 @@ class Laratalk
      */
     public static function availableTranslations(string $locale = null): array
     {
-        return trans('laratalk::app', [], $locale ?? Config::get('app.locale'));
+        return trans('laratalk::app', [], $locale ?? FacadesConfig::get('app.locale'));
     }
 
     /**
@@ -48,7 +59,9 @@ class Laratalk
     {
         $countDay = $datetime->diffInDays();
 
-        $trans = self::availableTranslations();
+        $trans = self::availableTranslations(
+            Auth::user()->{Config::locale()}
+        );
 
         if ($datetime->isToday()) {
 

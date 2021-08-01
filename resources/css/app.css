@@ -42,7 +42,7 @@ input[type="search"]::-webkit-search-cancel-button {
 .sidebar-list {
     @apply divide-y dark:divide-gray-500;
 }
-.sidebar-list:hover .dropdown {
+.media:hover .dropdown {
     @apply mr-0 pl-1 opacity-100;
 }
 

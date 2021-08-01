@@ -3,6 +3,7 @@
 return [
     'at' => 'pukul',
     'cancel' => 'Batal',
+    'change_language' => 'Ganti bahasa',
     'contact_info' => 'Info kontak',
     'dark' => 'Gelap',
     'delete_chat' => 'Hapus obrolan',
@@ -14,10 +15,11 @@ return [
     'group_info' => 'Info grup',
     'group_name' => 'Nama grup',
     'info_and_email_address' => 'Info dan alamat surel',
+    'language' => 'Bahasa',
     'laratalk_description' => 'Laratalk menyediakan obrolan berbasis Laravel antara pengguna dan grup',
     'laratalk_title' => 'Laratalk Messenger',
-    'leave_the_group' => 'Keluar dari group',
-    'leave_this_group' => 'Keluar dari group ini?',
+    'leave_the_group' => 'Keluar dari grup',
+    'leave_this_group' => 'Keluar dari grup ini?',
     'light' => 'Terang',
     'made' => 'Dibuat',
     'message' => [

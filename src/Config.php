@@ -99,6 +99,16 @@ class Config
     }
 
     /**
+     * Avatar from Gravatar for user
+     * 
+     * @return bool
+     */
+    public static function userGravatar(): bool
+    {
+        return FacadesConfig::get('laratalk.users.gravatar');
+    }
+
+    /**
      * Table users
      * 
      * @param string $column

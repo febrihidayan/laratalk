@@ -8,6 +8,8 @@ use Laratalk\Http\Controllers\Messages\PullMessageController;
 use Laratalk\Http\Controllers\Messages\StatusController;
 use Laratalk\Http\Controllers\Messages\ShowController;
 use Laratalk\Http\Controllers\Messages\StoreController;
+use Laratalk\Http\Controllers\Users\ChangeDarkmodeController;
+use Laratalk\Http\Controllers\Users\ChangeLanguageController;
 use Laratalk\Http\Controllers\Users\NewChatController;
 use Laratalk\Http\Controllers\Users\UserChatController;
 
@@ -22,6 +24,10 @@ Route::group([
         Route::post('group-create', CreateController::class);
 
         Route::get('user-chat', UserChatController::class);
+
+        Route::post('user-language', ChangeLanguageController::class);
+
+        Route::post('user-darkmode', ChangeDarkmodeController::class);
 
         Route::get('user-new-chat', NewChatController::class);
 
