@@ -51,8 +51,7 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 
 .svg-icon {
-    stroke-width: .25;
-    @apply fill-purple-400 stroke-purple-400 w-6 h-6;
+    @apply text-purple-400 w-6 h-6;
 }
 
 .svg-icon.svg-sm {
@@ -60,8 +59,7 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 
 .dark .svg-icon {
-    stroke-width: .5;
-    @apply fill-true-gray-200 stroke-true-gray-200;
+    @apply text-gray-200;
 }
 
 .transition-effect {
