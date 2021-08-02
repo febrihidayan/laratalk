@@ -1,11 +1,11 @@
 <?php
 
-namespace Laratalk\Models;
+namespace FebriHidayan\Laratalk\Models;
 
+use FebriHidayan\Laratalk\Config;
+use FebriHidayan\Laratalk\Laratalk;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Laratalk\Config;
-use Laratalk\Laratalk;
 
 class Message extends Model
 {

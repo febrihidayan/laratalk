@@ -1,19 +1,19 @@
 <?php
 
-namespace Laratalk\Http\Controllers\Messages;
+namespace FebriHidayan\Laratalk\Http\Controllers\Messages;
 
+use FebriHidayan\Laratalk\Config;
+use FebriHidayan\Laratalk\Events\Messages\SendEvent;
+use FebriHidayan\Laratalk\Http\Resources\MessageResource;
+use FebriHidayan\Laratalk\Laratalk;
+use FebriHidayan\Laratalk\Models\Group;
+use FebriHidayan\Laratalk\Models\Message;
+use FebriHidayan\Laratalk\Models\MessageRecipient;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
-use Laratalk\Config;
-use Laratalk\Events\Messages\SendEvent;
-use Laratalk\Http\Resources\MessageResource;
-use Laratalk\Laratalk;
-use Laratalk\Models\Group;
-use Laratalk\Models\Message;
-use Laratalk\Models\MessageRecipient;
 
 class StoreController extends Controller
 {

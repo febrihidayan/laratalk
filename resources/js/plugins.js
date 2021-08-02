@@ -26,5 +26,5 @@ window.Echo = new Echo({
     key: laratalk.echo.key,
     cluster: laratalk.echo.options.cluster,
     forceTLS: laratalk.echo.options.useTLS,
-    namespace: 'Laratalk.Events'
+    namespace: 'FebriHidayan.Laratalk.Events'
 });

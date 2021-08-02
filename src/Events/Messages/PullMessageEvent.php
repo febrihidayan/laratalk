@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratalk\Events\Messages;
+namespace FebriHidayan\Laratalk\Events\Messages;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;

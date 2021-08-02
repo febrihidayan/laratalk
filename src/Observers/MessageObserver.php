@@ -1,8 +1,8 @@
 <?php
 
-namespace Laratalk\Observers;
+namespace FebriHidayan\Laratalk\Observers;
 
-use Laratalk\Models\Message;
+use FebriHidayan\Laratalk\Models\Message;
 
 class MessageObserver
 {

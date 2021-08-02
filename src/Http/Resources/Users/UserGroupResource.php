@@ -1,9 +1,9 @@
 <?php
 
-namespace Laratalk\Http\Resources\Users;
+namespace FebriHidayan\Laratalk\Http\Resources\Users;
 
+use FebriHidayan\Laratalk\Laratalk;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Laratalk\Laratalk;
 
 class UserGroupResource extends JsonResource
 {

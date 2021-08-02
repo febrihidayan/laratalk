@@ -1,13 +1,13 @@
 <?php
 
-namespace Laratalk\Http\Controllers\Users;
+namespace FebriHidayan\Laratalk\Http\Controllers\Users;
 
+use FebriHidayan\Laratalk\Config;
+use FebriHidayan\Laratalk\Http\Resources\UserNewChatResource;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
-use Laratalk\Config;
-use Laratalk\Http\Resources\UserNewChatResource;
 
 class NewChatController extends Controller
 {

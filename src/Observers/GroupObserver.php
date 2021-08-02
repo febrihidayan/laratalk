@@ -1,8 +1,8 @@
 <?php
 
-namespace Laratalk\Observers;
+namespace FebriHidayan\Laratalk\Observers;
 
-use Laratalk\Models\Group;
+use FebriHidayan\Laratalk\Models\Group;
 
 class GroupObserver
 {

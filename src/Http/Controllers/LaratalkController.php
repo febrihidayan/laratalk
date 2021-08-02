@@ -1,14 +1,14 @@
 <?php
 
-namespace Laratalk\Http\Controllers;
+namespace FebriHidayan\Laratalk\Http\Controllers;
 
+use FebriHidayan\Laratalk\Config;
+use FebriHidayan\Laratalk\Events\Messages\StatusEvent;
+use FebriHidayan\Laratalk\Laratalk;
+use FebriHidayan\Laratalk\Models\Group;
+use FebriHidayan\Laratalk\Models\Message;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
-use Laratalk\Config;
-use Laratalk\Events\Messages\StatusEvent;
-use Laratalk\Laratalk;
-use Laratalk\Models\Group;
-use Laratalk\Models\Message;
 
 class LaratalkController extends Controller
 {

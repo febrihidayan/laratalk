@@ -1,14 +1,14 @@
 <?php
 
-namespace Laratalk\Http\Controllers\Users;
+namespace FebriHidayan\Laratalk\Http\Controllers\Users;
 
+use FebriHidayan\Laratalk\Config;
+use FebriHidayan\Laratalk\Http\Resources\UserListResource;
+use FebriHidayan\Laratalk\Models\Message;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
-use Laratalk\Config;
-use Laratalk\Http\Resources\UserListResource;
-use Laratalk\Models\Message;
 
 class UserChatController extends Controller
 {

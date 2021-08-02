@@ -1,10 +1,10 @@
 <?php
 
-namespace Laratalk\Http\Resources;
+namespace FebriHidayan\Laratalk\Http\Resources;
 
+use FebriHidayan\Laratalk\Config;
+use FebriHidayan\Laratalk\Laratalk;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Laratalk\Config;
-use Laratalk\Laratalk;
 
 class UserListResource extends JsonResource
 {

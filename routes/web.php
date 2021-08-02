@@ -1,17 +1,17 @@
 <?php
 
+use FebriHidayan\Laratalk\Http\Controllers\Groups\CreateController;
+use FebriHidayan\Laratalk\Http\Controllers\LaratalkController;
+use FebriHidayan\Laratalk\Http\Controllers\Messages\DestroyController;
+use FebriHidayan\Laratalk\Http\Controllers\Messages\PullMessageController;
+use FebriHidayan\Laratalk\Http\Controllers\Messages\StatusController;
+use FebriHidayan\Laratalk\Http\Controllers\Messages\ShowController;
+use FebriHidayan\Laratalk\Http\Controllers\Messages\StoreController;
+use FebriHidayan\Laratalk\Http\Controllers\Users\ChangeDarkmodeController;
+use FebriHidayan\Laratalk\Http\Controllers\Users\ChangeLanguageController;
+use FebriHidayan\Laratalk\Http\Controllers\Users\NewChatController;
+use FebriHidayan\Laratalk\Http\Controllers\Users\UserChatController;
 use Illuminate\Support\Facades\Route;
-use Laratalk\Http\Controllers\Groups\CreateController;
-use Laratalk\Http\Controllers\LaratalkController;
-use Laratalk\Http\Controllers\Messages\DestroyController;
-use Laratalk\Http\Controllers\Messages\PullMessageController;
-use Laratalk\Http\Controllers\Messages\StatusController;
-use Laratalk\Http\Controllers\Messages\ShowController;
-use Laratalk\Http\Controllers\Messages\StoreController;
-use Laratalk\Http\Controllers\Users\ChangeDarkmodeController;
-use Laratalk\Http\Controllers\Users\ChangeLanguageController;
-use Laratalk\Http\Controllers\Users\NewChatController;
-use Laratalk\Http\Controllers\Users\UserChatController;
 
 Route::group([
     'prefix' => config('laratalk.path'),

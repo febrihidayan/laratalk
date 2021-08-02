@@ -1,13 +1,13 @@
 <?php
 
-namespace Laratalk\Http\Controllers\Users;
+namespace FebriHidayan\Laratalk\Http\Controllers\Users;
 
+use FebriHidayan\Laratalk\Laratalk;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
-use Laratalk\Laratalk;
 
 class ChangeLanguageController extends Controller
 {

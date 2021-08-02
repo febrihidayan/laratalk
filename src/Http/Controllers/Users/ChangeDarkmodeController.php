@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratalk\Http\Controllers\Users;
+namespace FebriHidayan\Laratalk\Http\Controllers\Users;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;

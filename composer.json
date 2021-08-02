@@ -1,7 +1,15 @@
 {
     "name": "febrihidayan/laratalk",
     "description": "Laratalk provides Laravel based chat between users and groups",
-    "keywords": ["laratalk", "packages", "laravel", "chatting", "realtime", "messages", "pusher"],
+    "keywords": [
+        "chatting",
+        "laratalk",
+        "laravel",
+        "messages",
+        "packages",
+        "pusher",
+        "realtime"
+    ],
     "license": "MIT",
     "support": {
         "issues": "https://github.com/febrihidayan/laratalk/issues",
@@ -15,19 +23,19 @@
     ],
     "type": "library",
     "require": {
-        "php": "^7.2|^8.0",
+        "php": "^7.2.5|^8.0",
         "laravel/framework": "^6.0|^7.0|^8.0",
         "pusher/pusher-php-server": "^4.0"
     },
     "autoload": {
         "psr-4": {
-            "Laratalk\\": "src/"
+            "FebriHidayan\\Laratalk\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Laratalk\\LaratalkServiceProvider"
+                "FebriHidayan\\Laratalk\\LaratalkServiceProvider"
             ]
         }
     },

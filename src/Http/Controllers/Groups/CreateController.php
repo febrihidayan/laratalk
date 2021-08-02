@@ -1,18 +1,18 @@
 <?php
 
-namespace Laratalk\Http\Controllers\Groups;
+namespace FebriHidayan\Laratalk\Http\Controllers\Groups;
 
+use FebriHidayan\Laratalk\Config;
+use FebriHidayan\Laratalk\Events\Groups\NewGroupEvent;
+use FebriHidayan\Laratalk\Http\Resources\UserListResource;
+use FebriHidayan\Laratalk\Models\Group;
+use FebriHidayan\Laratalk\Models\GroupUser;
+use FebriHidayan\Laratalk\Models\Message;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
-use Laratalk\Config;
-use Laratalk\Events\Groups\NewGroupEvent;
-use Laratalk\Http\Resources\UserListResource;
-use Laratalk\Models\Group;
-use Laratalk\Models\GroupUser;
-use Laratalk\Models\Message;
 
 class CreateController extends Controller
 {

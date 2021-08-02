@@ -1,20 +1,20 @@
 <?php
 
-namespace Laratalk\Http\Controllers\Messages;
+namespace FebriHidayan\Laratalk\Http\Controllers\Messages;
 
+use FebriHidayan\Laratalk\Config;
+use FebriHidayan\Laratalk\Events\Messages\StatusEvent;
+use FebriHidayan\Laratalk\Http\Resources\Messages\ShowGroupResource;
+use FebriHidayan\Laratalk\Http\Resources\Messages\ShowUserResource;
+use FebriHidayan\Laratalk\Http\Resources\Users\UserGroupResource;
+use FebriHidayan\Laratalk\Laratalk;
+use FebriHidayan\Laratalk\Models\Group;
+use FebriHidayan\Laratalk\Models\GroupUser;
+use FebriHidayan\Laratalk\Models\Message;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
-use Laratalk\Config;
-use Laratalk\Events\Messages\StatusEvent;
-use Laratalk\Http\Resources\Messages\ShowGroupResource;
-use Laratalk\Http\Resources\Messages\ShowUserResource;
-use Laratalk\Http\Resources\Users\UserGroupResource;
-use Laratalk\Laratalk;
-use Laratalk\Models\Group;
-use Laratalk\Models\GroupUser;
-use Laratalk\Models\Message;
 
 class ShowController extends Controller
 {

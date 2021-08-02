@@ -1,8 +1,8 @@
 <?php
 
+use FebriHidayan\Laratalk\Models\Message;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
-use Laratalk\Models\Message;
 
 Broadcast::channel('chat', function ($user) {
     return Auth::check();

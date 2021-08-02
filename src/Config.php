@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratalk;
+namespace FebriHidayan\Laratalk;
 
 use Illuminate\Support\Facades\Config as FacadesConfig;
 

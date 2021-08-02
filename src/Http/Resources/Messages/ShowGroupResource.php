@@ -1,10 +1,10 @@
 <?php
 
-namespace Laratalk\Http\Resources\Messages;
+namespace FebriHidayan\Laratalk\Http\Resources\Messages;
 
+use FebriHidayan\Laratalk\Models\Message;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
-use Laratalk\Models\Message;
 
 class ShowGroupResource extends JsonResource
 {

@@ -1,10 +1,10 @@
 <?php
 
+use FebriHidayan\Laratalk\Config;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Config as FacadesConfig;
 use Illuminate\Support\Facades\Schema;
-use Laratalk\Config;
 
 class SetupLaratalkTables extends Migration
 {

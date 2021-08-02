@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratalk\Http\Resources;
+namespace FebriHidayan\Laratalk\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;

@@ -1,14 +1,14 @@
 <?php
 
-namespace Laratalk\Http\Controllers\Messages;
+namespace FebriHidayan\Laratalk\Http\Controllers\Messages;
 
+use FebriHidayan\Laratalk\Events\Messages\StatusEvent;
+use FebriHidayan\Laratalk\Models\Message;
+use FebriHidayan\Laratalk\Models\MessageRecipient;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
-use Laratalk\Events\Messages\StatusEvent;
-use Laratalk\Models\Message;
-use Laratalk\Models\MessageRecipient;
 
 class StatusController extends Controller
 {

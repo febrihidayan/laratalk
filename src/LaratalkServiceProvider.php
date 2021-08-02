@@ -1,14 +1,14 @@
 <?php
 
-namespace Laratalk;
+namespace FebriHidayan\Laratalk;
 
+use FebriHidayan\Laratalk\Console\InstallCommand;
+use FebriHidayan\Laratalk\Console\PublishCommand;
+use FebriHidayan\Laratalk\Models\Group;
+use FebriHidayan\Laratalk\Models\Message;
+use FebriHidayan\Laratalk\Observers\GroupObserver;
+use FebriHidayan\Laratalk\Observers\MessageObserver;
 use Illuminate\Support\ServiceProvider;
-use Laratalk\Console\InstallCommand;
-use Laratalk\Console\PublishCommand;
-use Laratalk\Models\Group;
-use Laratalk\Models\Message;
-use Laratalk\Observers\GroupObserver;
-use Laratalk\Observers\MessageObserver;
 
 class LaratalkServiceProvider extends ServiceProvider
 {

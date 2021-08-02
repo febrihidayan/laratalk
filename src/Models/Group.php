@@ -1,9 +1,9 @@
 <?php
 
-namespace Laratalk\Models;
+namespace FebriHidayan\Laratalk\Models;
 
+use FebriHidayan\Laratalk\Config;
 use Illuminate\Database\Eloquent\Model;
-use Laratalk\Config;
 
 class Group extends Model
 {

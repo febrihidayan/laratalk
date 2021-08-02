@@ -1,10 +1,10 @@
 <?php
 
-namespace Laratalk\Models;
+namespace FebriHidayan\Laratalk\Models;
 
+use FebriHidayan\Laratalk\Config;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Facades\Auth;
-use Laratalk\Config;
 
 class GroupUser extends Pivot
 {

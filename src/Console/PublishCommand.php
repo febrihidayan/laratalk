@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratalk\Console;
+namespace FebriHidayan\Laratalk\Console;
 
 use Illuminate\Console\Command;
 

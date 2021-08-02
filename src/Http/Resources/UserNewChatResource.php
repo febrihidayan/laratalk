@@ -1,9 +1,9 @@
 <?php
 
-namespace Laratalk\Http\Resources;
+namespace FebriHidayan\Laratalk\Http\Resources;
 
+use FebriHidayan\Laratalk\Laratalk;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Laratalk\Laratalk;
 
 class UserNewChatResource extends JsonResource
 {

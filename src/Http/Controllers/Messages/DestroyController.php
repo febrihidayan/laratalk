@@ -1,16 +1,16 @@
 <?php
 
-namespace Laratalk\Http\Controllers\Messages;
+namespace FebriHidayan\Laratalk\Http\Controllers\Messages;
 
+use FebriHidayan\Laratalk\Events\Messages\SendEvent;
+use FebriHidayan\Laratalk\Http\Resources\MessageResource;
+use FebriHidayan\Laratalk\Models\GroupUser;
+use FebriHidayan\Laratalk\Models\Message;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
-use Laratalk\Events\Messages\SendEvent;
-use Laratalk\Http\Resources\MessageResource;
-use Laratalk\Models\GroupUser;
-use Laratalk\Models\Message;
 
 class DestroyController extends Controller
 {
