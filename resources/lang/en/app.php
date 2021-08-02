@@ -60,6 +60,7 @@ return [
     'settings' => 'Settings',
     'sunday' => 'Sunday',
     'theme' => 'Theme',
+    'thursday' => 'Thursday',
     'today' => 'today',
     'tuesday' => 'Tuesday',
     'type_a_message' => 'Type a message',

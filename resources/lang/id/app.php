@@ -61,6 +61,7 @@ return [
     'settings' => 'Setelan',
     'sunday' => 'Minggu',
     'theme' => 'Tema',
+    'thursday' => 'Kamis',
     'today' => 'hari ini',
     'tuesday' => 'Selasa',
     'type_a_message' => 'Ketik pesan',

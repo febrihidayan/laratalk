@@ -76,12 +76,13 @@ class Laratalk
             return  $trans['yesterday'];
         }
 
-        if ($countDay >= 1 & $countDay < 7) {
+        if ($countDay >= 1 && $countDay <= 6) {
             $days = [
                 $trans['sunday'],
                 $trans['monday'],
                 $trans['tuesday'],
                 $trans['wednesday'],
+                $trans['thursday'],
                 $trans['friday'],
                 $trans['saturday'],
             ];
