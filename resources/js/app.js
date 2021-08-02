@@ -12,6 +12,7 @@ import HelperMixin from './Mixins/HelperMixin'
 /**
  * Components
  */
+import Avatar from './components/modules/Avatar.vue'
 import BoxAside from './components/modules/BoxAside.vue'
 import Media from './components/modules/Media.vue'
 import Modal from './components/modules/Modal.vue'
@@ -44,6 +45,7 @@ const app = createApp({
         HelperMixin
     ],
     components: {
+        Avatar,
         BoxAside,
         Media,
         Modal,

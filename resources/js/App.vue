@@ -7,11 +7,12 @@
         >
             <div class="sidebar-detail">
                 <div class="dark:bg-dark-300 py-8">
-                    <img
-                        class="rounded-full h-48 w-48 mx-auto cursor-pointer"
-                        :src="laratalk.profile.avatar"
-                        alt="avatar"
-                    >
+                    <Avatar
+                        :image="laratalk.profile.avatar"
+                        :isUpload="true"
+                        :size="48"
+                        class="flex justify-center"
+                    />
                 </div>
                 <div class="bg-white dark:bg-dark-300 my-2 px-6 py-4">
                     <small class="text-purple-800 dark:text-purple-300">{{
@@ -64,11 +65,10 @@
                         @click="fetchMessages(item.id, models.message.type_user);isBoxChat=false"
                     >
                         <template #left>
-                            <img
-                                class="rounded-full h-13 w-13"
-                                :src="item.avatar"
-                                alt="avatar"
-                            >
+                            <Avatar
+                                :image="item.avatar"
+                                :size="13"
+                            />
                         </template>
 
                         <div class="flex">
@@ -99,11 +99,10 @@
                     >
                         <div class="inline-flex bg-light-300 dark:bg-dark-100 rounded-full">
                             <div class="flex-none">
-                                <img
-                                    class="rounded-full w-7 h-7"
-                                    :src="item.avatar"
-                                    alt="profile"
-                                >
+                                <Avatar
+                                    :image="item.avatar"
+                                    :size="7"
+                                />
                             </div>
                             <div class="flex-grow my-auto mx-1">
                                 <p class="text-md">{{
@@ -150,11 +149,10 @@
                             v-if="users_add_Groups.findIndex((s) => s.id === item.id) == -1"
                         >
                             <template #left>
-                                <img
-                                    class="rounded-full h-13 w-13"
-                                    :src="item.avatar"
-                                    alt="avatar"
-                                >
+                                <Avatar
+                                    :image="item.avatar"
+                                    :size="13"
+                                />
                             </template>
 
                             <div class="flex">
@@ -187,13 +185,12 @@
             <div
                 class="border-b dark:border-dark-50 ml-10"
             >
-                <figure class="py-8">
-                    <img
-                        class="rounded-full h-48 w-48 mx-auto cursor-pointer"
-                        :src="laratalk.profile.avatar"
-                        alt="avatar"
-                    >
-                </figure>
+                <Avatar
+                    :isIconGroup="true"
+                    :isUpload="true"
+                    :size="48"
+                    class="py-8 flex justify-center"
+                />
 
                 <input
                     v-model="formGroup.name"
@@ -231,11 +228,10 @@
                 class="flex cursor-pointer hover:bg-light-300 dark:hover:bg-dark-100"
             >
                 <div class="flex-none p-4">
-                    <img
-                        class="rounded-full h-20 w-20 cursor-pointer"
-                        :src="laratalk.profile.avatar"
-                        alt="profile"
-                    >
+                    <Avatar
+                        :image="laratalk.profile.avatar"
+                        :size="20"
+                    />
                 </div>
                 <div class="flex-grow my-auto">
                     <p class="text-xl">{{
@@ -291,12 +287,11 @@
         >
             <div class="flex bg-light-600 dark:bg-dark-400 px-5 py-2">
                 <div class="flex-grow">
-                    <img
+                    <Avatar
                         @click="isBoxProfile=true"
-                        class="rounded-full h-10 w-10 cursor-pointer"
-                        :src="laratalk.profile.avatar"
-                        alt="profile"
-                    >
+                        :image="laratalk.profile.avatar"
+                        class="cursor-pointer"
+                    />
                 </div>
                 <div class="flex flex-grow-0 flex-shrink-0 my-auto">
                     <a class="cursor-pointer mx-2" @click="isBoxChat=true">
@@ -376,12 +371,11 @@
                     }]"
                 >
                     <template #left>
-                        <img
+                        <Avatar
                             @click="fetchMessages(item.id, item.chat_type)"
-                            class="rounded-full h-13 w-13"
-                            :src="item.avatar"
-                            alt="avatar"
-                        >
+                            :image="item.avatar"
+                            :size="13"
+                        />
                     </template>
 
                     <div
@@ -480,11 +474,9 @@
                             </a>
                         </div>
                         <div class="flex-none p-2 cursor-pointer" @click="isDetailUser = true">
-                            <img
-                                class="rounded-full h-10 w-10"
-                                :src="message.avatar"
-                                alt="avatar"
-                            >
+                            <Avatar
+                                :image="message.avatar"
+                            />
                         </div>
                         <div class="flex-grow grid cursor-pointer my-auto" @click="isDetailUser = true">
                             <p class="text-base">{{
@@ -727,13 +719,12 @@
             </div>
             <div class="sidebar-detail">
                 <div class="bg-white dark:bg-dark-300 p-6">
-                    <figure class="my-4">
-                        <img
-                            class="rounded-full h-48 w-48 mx-auto cursor-pointer"
-                            :src="message.avatar"
-                            alt="avatar"
-                        >
-                    </figure>
+                    <Avatar
+                        :image="message.avatar"
+                        :isIconGroup="message.chat_type === models.message.type_group"
+                        :size="48"
+                        class="my-4 flex justify-center"
+                    />
                     <p class="text-xl">{{
                         message.name
                     }}</p>
@@ -771,13 +762,11 @@
                                 :cursor="laratalk.profile.id != item.id"
                             >
                                 <template #left>
-                                    <figure class="pl-6">
-                                        <img
-                                            class="rounded-full h-13 w-13"
-                                            :src="item.avatar"
-                                            alt="avatar"
-                                        >
-                                    </figure>
+                                    <Avatar
+                                        :image="laratalk.profile.avatar"
+                                        :size="13"
+                                        class="pl-6"
+                                    />
                                 </template>
 
                                 <div class="flex pr-6">

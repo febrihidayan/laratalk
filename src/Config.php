@@ -150,4 +150,34 @@ class Config
     {
         return FacadesConfig::get('laratalk.users.migration.columns.locale');
     }
+
+    /**
+     * File directory
+     * 
+     * @return string
+     */
+    public static function fileDirectory(): string
+    {
+        return FacadesConfig::get('laratalk.attachment.folder');
+    }
+
+    /**
+     * File size
+     * 
+     * @return int
+     */
+    public static function fileSize(): int
+    {
+        return FacadesConfig::get('laratalk.attachment.size');
+    }
+
+    /**
+     * Format images
+     * 
+     * @return array
+     */
+    public static function formatImages(): array
+    {
+        return FacadesConfig::get('laratalk.attachment.images');
+    }
 }

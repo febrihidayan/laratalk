@@ -7,6 +7,7 @@ use FebriHidayan\Laratalk\Http\Controllers\Messages\PullMessageController;
 use FebriHidayan\Laratalk\Http\Controllers\Messages\StatusController;
 use FebriHidayan\Laratalk\Http\Controllers\Messages\ShowController;
 use FebriHidayan\Laratalk\Http\Controllers\Messages\StoreController;
+use FebriHidayan\Laratalk\Http\Controllers\UploadAvatarController;
 use FebriHidayan\Laratalk\Http\Controllers\Users\ChangeDarkmodeController;
 use FebriHidayan\Laratalk\Http\Controllers\Users\ChangeLanguageController;
 use FebriHidayan\Laratalk\Http\Controllers\Users\NewChatController;
@@ -40,6 +41,8 @@ Route::group([
         Route::post('message-status', StatusController::class);
 
         Route::post('message-store', StoreController::class);
+
+        Route::post('upload-avatar', UploadAvatarController::class);
 
     });
 
