@@ -362,12 +362,9 @@
                 <Media
                     v-for="(item, index) in users"
                     :key="index"
+                    :isActive="form.type_id == getTypeId(item.chat_type, item.id)"
                     :class="[{
-                        'font-medium': item.read_count,
-                        'hover:bg-light-300 dark:hover:bg-true-gray-700':
-                            form.type_id != getTypeId(item.chat_type, item.id),
-                        'bg-light-500 dark:bg-true-gray-800':
-                            form.type_id == getTypeId(item.chat_type, item.id)
+                        'font-medium': item.read_count
                     }]"
                 >
                     <template #left>
@@ -413,13 +410,17 @@
                                 >
                                     <CheckIcon
                                         :class="[`svg-icon svg-sm flex-none`, {
-                                            'text-dark-200 dark:!text-light-200': item.status != 'read'
+                                            '!text-dark-200': !dark_mode && item.status != 'read',
+                                            '!text-light-200': dark_mode && item.status != 'read',
+                                            '!text-purple-400': item.status == 'read'
                                         }]"
                                     />
                                     <CheckIcon
                                         v-if="item.status != models.message.send"
-                                        :class="[`svg-icon svg-sm flex-none`, {
-                                            'text-dark-200 dark:!text-light-200': item.status == 'accept'
+                                        :class="[`svg-icon svg-sm flex-none -ml-4`, {
+                                            '!text-dark-200': !dark_mode && item.status == 'accept',
+                                            '!text-light-200': dark_mode && item.status == 'accept',
+                                            '!text-purple-400': item.status == 'read'
                                         }]"
                                     />
                                 </template>
@@ -607,13 +608,15 @@
                                     <template v-if="item.content_type === models.message.chat">
                                         <CheckIcon
                                             :class="[`svg-icon svg-sm`, {
-                                                '!text-light-200': item.status != 'read'
+                                                '!text-light-200': item.status != 'read',
+                                                '!text-purple-400': item.status == 'read'
                                             }]"
                                         />
                                         <CheckIcon
                                             v-if="item.status != 'send'"
                                             :class="[`svg-icon svg-sm -ml-4`, {
-                                                '!text-light-200': item.status == 'accept'
+                                                '!text-light-200': item.status == 'accept',
+                                                '!text-purple-400': item.status == 'read'
                                             }]"
                                         />
                                     </template>

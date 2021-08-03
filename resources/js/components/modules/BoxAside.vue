@@ -5,13 +5,13 @@
             '-left-full -left-100': !isActive
         }]"
     >
-        <div class="flex bg-blue-500 dark:bg-dark-400 text-white p-4">
-            <a class="cursor-pointer" @click="isActive=false">
+        <div class="flex bg-blue-500 dark:bg-dark-400 text-white">
+            <a class="cursor-pointer p-4" @click="isActive=false">
                 <ChevronLeftIcon
                     class="svg-icon !text-white"
                 />
             </a>
-            <p class="text-base ml-3">{{
+            <p class="text-base my-4">{{
                 name
             }}</p>
         </div>

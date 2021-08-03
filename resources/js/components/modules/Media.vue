@@ -1,7 +1,9 @@
 <template>
     <div 
         :class="[`media flex h-18 dark:divide-gray-500`, {
-            'cursor-pointer hover:bg-light-300 dark:hover:bg-true-gray-700': cursor
+            'cursor-pointer': cursor,
+            'hover:bg-light-300 dark:hover:bg-true-gray-700': cursor && !isActive,
+            'bg-light-500 dark:bg-true-gray-800': isActive
         }]"
     >
         <div
@@ -22,6 +24,10 @@ export default {
         cursor: {
             type: Boolean,
             default: true
+        },
+        isActive: {
+            type: Boolean,
+            default: false
         }
     },
     computed: {
