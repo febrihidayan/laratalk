@@ -8,7 +8,7 @@ return [
      * --------------------------------------------------------------------------
      * 
      * Customize the name of the application to be displayed or leave it by
-     * default
+     * default.
      * 
      */
     'name' => env('LARATALK_NAME', 'Laratalk'),
@@ -19,7 +19,7 @@ return [
      * --------------------------------------------------------------------------
      * 
      * Laratalk can be accessed with laratalk routing, you can adjust to your
-     * favorite routing or leave it by default
+     * favorite routing or leave it by default.
      * 
      */
     'path' => env('LARATALK_PATH', 'laratalk'),
@@ -32,8 +32,8 @@ return [
      * This middleware will be used in all Laratalk routing, you can change any
      * of them or add middleware that you have created.
      * 
-     * Remember! leave the auth middleware still there, if it is removed
-     * Laratalk doesn't work properly
+     * Remember! leave the auth middleware still there, if it is removed.
+     * Laratalk doesn't work properly.
      * 
      */
     'middleware' => [
@@ -56,7 +56,7 @@ return [
          * By default it will use the avatar from Gravatar, it will
          * ignore the avatar field from the user table.
          */
-        'gravatar' => true,
+        'gravatar' => env('LARATALK_USERS_GRAVATAR', true),
 
         'model' => \App\Models\User::class,
 
@@ -65,6 +65,7 @@ return [
 
             'columns' => [
                 'avatar' => 'avatar',
+                'bio' => 'bio',
                 'dark_mode' => 'dark_mode',
                 'locale' => 'locale',
             ],
@@ -101,37 +102,43 @@ return [
 
     /**
      * --------------------------------------------------------------------------
-     * Set attachments
+     * Storage
      * --------------------------------------------------------------------------
      * 
-     * Add file format or change directory to your liking
-     * 
      * Please note the file format does not need to add an image format.
-     * Because it will be added automatically, don't duplicate it
+     * Because it will be added automatically, don't duplicate it.
      * 
      */
-    'attachment' => [
-        'folder' => 'attachments',
-        'size' => 2048,
+    'storage' => [
+        'disk' => env('LARATALK_STORAGE_DISK', 'local'),
+
+        'path' => env('LARATALK_STORAGE_PATH', 'public/laratalk'),
+
         'images' => [
-            'gif', 'jpeg', 'jpg', 'png'
+            'format' => [
+                'gif', 'jpeg', 'jpg', 'png'
+            ],
+            'size' => 1024
         ],
+
         'files' => [
-            'docs', 'mp4', 'pdf', 'rar', 'txt', 'zip'
+            'format' => [
+                'docs', 'mp4', 'pdf', 'rar', 'txt', 'zip',
+            ],
+            'size' => 30720
         ],
     ],
 
     /**
      * --------------------------------------------------------------------------
-     * Group features
+     * Group
      * --------------------------------------------------------------------------
      * 
      * Set group configuration both from max participants and group features
      * 
      */
     'group' => [
-        'avatar' => '',
-        'feature' => false,
-        'max_recipient' => 300
+        'disabled' => env('LARATALK_GROUP_DISABLED', false),
+        'participant' => env('LARATALK_GROUP_PARTICIPANT', 300)
     ]
 ];

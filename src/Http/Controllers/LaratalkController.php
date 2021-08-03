@@ -55,11 +55,12 @@ class LaratalkController extends Controller
                     'id' => $user->id,
                     'avatar' => Config::userGravatar()
                         ? Laratalk::gravatar($user->email)
-                        : $user->{Config::avatar()},
+                        : $user->{Config::userAvatar()},
                     'name' => $user->name,
                     'email' => $user->email,
-                    'locale' => $user->{Config::locale()},
-                    'dark_mode' => (bool)$user->{Config::darkMode()}
+                    'bio' => $user->{Config::userBio()},
+                    'locale' => $user->{Config::userLocale()},
+                    'dark_mode' => (bool)$user->{Config::userDarkMode()}
                 ],
                 'languages' => Laratalk::$languages,
                 'models' => [
@@ -91,7 +92,7 @@ class LaratalkController extends Controller
                     ]
                 ],
                 'translations' => Laratalk::availableTranslations(
-                    $user->{Config::locale()}
+                    $user->{Config::userLocale()}
                 ),
                 'echo' => Config::pusher()
             ]);

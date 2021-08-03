@@ -14,8 +14,8 @@ class UploadAvatarController extends Controller
 {
     public function __invoke()
     {
-        $format = implode(',', Config::formatImages());
-        $size = Config::fileSize();
+        $format = implode(',', Config::storageImageFormat());
+        $size = Config::storageImageSize();
         
         Validator::validate(Request::all(), [
             'image' => 
@@ -23,7 +23,7 @@ class UploadAvatarController extends Controller
         ]);
 
         $path = Storage::putFile(
-            'public/' . Config::fileDirectory(),
+            Config::storagePath(),
             Request::file('image')
         );
 

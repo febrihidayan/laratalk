@@ -40,21 +40,25 @@ class SetupLaratalkTables extends Migration
      */
     public function up()
     {
-        Schema::create(Config::groups(), function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name', 30);
-            $table->string('description', 500)->nullable();
-            $table->string('avatar')->nullable();
-            $table->{$this->foreignType}('user_id', $this->foreignLength);
-            $table->unsignedBigInteger('pinned_message_id')->nullable();
-            $table->timestamps();
-        });
+        if (Config::groupEnabled()) {
 
-        Schema::create(Config::groupUser(), function (Blueprint $table) {
-            $table->unsignedBigInteger('group_id');
-            $table->{$this->foreignType}('user_id', $this->foreignLength);
-            $table->boolean('role')->default(0);
-        });
+            Schema::create(Config::groups(), function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->string('name', 30);
+                $table->string('description', 500)->nullable();
+                $table->string('avatar')->nullable();
+                $table->{$this->foreignType}('user_id', $this->foreignLength);
+                $table->unsignedBigInteger('pinned_message_id')->nullable();
+                $table->timestamps();
+            });
+    
+            Schema::create(Config::groupUser(), function (Blueprint $table) {
+                $table->unsignedBigInteger('group_id');
+                $table->{$this->foreignType}('user_id', $this->foreignLength);
+                $table->boolean('role')->default(0);
+            });
+
+        }
 
         Schema::create(Config::messages(), function (Blueprint $table) {
             $table->bigIncrements('id');
@@ -78,16 +82,20 @@ class SetupLaratalkTables extends Migration
 
         Schema::table(Config::users(), function (Blueprint $table) {
             
-            if (!Schema::hasColumn(Config::users(), Config::avatar())) {
-                $table->string(Config::avatar())->nullable();
+            if (!Schema::hasColumn(Config::users(), Config::userAvatar())) {
+                $table->string(Config::userAvatar())->nullable();
             }
             
-            if (!Schema::hasColumn(Config::users(), Config::darkMode())) {
-                $table->boolean(Config::darkMode())->nullable();
+            if (!Schema::hasColumn(Config::users(), Config::userBio())) {
+                $table->tinyText(Config::userBio())->nullable();
             }
             
-            if (!Schema::hasColumn(Config::users(), Config::locale())) {
-                $table->string(Config::locale())->nullable();
+            if (!Schema::hasColumn(Config::users(), Config::userDarkMode())) {
+                $table->boolean(Config::userDarkMode())->nullable();
+            }
+            
+            if (!Schema::hasColumn(Config::users(), Config::userLocale())) {
+                $table->string(Config::userLocale())->nullable();
             }
             
         });
@@ -100,15 +108,22 @@ class SetupLaratalkTables extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists(Config::groups());
-        Schema::dropIfExists(Config::groupUser());
+        if (Config::groupEnabled()) {
+
+            Schema::dropIfExists(Config::groups());
+            Schema::dropIfExists(Config::groupUser());
+
+        }
+        
         Schema::dropIfExists(Config::messages());
         Schema::dropIfExists(Config::messageRecipient());
 
         Schema::table(Config::users(), function (Blueprint $table) {
             $table->drop([
-                Config::darkMode(),
-                Config::locale()
+                Config::userAvatar(),
+                Config::userBio(),
+                Config::userDarkMode(),
+                Config::userLocale()
             ]);
         });
     }

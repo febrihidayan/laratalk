@@ -89,6 +89,19 @@ class Config
     }
 
     /**
+     * Table users
+     * 
+     * @param string $column
+     * @return string
+     */
+    public static function users(string $column = ''): string
+    {
+        $column = $column ? ".$column" : $column;
+        
+        return FacadesConfig::get('laratalk.users.migration.table') . $column;
+    }
+
+    /**
      * Namespace user model
      * 
      * @return string
@@ -109,26 +122,23 @@ class Config
     }
 
     /**
-     * Table users
-     * 
-     * @param string $column
-     * @return string
-     */
-    public static function users(string $column = ''): string
-    {
-        $column = $column ? ".$column" : $column;
-        
-        return FacadesConfig::get('laratalk.users.migration.table') . $column;
-    }
-
-    /**
      * Column avatar for table users
      * 
      * @return string
      */
-    public static function avatar(): string
+    public static function userAvatar(): string
     {
         return FacadesConfig::get('laratalk.users.migration.columns.avatar');
+    }
+
+    /**
+     * Column bio for table users
+     * 
+     * @return string
+     */
+    public static function userBio(): string
+    {
+        return FacadesConfig::get('laratalk.users.migration.columns.bio');
     }
 
     /**
@@ -136,7 +146,7 @@ class Config
      * 
      * @return string
      */
-    public static function darkMode(): string
+    public static function userDarkMode(): string
     {
         return FacadesConfig::get('laratalk.users.migration.columns.dark_mode');
     }
@@ -146,38 +156,88 @@ class Config
      * 
      * @return string
      */
-    public static function locale(): string
+    public static function userLocale(): string
     {
         return FacadesConfig::get('laratalk.users.migration.columns.locale');
     }
 
     /**
-     * File directory
+     * Filesystem disk
      * 
      * @return string
      */
-    public static function fileDirectory(): string
+    public static function storageDisk(): string
     {
-        return FacadesConfig::get('laratalk.attachment.folder');
+        return FacadesConfig::get('laratalk.storage.disk');
     }
 
     /**
-     * File size
+     * Storage path
      * 
-     * @return int
+     * @return string
      */
-    public static function fileSize(): int
+    public static function storagePath(): string
     {
-        return FacadesConfig::get('laratalk.attachment.size');
+        return FacadesConfig::get('laratalk.storage.path');
     }
 
     /**
-     * Format images
+     * Show all image formats
      * 
      * @return array
      */
-    public static function formatImages(): array
+    public static function storageImageFormat(): array
     {
-        return FacadesConfig::get('laratalk.attachment.images');
+        return FacadesConfig::get('laratalk.storage.images.format');
+    }
+
+    /**
+     * Size for image format
+     * 
+     * @return int
+     */
+    public static function storageImageSize(): int
+    {
+        return FacadesConfig::get('laratalk.storage.images.size');
+    }
+
+    /**
+     * Show all file formats
+     * 
+     * @return array
+     */
+    public static function storageFileFormat(): array
+    {
+        return FacadesConfig::get('laratalk.storage.files.format');
+    }
+
+    /**
+     * Size for file format
+     * 
+     * @return int
+     */
+    public static function storageFileSize(): int
+    {
+        return FacadesConfig::get('laratalk.storage.files.size');
+    }
+
+    /**
+     * Enable or disable group chat feature
+     * 
+     * @return bool
+     */
+    public static function groupEnabled(): bool
+    {
+        return FacadesConfig::get('laratalk.group.enabled');
+    }
+
+    /**
+     * Determine the maximum group participants
+     * 
+     * @return int
+     */
+    public static function groupParticipant(): int
+    {
+        return FacadesConfig::get('laratalk.group.participant');
     }
 }

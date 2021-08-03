@@ -60,7 +60,7 @@ class Laratalk
         $countDay = $datetime->diffInDays();
 
         $trans = self::availableTranslations(
-            Auth::user()->{Config::locale()}
+            Auth::user()->{Config::userLocale()}
         );
 
         if ($datetime->isToday()) {
