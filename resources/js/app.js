@@ -2,6 +2,7 @@ require('./plugins')
 
 import { createVNode, createApp, render } from 'vue'
 import App from './App.vue'
+import store from './store'
 
 /**
  * Mixins
@@ -90,5 +91,7 @@ const modal = (params) => {
 }
 
 app.config.globalProperties.$modal = modal
+
+app.use(store)
 
 app.mount('#laratalk')
