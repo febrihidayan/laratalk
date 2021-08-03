@@ -40,25 +40,21 @@ class SetupLaratalkTables extends Migration
      */
     public function up()
     {
-        if (Config::groupEnabled()) {
+        Schema::create(Config::groups(), function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('name', 30);
+            $table->string('description', 500)->nullable();
+            $table->string('avatar')->nullable();
+            $table->{$this->foreignType}('user_id', $this->foreignLength);
+            $table->unsignedBigInteger('pinned_message_id')->nullable();
+            $table->timestamps();
+        });
 
-            Schema::create(Config::groups(), function (Blueprint $table) {
-                $table->bigIncrements('id');
-                $table->string('name', 30);
-                $table->string('description', 500)->nullable();
-                $table->string('avatar')->nullable();
-                $table->{$this->foreignType}('user_id', $this->foreignLength);
-                $table->unsignedBigInteger('pinned_message_id')->nullable();
-                $table->timestamps();
-            });
-    
-            Schema::create(Config::groupUser(), function (Blueprint $table) {
-                $table->unsignedBigInteger('group_id');
-                $table->{$this->foreignType}('user_id', $this->foreignLength);
-                $table->boolean('role')->default(0);
-            });
-
-        }
+        Schema::create(Config::groupUser(), function (Blueprint $table) {
+            $table->unsignedBigInteger('group_id');
+            $table->{$this->foreignType}('user_id', $this->foreignLength);
+            $table->boolean('role')->default(0);
+        });
 
         Schema::create(Config::messages(), function (Blueprint $table) {
             $table->bigIncrements('id');
@@ -108,13 +104,8 @@ class SetupLaratalkTables extends Migration
      */
     public function down()
     {
-        if (Config::groupEnabled()) {
-
-            Schema::dropIfExists(Config::groups());
-            Schema::dropIfExists(Config::groupUser());
-
-        }
-        
+        Schema::dropIfExists(Config::groups());
+        Schema::dropIfExists(Config::groupUser());
         Schema::dropIfExists(Config::messages());
         Schema::dropIfExists(Config::messageRecipient());
 
