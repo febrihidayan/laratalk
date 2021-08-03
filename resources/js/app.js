@@ -1,6 +1,7 @@
 require('./plugins')
 
 import { createVNode, createApp, render } from 'vue'
+import { createStore } from 'vuex'
 import App from './App.vue'
 import store from './store'
 
@@ -65,6 +66,11 @@ const app = createApp({
         TranslateIcon,
         TrashIcon,
         XIcon
+    },
+    setup() {
+        const store = createStore()
+
+        store.dispacth('config/fetchConfig')
     },
     ...App
 })
