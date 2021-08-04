@@ -1,15 +1,13 @@
 require('./plugins')
 
 import { createVNode, createApp, render } from 'vue'
-import { createStore } from 'vuex'
-import App from './App.vue'
+import { useStore } from 'vuex'
 import store from './store'
-
+import App from './App.vue'
 /**
  * Mixins
  */
-import GlobalMixin from './Mixins/GlobalMixin'
-import HelperMixin from './Mixins/HelperMixin'
+import GlobalMixin from './mixins/GlobalMixin'
 
 /**
  * Components
@@ -44,7 +42,6 @@ import {
 const app = createApp({
     mixins: [
         GlobalMixin,
-        HelperMixin
     ],
     components: {
         Avatar,
@@ -68,9 +65,9 @@ const app = createApp({
         XIcon
     },
     setup() {
-        const store = createStore()
+        const store = useStore()
 
-        store.dispacth('config/fetchConfig')
+        store.dispatch('config/fetchConfig')
     },
     ...App
 })

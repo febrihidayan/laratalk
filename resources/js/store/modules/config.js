@@ -32,5 +32,16 @@ export const actions = {
         state.profile = config.profile
         state.storage = config.storage
         state.translations = config.translations
+    },
+
+    fetchTranslation({ state }, locale)
+    {
+        axios
+            .post('user-language', {
+                locale
+            })
+            .then(({ data }) => {
+                state.translations = data
+            })
     }
 }

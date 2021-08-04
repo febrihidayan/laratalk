@@ -1,5 +1,5 @@
 <template>
-    <figure>
+    <figure class="relative">
         <div
             v-if="!src"
             class="flex justify-center items-center bg-dark-50 rounded-full"
@@ -43,6 +43,7 @@
             <input
                 type="file"
                 @change="onFileChange"
+                :accept="acceptImage"
                 class="hidden"
             >
         </label>
@@ -50,6 +51,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import {
     CameraIcon
 } from '@heroicons/vue/outline'
@@ -83,6 +86,15 @@ export default {
         UserIcon
     },
     computed: {
+        ...mapGetters({
+            auth_user: 'config/profile',
+            storage: 'config/storage',
+        }),
+
+        acceptImage() {
+            return 'image/' + this.storage.image_format.join(',image/')
+        },
+
         whStyle() {
             return this.styleObject(this.size)
         },
@@ -109,7 +121,7 @@ export default {
             axios
                 .post('upload-avatar', data)
                 .then(({ data }) => {
-                    this.laratalk.profile.avatar = data
+                    this.auth_user.avatar = data
                 })
         },
         

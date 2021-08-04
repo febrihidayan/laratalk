@@ -5,3 +5,9 @@
  * Copyright 2020, Pusher
  * Released under the MIT licence.
  */
+
+/*!
+ * vuex v4.0.2
+ * (c) 2021 Evan You
+ * @license MIT
+ */

@@ -83,7 +83,7 @@ class SetupLaratalkTables extends Migration
             }
             
             if (!Schema::hasColumn(Config::users(), Config::userBio())) {
-                $table->tinyText(Config::userBio())->nullable();
+                $table->string(Config::userBio())->nullable();
             }
             
             if (!Schema::hasColumn(Config::users(), Config::userDarkMode())) {

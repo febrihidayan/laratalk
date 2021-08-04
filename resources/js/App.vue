@@ -1,26 +1,99 @@
 <template>
     <section class="flex h-full dark:bg-dark-100 dark:text-gray-100">
+
+        <!-- box aside settings -->
+        <BoxAside
+            v-model="isBoxSetting"
+            :name="trans.settings"
+        >
+            <div
+                @click="isBoxProfile=true"
+                class="flex cursor-pointer hover:bg-light-300 dark:hover:bg-dark-100"
+            >
+                <div class="flex-none p-4">
+                    <Avatar
+                        :image="auth_user.avatar"
+                        :size="20"
+                    />
+                </div>
+                <div class="flex-grow my-auto">
+                    <p class="text-xl">{{
+                        auth_user.name
+                    }}</p>
+                </div>
+            </div>
+            <Media
+                @click="isSettingTheme=true"
+                class="!h-15"
+            >
+                <template #left>
+                    <div class="py-4 px-3">
+                        <MoonIcon
+                            v-if="dark_mode"
+                            class="svg-icon"
+                        />
+                        <SunIcon
+                            v-else
+                            class="svg-icon"
+                        />
+                    </div>
+                </template>
+
+                <p class="text-md">{{
+                    trans.theme
+                }}</p>
+
+            </Media>
+            <Media
+                @click="isSettingLang=true"
+                class="!h-15"
+            >
+                <template #left>
+                    <div class="py-4 px-3">
+                        <TranslateIcon
+                            class="svg-icon"
+                        />
+                    </div>
+                </template>
+
+                <p class="text-md">{{
+                    trans.language
+                }}</p>
+
+            </Media>
+        </BoxAside>
+        
         <!-- box aside profile -->
         <BoxAside
             v-model="isBoxProfile"
             :name="trans.profile"
         >
-            <div class="sidebar-detail">
-                <div class="dark:bg-dark-300 py-8">
+            <div class="sidebar-detail bg-light-600 dark:bg-dark-100">
+                <div class="bg-white dark:bg-dark-300">
                     <Avatar
-                        :image="laratalk.profile.avatar"
+                        :image="auth_user.avatar"
                         :isUpload="true"
                         :size="48"
-                        class="flex justify-center"
+                        class="flex justify-center pt-7 pb-5"
                     />
+                    <div class="px-6 py-4">
+                        <small class="text-purple-800 dark:text-purple-300">{{
+                            trans.your_name
+                        }}</small>
+                        <div class="mt-4">
+                            <p>{{
+                                auth_user.name
+                            }}</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="bg-white dark:bg-dark-300 my-2 px-6 py-4">
                     <small class="text-purple-800 dark:text-purple-300">{{
-                        trans.your_name
+                        trans.info
                     }}</small>
                     <div class="mt-4">
                         <p>{{
-                            laratalk.profile.name
+                            auth_user.bio
                         }}</p>
                     </div>
                 </div>
@@ -218,68 +291,6 @@
             </div>
         </BoxAside>
 
-        <!-- box aside settings -->
-        <BoxAside
-            v-model="isBoxSetting"
-            :name="trans.settings"
-        >
-            <div
-                @click="isBoxProfile=true"
-                class="flex cursor-pointer hover:bg-light-300 dark:hover:bg-dark-100"
-            >
-                <div class="flex-none p-4">
-                    <Avatar
-                        :image="laratalk.profile.avatar"
-                        :size="20"
-                    />
-                </div>
-                <div class="flex-grow my-auto">
-                    <p class="text-xl">{{
-                        laratalk.profile.name
-                    }}</p>
-                </div>
-            </div>
-            <Media
-                @click="isSettingTheme=true"
-                class="!h-15"
-            >
-                <template #left>
-                    <div class="py-4 px-3">
-                        <MoonIcon
-                            v-if="dark_mode"
-                            class="svg-icon"
-                        />
-                        <SunIcon
-                            v-else
-                            class="svg-icon"
-                        />
-                    </div>
-                </template>
-
-                <p class="text-md">{{
-                    trans.theme
-                }}</p>
-
-            </Media>
-            <Media
-                @click="isSettingLang=true"
-                class="!h-15"
-            >
-                <template #left>
-                    <div class="py-4 px-3">
-                        <TranslateIcon
-                            class="svg-icon"
-                        />
-                    </div>
-                </template>
-
-                <p class="text-md">{{
-                    trans.language
-                }}</p>
-
-            </Media>
-        </BoxAside>
-
         <aside
             :class="[`flex-none min-w-100 sm:border-r-1 dark:sm:border-dark-200 <sm:w-full <lg:fixed <lg:top-0 <lg:left-0 <lg:z-20 ease-in-out transition-all duration-300`, {
                 '<sm:-left-full <lg:-left-100': !isContactChat
@@ -289,7 +300,7 @@
                 <div class="flex-grow">
                     <Avatar
                         @click="isBoxProfile=true"
-                        :image="laratalk.profile.avatar"
+                        :image="auth_user.avatar"
                         class="cursor-pointer"
                     />
                 </div>
@@ -362,7 +373,7 @@
                 <Media
                     v-for="(item, index) in users"
                     :key="index"
-                    :isActive="form.type_id == getTypeId(item.chat_type, item.id)"
+                    :isActive="form.type_id == typeId(item.chat_type, item.id)"
                     :class="[{
                         'font-medium': item.read_count
                     }]"
@@ -406,7 +417,7 @@
                                 :title="item.content"
                             >
                                 <template
-                                    v-if="laratalk.profile.id === item.content_by && item.content_type === models.message.chat"
+                                    v-if="auth_user.id === item.content_by && item.content_type === models.message.chat"
                                 >
                                     <CheckIcon
                                         :class="[`svg-icon svg-sm flex-none`, {
@@ -569,7 +580,7 @@
 
                             <!-- message right -->
                             <div
-                                v-if="laratalk.profile.id == item.content_by"
+                                v-if="auth_user.id == item.content_by"
                                 class="message bg-dark-500 text-white rounded-t-xl rounded-l-xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-3 ml-auto"
                             >
                                 <div
@@ -742,6 +753,9 @@
                             : trans.description
                     }}</small>
                     <div class="mt-4">
+                        <p v-if="message.bio">{{
+                            message.bio
+                        }}</p>
                         <p>{{
                             message.chat_type === models.message.type_user
                                 ? message.email : message.description
@@ -761,12 +775,12 @@
                             :key="index"
                         >
                             <Media
-                                v-on:click="laratalk.profile.id != item.id ? fetchMessages(item.id, models.message.type_user) : ''"
-                                :cursor="laratalk.profile.id != item.id"
+                                v-on:click="auth_user.id != item.id ? fetchMessages(item.id, models.message.type_user) : ''"
+                                :cursor="auth_user.id != item.id"
                             >
                                 <template #left>
                                     <Avatar
-                                        :image="laratalk.profile.avatar"
+                                        :image="auth_user.avatar"
                                         :size="13"
                                         class="pl-6"
                                     />
@@ -774,7 +788,7 @@
 
                                 <div class="flex pr-6">
                                     <p class="flex-grow truncate text-lg">{{
-                                        laratalk.profile.id != item.id
+                                        auth_user.id != item.id
                                             ? item.name : trans.you
                                     }}</p>
                                     <small
@@ -859,12 +873,12 @@
         }}</h3>
         <div class="block mt-5 dark:text-light-700">
             <div
-                v-for="(lang, key) in laratalk.languages"
+                v-for="(lang, key) in languages"
                 :key="key"
             >
                 <label class="inline-flex items-center cursor-pointer">
                     <input
-                        v-model="locale"
+                        v-model="auth_user.locale"
                         type="radio"
                         class="form-radio cursor-pointer"
                         :value="key"
@@ -882,6 +896,11 @@
 <script>
 import debounce from 'lodash/debounce'
 import includes from 'lodash/includes'
+
+// helpers
+import {
+    firstName, typeId
+} from './utils/helpers'
 
 export default {
     data() {
@@ -906,8 +925,6 @@ export default {
             message_countdown: null,
             message_second: 0,
             message_typing: false,
-            profile: {},
-            userIndex: null,
             users: [],
             users_add_Groups: [],
             users_new_chat: []
@@ -916,6 +933,9 @@ export default {
     methods: {
         // lodash includes
         includes,
+
+        // helpers
+        typeId,
 
         addGroupParticipant(user)
         {
@@ -970,7 +990,7 @@ export default {
         {
             this.isContactChat = false
 
-            const type_id = this.getTypeId(type, id)
+            const type_id = typeId(type, id)
 
             if (this.form.type_id !== type_id) {
 
@@ -998,7 +1018,7 @@ export default {
     
                     this.users.find((s) => {
 
-                        if (this.getTypeId(s.chat_type, s.id) === type_id) {
+                        if (typeId(s.chat_type, s.id) === type_id) {
                             s.read_count = 0
 
                             if (s.chat_type === this.models.message.type_user) {
@@ -1042,7 +1062,7 @@ export default {
                 data.forEach((s) => {
                     if (s.chat_type === this.models.message.type_group) {
                         this.listenTyping(
-                            this.getTypeId(s.chat_type, s.id)
+                            typeId(s.chat_type, s.id)
                         )
                     }
                 })
@@ -1054,7 +1074,7 @@ export default {
             let string = ''
 
             data.forEach(s => {
-                string += this.firstName(s.name) + ', '
+                string += firstName(s.name) + ', '
             })
 
             return string.substr(0, string.length - 2)
@@ -1090,7 +1110,7 @@ export default {
 
         listenEcho()
         {
-            Echo.channel('laratalk-user-message.' + this.laratalk.profile.id)
+            Echo.channel('laratalk-user-message.' + this.auth_user.id)
                 .listen('Messages\\SendEvent', (e) => {
 
                     this.pushMessage(e)
@@ -1134,7 +1154,7 @@ export default {
                     this.users.unshift(e)
 
                     this.listenTyping(
-                        this.getTypeId(e.chat_type, e.id)
+                        typeId(e.chat_type, e.id)
                     )
                 })
             
@@ -1188,7 +1208,7 @@ export default {
                     }
                 })
             
-            this.listenTyping(`user-` + this.laratalk.profile.id)
+            this.listenTyping(`user-` + this.auth_user.id)
 
         },
 
@@ -1257,7 +1277,7 @@ export default {
                 userIndex = this.users.findIndex(
                     (e) => e.chat_type === this.models.message.type_user &&
                         e.id === (
-                            this.laratalk.profile.id == data.content_by
+                            this.auth_user.id == data.content_by
                                 ? this.message.id : data.content_by
                         )
                 )
@@ -1282,8 +1302,8 @@ export default {
                 user.status = 'send'
 
                 if (
-                    this.getTypeId(user.chat_type, user.id) !==
-                        this.getTypeId(this.message.chat_type, this.message.id)
+                    typeId(user.chat_type, user.id) !==
+                        typeId(this.message.chat_type, this.message.id)
                 ) {
                     user.read_count++
                 }
@@ -1303,7 +1323,7 @@ export default {
                     content_type: 0,
                     chat_type: data.chat_type,
                     read_count:
-                        this.laratalk.profile.id != data.content_by ? 1 : 0,
+                        this.auth_user.id != data.content_by ? 1 : 0,
                     status: data.status,
                     last_time: data.time
                 })
@@ -1311,8 +1331,8 @@ export default {
 
             if (
                 this.message.messages &&
-                this.getTypeId(data.chat_type, this.message.id) ===
-                    this.getTypeId(this.message.chat_type, this.message.id)
+                typeId(data.chat_type, this.message.id) ===
+                    typeId(this.message.chat_type, this.message.id)
             ) {
 
                 this.message.messages.push(data)
@@ -1321,7 +1341,7 @@ export default {
 
             }
 
-            if (this.laratalk.profile.id != data.content_by) {
+            if (this.auth_user.id != data.content_by) {
 
                 let status = (
                     this.message.chat_type === this.models.message.type_user &&
@@ -1374,13 +1394,10 @@ export default {
 
         sendLanguage({ target})
         {
-            axios
-                .post('user-language', {
-                    locale: target.value
-                })
-                .then(({ data }) => {
-                    this.trans = data
-                })
+            this.$store.dispatch(
+                'config/fetchTranslation',
+                target.value
+            )
         },
 
         sendMessage()
@@ -1420,23 +1437,22 @@ export default {
 
             const data = {
                 id: this.message.chat_type === this.models.message.type_group
-                    ? this.message.id : this.laratalk.profile.id,
+                    ? this.message.id : this.auth_user.id,
                 typing: bool || this.message_typing,
                 chat_type: this.message.chat_type
             }
 
             if (this.message.chat_type === this.models.message.type_group) {
-                data.typing_name = this.firstName(
-                    this.laratalk.profile.name
+                data.typing_name = firstName(
+                    this.auth_user.name
                 )
             }
 
             Echo.private('chat')
                 .whisper(`typing-${this.form.type_id}`, data)
-        }
+        },
 
     },
-
     beforeMount() {
         this.fetchUsers()
         this.listenEcho()

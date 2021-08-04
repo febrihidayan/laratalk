@@ -94,7 +94,11 @@ class LaratalkController extends Controller
                 'translations' => Laratalk::availableTranslations(
                     $user->{Config::userLocale()}
                 ),
-                'echo' => Config::pusher()
+                'echo' => Config::pusher(),
+                'storage' => [
+                    'image_format' => Config::storageImageFormat(),
+                    'file_format' => Config::storageFileFormat(),
+                ]
             ]);
     }
 }

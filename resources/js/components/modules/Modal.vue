@@ -58,6 +58,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
     props: {
         content: String,
@@ -72,10 +74,12 @@ export default {
         },
         programmatic: Boolean
     },
+    computed: mapGetters({
+        trans: 'config/translations'
+    }),
     data() {
         return {
-            isActive: this.modelValue || false,
-            trans: window.laratalk.translations
+            isActive: this.modelValue || false
         }
     },
     watch: {
