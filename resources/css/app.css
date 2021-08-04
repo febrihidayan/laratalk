@@ -1,9 +1,12 @@
 @windicss;
 
+/* 
+ * scrollbar (overflow)
+ */
 ::-webkit-scrollbar {
     background-color: transparent;
     height: 6px;
-    width: 6px
+    width: 6px;
 }
 
 ::-webkit-scrollbar-thumb {

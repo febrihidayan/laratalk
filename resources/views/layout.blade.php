@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Karla|Merriweather:400,700">
     <link rel="stylesheet" type="text/css" href="{{ mix('css/app.css', 'vendor/laratalk') }}">
 </head>
-<body class="overflow-hidden">
+<body>
 
     <div id="laratalk"></div>
 
