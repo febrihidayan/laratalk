@@ -4,6 +4,7 @@ import { createVNode, createApp, render } from 'vue'
 import { useStore } from 'vuex'
 import store from './store'
 import App from './App.vue'
+
 /**
  * Mixins
  */

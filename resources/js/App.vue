@@ -1,5 +1,5 @@
 <template>
-    <section class="flex h-full dark:bg-dark-100 dark:text-gray-100">
+    <section class="dark:text-gray-100">
 
         <!-- box aside settings -->
         <BoxAside
@@ -291,185 +291,189 @@
             </div>
         </BoxAside>
 
+        <!-- aside contact chat -->
         <aside
-            :class="[`flex-none min-w-100 sm:border-r-1 dark:sm:border-dark-200 <sm:w-full <lg:fixed <lg:top-0 <lg:left-0 <lg:z-20 ease-in-out transition-all duration-300`, {
-                '<sm:-left-full <lg:-left-100': !isContactChat
+            :class="[`bg-dark-200 overflow-hidden <md:fixed <md:top-0 <md:left-0 <md:w-0 z-30`, {
+                '<sm:w-full <md:w-100': isAsideLeft,
+                '<xl:w-35/100 xl:w-3/10': !isAsideRight,
+                '<lg:w-35/100 <xl:w-3/10 xl:w-25/100': isAsideRight
             }]"
         >
-            <div class="flex bg-light-600 dark:bg-dark-400 px-5 py-2">
-                <div class="flex-grow">
-                    <Avatar
-                        @click="isBoxProfile=true"
-                        :image="auth_user.avatar"
-                        class="cursor-pointer"
-                    />
-                </div>
-                <div class="flex flex-grow-0 flex-shrink-0 my-auto">
-                    <a class="cursor-pointer mx-2" @click="isBoxChat=true">
-                        <AnnotationIcon
-                            class="svg-icon"
+            <div class="sm:border-r-1 dark:sm:border-dark-200">
+                <div class="flex bg-light-600 dark:bg-dark-400 px-5 py-2">
+                    <div class="flex-grow">
+                        <Avatar
+                            @click="isBoxProfile=true"
+                            :image="auth_user.avatar"
+                            class="cursor-pointer"
                         />
-                    </a>
-                    <div class="dropdown mx-2">
-                        <a class="dropdown-button">
-                            <DotsVerticalIcon
+                    </div>
+                    <div class="flex flex-grow-0 flex-shrink-0 my-auto">
+                        <a class="cursor-pointer mx-2" @click="isBoxChat=true">
+                            <AnnotationIcon
                                 class="svg-icon"
                             />
                         </a>
-                        <div class="dropdown-menu">
-                            <a
-                                @click="isBoxNewGroup=true"
-                                class="dropdown-item"
-                            >{{
-                                trans.new_group
-                            }}</a>
-                            <a
-                                @click="isBoxProfile=true"
-                                class="dropdown-item"
-                            >{{
-                                trans.profile
-                            }}</a>
-                            <a
-                                @click="isBoxSetting=true"
-                                class="dropdown-item"
-                            >{{
-                                trans.settings
-                            }}</a>
-                            <a
-                                href="/"
-                                class="dropdown-item"
-                            >{{
-                                trans.exit
-                            }}</a>
-                        </div>
-                    </div>
-                    <a v-if="message.messages" class="cursor-pointer mx-2 -mr-2 lg:hidden" @click="isContactChat = !isContactChat">
-                        <XIcon
-                            class="svg-icon"
-                        />
-                    </a>
-                </div>
-            </div>
-
-            <!-- column search -->
-            <div class="bg-light-200 dark:bg-dark-200 border-b-1 dark:border-dark-50 px-4 py-2">
-                <div class="flex rounded-full bg-white dark:bg-dark-50 p-1">
-                    <span class="flex-grow-0 flex-shrink-0">
-                        <SearchIcon
-                            class="svg-icon"
-                        />
-                    </span>
-                    <input
-                        type="search"
-                        class="flex-grow dark:bg-dark-50 focus:outline-none ml-3" 
-                        :placeholder="trans.search"
-                        @input="fetchSearchUserChat"
-                    >
-                </div>
-            </div>
-
-            <!-- list users and groups -->
-            <div class="sidebar-content bg-white dark:bg-dark-300 dark:divide-gray-700 divide-light-500">
-                <Media
-                    v-for="(item, index) in users"
-                    :key="index"
-                    :isActive="form.type_id == typeId(item.chat_type, item.id)"
-                    :class="[{
-                        'font-medium': item.read_count
-                    }]"
-                >
-                    <template #left>
-                        <Avatar
-                            @click="fetchMessages(item.id, item.chat_type)"
-                            :image="item.avatar"
-                            :size="13"
-                        />
-                    </template>
-
-                    <div
-                        @click="fetchMessages(item.id, item.chat_type)"
-                        class="flex"
-                    >
-                        <p
-                            class="flex-grow truncate text-lg"
-                            :title="item.name"
-                        >{{
-                            item.name
-                        }}</p>
-                        <small class="flex-none my-auto">{{
-                            item.last_time
-                        }}</small>
-                    </div>
-                    <div class="flex text-sm">
-                        <span
-                            v-if="item.typing"
-                            @click="fetchMessages(item.id, item.chat_type)"
-                            class="flex-grow"
-                        >{{
-                            item.typing_name
-                                ? `${item.typing_name}: ${trans.typing}`
-                                : trans.typing
-                        }}</span>
-                        <template v-else>
-                            <div
-                                @click="fetchMessages(item.id, item.chat_type)"
-                                class="contents flex-grow"
-                                :title="item.content"
-                            >
-                                <template
-                                    v-if="auth_user.id === item.content_by && item.content_type === models.message.chat"
-                                >
-                                    <CheckIcon
-                                        :class="[`svg-icon svg-sm flex-none`, {
-                                            '!text-dark-200': !dark_mode && item.status != 'read',
-                                            '!text-light-200': dark_mode && item.status != 'read',
-                                            '!text-purple-400': item.status == 'read'
-                                        }]"
-                                    />
-                                    <CheckIcon
-                                        v-if="item.status != models.message.send"
-                                        :class="[`svg-icon svg-sm flex-none -ml-4`, {
-                                            '!text-dark-200': !dark_mode && item.status == 'accept',
-                                            '!text-light-200': dark_mode && item.status == 'accept',
-                                            '!text-purple-400': item.status == 'read'
-                                        }]"
-                                    />
-                                </template>
-                                <span class="flex-grow truncate">{{
-                                    item.content_type === models.message.chat
-                                        ? item.content : getTransMessage(item)
-                                }}</span>
-                            </div>
-                        </template>
-                        <small
-                            @click="fetchMessages(item.id, item.chat_type)"
-                            v-if="item.read_count"
-                            class="flex-none bg-purple-600 text-white w-5 h-5 leading-5 text-center rounded-full"
-                        >{{
-                            item.read_count
-                        }}</small>
-                        <div class="dropdown -mr-9 pl-3 transition-effect opacity-0">
+                        <div class="dropdown mx-2">
                             <a class="dropdown-button">
-                                <ChevronDownIcon
+                                <DotsVerticalIcon
                                     class="svg-icon"
                                 />
                             </a>
                             <div class="dropdown-menu">
                                 <a
-                                    @click="deleteChatorLeaveGroup(item.id, item.chat_type)"
+                                    @click="isBoxNewGroup=true"
                                     class="dropdown-item"
                                 >{{
-                                    item.chat_type === models.message.type_user
-                                        ? trans.delete_chat : trans.leave_the_group
+                                    trans.new_group
+                                }}</a>
+                                <a
+                                    @click="isBoxProfile=true"
+                                    class="dropdown-item"
+                                >{{
+                                    trans.profile
+                                }}</a>
+                                <a
+                                    @click="isBoxSetting=true"
+                                    class="dropdown-item"
+                                >{{
+                                    trans.settings
+                                }}</a>
+                                <a
+                                    href="/"
+                                    class="dropdown-item"
+                                >{{
+                                    trans.exit
                                 }}</a>
                             </div>
                         </div>
                     </div>
-                </Media>
+                </div>
+
+                <!-- column search -->
+                <div class="bg-light-200 dark:bg-dark-200 border-b-1 dark:border-dark-50 px-4 py-2">
+                    <div class="flex rounded-full bg-white dark:bg-dark-50 p-1">
+                        <span class="flex-grow-0 flex-shrink-0">
+                            <SearchIcon
+                                class="svg-icon"
+                            />
+                        </span>
+                        <input
+                            type="search"
+                            class="flex-grow dark:bg-dark-50 focus:outline-none ml-3" 
+                            :placeholder="trans.search"
+                            @input="fetchSearchUserChat"
+                        >
+                    </div>
+                </div>
+
+                <!-- list users and groups -->
+                <div class="sidebar-content bg-white dark:bg-dark-300 dark:divide-gray-700 divide-light-500">
+                    <Media
+                        v-for="(item, index) in users"
+                        :key="index"
+                        :isActive="form.type_id == typeId(item.chat_type, item.id)"
+                        :class="[{
+                            'font-medium': item.read_count
+                        }]"
+                    >
+                        <template #left>
+                            <Avatar
+                                @click="fetchMessages(item.id, item.chat_type)"
+                                :image="item.avatar"
+                                :size="13"
+                            />
+                        </template>
+
+                        <div
+                            @click="fetchMessages(item.id, item.chat_type)"
+                            class="flex"
+                        >
+                            <p
+                                class="flex-grow truncate text-lg"
+                                :title="item.name"
+                            >{{
+                                item.name
+                            }}</p>
+                            <small class="flex-none my-auto">{{
+                                item.last_time
+                            }}</small>
+                        </div>
+                        <div class="flex text-sm">
+                            <span
+                                v-if="item.typing"
+                                @click="fetchMessages(item.id, item.chat_type)"
+                                class="flex-grow"
+                            >{{
+                                item.typing_name
+                                    ? `${item.typing_name}: ${trans.typing}`
+                                    : trans.typing
+                            }}</span>
+                            <template v-else>
+                                <div
+                                    @click="fetchMessages(item.id, item.chat_type)"
+                                    class="contents flex-grow"
+                                    :title="item.content"
+                                >
+                                    <template
+                                        v-if="auth_user.id === item.content_by && item.content_type === models.message.chat"
+                                    >
+                                        <CheckIcon
+                                            :class="[`svg-icon svg-sm flex-none`, {
+                                                '!text-dark-200': !dark_mode && item.status != 'read',
+                                                '!text-light-200': dark_mode && item.status != 'read',
+                                                '!text-purple-400': item.status == 'read'
+                                            }]"
+                                        />
+                                        <CheckIcon
+                                            v-if="item.status != models.message.send"
+                                            :class="[`svg-icon svg-sm flex-none -ml-4`, {
+                                                '!text-dark-200': !dark_mode && item.status == 'accept',
+                                                '!text-light-200': dark_mode && item.status == 'accept',
+                                                '!text-purple-400': item.status == 'read'
+                                            }]"
+                                        />
+                                    </template>
+                                    <span class="flex-grow truncate">{{
+                                        item.content_type === models.message.chat
+                                            ? item.content : getTransMessage(item)
+                                    }}</span>
+                                </div>
+                            </template>
+                            <small
+                                @click="fetchMessages(item.id, item.chat_type)"
+                                v-if="item.read_count"
+                                class="flex-none bg-purple-600 text-white w-5 h-5 leading-5 text-center rounded-full"
+                            >{{
+                                item.read_count
+                            }}</small>
+                            <div class="dropdown -mr-9 pl-3 transition-effect opacity-0">
+                                <a class="dropdown-button">
+                                    <ChevronDownIcon
+                                        class="svg-icon"
+                                    />
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a
+                                        @click="deleteChatorLeaveGroup(item.id, item.chat_type)"
+                                        class="dropdown-item"
+                                    >{{
+                                        item.chat_type === models.message.type_user
+                                            ? trans.delete_chat : trans.leave_the_group
+                                    }}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </Media>
+                </div>
             </div>
         </aside>
+        
+        <!-- main messages -->
         <main
-            :class="[`flex-grow z-10`, {
+            :class="[`<md:w-full`, {
+                '<xl:w-65/100 xl:w-7/10': !isAsideRight,
+                '<lg:w-65/100 <xl:w-4/10 xl:w-45/100': isAsideRight,
                 'flex': !message.messages
             }]"
         >
@@ -479,18 +483,18 @@
                 <div class="bg-light-600 dark:bg-dark-400 px-2">
                     <div class="flex">
                         <div class="flex-none p-2 my-auto lg:hidden">
-                            <a class="cursor-pointer" @click="isContactChat = !isContactChat">
+                            <a class="cursor-pointer" @click="isAsideLeft = !isAsideLeft">
                                 <ChevronLeftIcon
                                     class="svg-icon"
                                 />
                             </a>
                         </div>
-                        <div class="flex-none p-2 cursor-pointer" @click="isDetailUser = true">
+                        <div class="flex-none p-2 cursor-pointer" @click="isAsideRight = true">
                             <Avatar
                                 :image="message.avatar"
                             />
                         </div>
-                        <div class="flex-grow grid cursor-pointer my-auto" @click="isDetailUser = true">
+                        <div class="flex-grow grid cursor-pointer my-auto" @click="isAsideRight = true">
                             <p class="text-base">{{
                                 message.name
                             }}</p>
@@ -522,7 +526,7 @@
                                 </a>
                                 <div class="dropdown-menu">
                                     <a
-                                         @click="isDetailUser = true"
+                                         @click="isAsideRight = true"
                                         class="dropdown-item"
                                     >{{
                                         message.chat_type === models.message.type_user
@@ -717,11 +721,14 @@
         </main>
 
         <!-- detail info contact or group -->
-        <aside :class="[`flex-none bg-light-600 dark:bg-dark-100 w-0 <xl:fixed <xl:top-0 <xl:right-0 z-10 ease-in-out transition-all duration-300`, {
-            'w-100 <sm:w-full md:border-l-1 dark:md:border-dark-200': isDetailUser
-        }]">
+        <aside
+            :class="[`bg-light-600 dark:bg-dark-100 <md:w-full lg:border-l-1 dark:lg:border-dark-200 <lg:fixed <lg:top-0 <lg:right-0 z-20`,{
+                '!w-0': !isAsideRight,
+                '<lg:w-65/100 <xl:w-3/10 xl:w-3/10': isAsideRight
+            }]"
+        >
             <div class="flex bg-blue-500 dark:bg-dark-400 text-white p-4">
-                <a class="cursor-pointer" @click="isDetailUser = !isDetailUser">
+                <a class="cursor-pointer" @click="isAsideRight = !isAsideRight">
                     <XIcon
                         class="svg-icon !text-white"
                     />
@@ -912,13 +919,13 @@ export default {
                 name: '',
                 users: []
             },
+            isAsideLeft: true,
+            isAsideRight: false,
             isBoxChat: false,
             isBoxGroup: false,
             isBoxNewGroup: false,
             isBoxProfile: false,
             isBoxSetting: false,
-            isContactChat: true,
-            isDetailUser: false,
             isSettingLang: false,
             isSettingTheme: false,
             message: {},
@@ -962,8 +969,8 @@ export default {
                             chat_type
                         })
                         .then(() => {
-                            this.isContactChat = true
-                            this.isDetailUser = false
+                            this.isAsideLeft = true
+                            this.isAsideRight = false
 
                             const index = this.users.findIndex(
                                     (e) =>
@@ -988,7 +995,7 @@ export default {
 
         fetchMessages(id, type)
         {
-            this.isContactChat = false
+            this.isAsideLeft = false
 
             const type_id = typeId(type, id)
 
@@ -1459,3 +1466,13 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+section {
+    @apply inline-flex w-full h-full z-10;
+}
+aside,
+main {
+    @apply flex-grow h-full ease-in-out transition-all duration-200;
+}
+</style>
