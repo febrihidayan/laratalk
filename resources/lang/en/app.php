@@ -13,6 +13,7 @@ return [
     'group_admin' => 'Group admin',
     'group_info' => 'Group info',
     'group_name' => 'Group name',
+    'info' => 'Info',
     'info_and_email_address' => 'Info and email address',
     'language' => 'Languages',
     'laratalk_description' => 'Laratalk provides Laravel based chat between users and groups',

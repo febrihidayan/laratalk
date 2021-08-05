@@ -553,160 +553,158 @@
                 </div>
 
                 <!-- all messages -->
-                <article class="main-content">
-                    <div class="bg-light-200 dark:bg-dark-100 flex flex-col px-24 <sm:px-5 <md:px-10" id="main-content">
-                        <template
-                            v-for="(item, index) in message.messages"
-                            :key="index"
+                <article class="main-content bg-light-200 dark:bg-dark-100 flex flex-col px-24 <sm:px-5 <md:px-10" id="main-content">
+                    <template
+                        v-for="(item, index) in message.messages"
+                        :key="index"
+                    >
+                        <div
+                            v-if="index == 0 || (message.messages[index-1] && message.messages[index-1].last_time != item.last_time)"
+                            class="bg-light-400 text-dark-500 rounded-md mx-auto my-4 py-1 px-2"
                         >
-                            <div
-                                v-if="index == 0 || (message.messages[index-1] && message.messages[index-1].last_time != item.last_time)"
-                                class="bg-light-400 text-dark-500 rounded-md mx-auto my-4 py-1 px-2"
-                            >
-                                <span class="uppercase text-xs">{{
-                                    item.last_time
-                                }}</span>
-                            </div>
-                            <div
-                                v-if="
-                                    !includes(
-                                        [models.message.chat, models.message.pull_message],
-                                        item.content_type
-                                    ) &&
-                                    message.chat_type === models.message.type_group
-                                "
-                                class="bg-light-400 text-dark-500 rounded-md mx-auto my-4 py-1 px-2"
-                            >
-                                <span class="text-xs">{{
-                                    getTransMessage(item)
-                                }}</span>
-                            </div>
-                            <template v-else>
+                            <span class="uppercase text-xs">{{
+                                item.last_time
+                            }}</span>
+                        </div>
+                        <div
+                            v-if="
+                                !includes(
+                                    [models.message.chat, models.message.pull_message],
+                                    item.content_type
+                                ) &&
+                                message.chat_type === models.message.type_group
+                            "
+                            class="bg-light-400 text-dark-500 rounded-md mx-auto my-4 py-1 px-2"
+                        >
+                            <span class="text-xs">{{
+                                getTransMessage(item)
+                            }}</span>
+                        </div>
+                        <template v-else>
 
-                                <!-- message right -->
+                            <!-- message right -->
+                            <div
+                                v-if="auth_user.id == item.content_by"
+                                class="message bg-dark-500 text-white rounded-t-xl rounded-l-xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-3 ml-auto"
+                            >
                                 <div
-                                    v-if="auth_user.id == item.content_by"
-                                    class="message bg-dark-500 text-white rounded-t-xl rounded-l-xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-3 ml-auto"
+                                    v-if="item.content_type === models.message.chat"
+                                    class="dropdown z-20"
                                 >
-                                    <div
-                                        v-if="item.content_type === models.message.chat"
-                                        class="dropdown z-20"
-                                    >
-                                        <a class="dropdown-button absolute w-10 bg-gradient-to-tr from-dark-500/80 to-dark-500 right-0 opacity-0 transition-effect">
-                                            <ChevronDownIcon
-                                                class="svg-icon !text-white float-right transform"
-                                            />
-                                        </a>
-                                        <div class="dropdown-menu !mt-6 !w-36">
-                                            <a
-                                                @click="sendPullMessage(item.id, message)"
-                                                class="dropdown-item"
-                                            >{{
-                                                trans.pull_message
-                                            }}</a>
-                                        </div>
-                                    </div>
-                                    <p>
-                                        <span
-                                            :class="[`whitespace-pre-wrap`, {
-                                                'italic': item.content_type !== models.message.chat
-                                            }]"
+                                    <a class="dropdown-button absolute w-10 bg-gradient-to-tr from-dark-500/80 to-dark-500 right-0 opacity-0 transition-effect">
+                                        <ChevronDownIcon
+                                            class="svg-icon !text-white float-right transform"
+                                        />
+                                    </a>
+                                    <div class="dropdown-menu !mt-6 !w-36">
+                                        <a
+                                            @click="sendPullMessage(item.id, message)"
+                                            class="dropdown-item"
                                         >{{
-                                            item.content_type === models.message.chat
-                                                ? item.content
-                                                : getTransMessage(item)
-                                        }}</span>
-                                        <span class="w-18 inline-block"></span>
-                                    </p>
-                                    <small class="flex float-right -mt-3 -mb-5px z-30">{{
-                                        item.time
-                                    }}
-                                        <template v-if="item.content_type === models.message.chat">
-                                            <CheckIcon
-                                                :class="[`svg-icon svg-sm`, {
-                                                    '!text-light-200': item.status != 'read',
-                                                    '!text-purple-400': item.status == 'read'
-                                                }]"
-                                            />
-                                            <CheckIcon
-                                                v-if="item.status != 'send'"
-                                                :class="[`svg-icon svg-sm -ml-4`, {
-                                                    '!text-light-200': item.status == 'accept',
-                                                    '!text-purple-400': item.status == 'read'
-                                                }]"
-                                            />
-                                        </template>
-                                    </small>
-                                </div>
-                                
-                                <!-- message left -->
-                                <div
-                                    v-else
-                                    class="message bg-white dark:text-dark-300 rounded-r-xl rounded-t-xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-2 mr-auto"
-                                >
-                                    <div
-                                        v-if="item.content_type === models.message.chat"
-                                        class="dropdown z-20"
-                                    >
-                                        <a class="dropdown-button absolute w-10 bg-gradient-to-tr from-white/80 to-white right-0 opacity-0 transition-effect">
-                                            <ChevronDownIcon
-                                                class="svg-icon !bg-white !text-gray-400 float-right transform"
-                                            />
-                                        </a>
-                                        <div class="dropdown-menu !mt-6 !w-36">
-                                            <!-- <a class="dropdown-item"></a> -->
-                                        </div>
+                                            trans.pull_message
+                                        }}</a>
                                     </div>
-                                    <a
-                                        @click="fetchMessages(item.content_by, models.message.type_user)"
-                                        v-if="message.chat_type === models.message.type_group"
-                                        class="cursor-pointer !text-cyan-500 hover:underline"
+                                </div>
+                                <p>
+                                    <span
+                                        :class="[`whitespace-pre-wrap`, {
+                                            'italic': item.content_type !== models.message.chat
+                                        }]"
                                     >{{
-                                        item.user_by_name
-                                    }}</a>
-                                    <p>
-                                        <span
-                                            :class="[`whitespace-pre-wrap`, {
-                                                'italic': item.content_type !== models.message.chat
+                                        item.content_type === models.message.chat
+                                            ? item.content
+                                            : getTransMessage(item)
+                                    }}</span>
+                                    <span class="w-18 inline-block"></span>
+                                </p>
+                                <small class="flex float-right -mt-3 -mb-5px z-30">{{
+                                    item.time
+                                }}
+                                    <template v-if="item.content_type === models.message.chat">
+                                        <CheckIcon
+                                            :class="[`svg-icon svg-sm`, {
+                                                '!text-light-200': item.status != 'read',
+                                                '!text-purple-400': item.status == 'read'
                                             }]"
-                                        >{{
-                                            item.content_type === models.message.chat
-                                                ? item.content
-                                                : getTransMessage(item)
-                                        }}</span>
-                                        <span class="w-13 inline-block"></span>
-                                    </p>
-                                    <small class="float-right -mt-3 -mb-5px z-30">{{
-                                        item.time
-                                    }}</small>
-                                </div>
-                            </template>
-                        </template>
-                    </div>
-
-                    <!-- form chat -->
-                    <div class="flex absolute bottom-0 w-full bg-light-600 dark:bg-dark-500">
-                        <div class="flex-grow pl-4 pr-2 py-2">
-                            <div class="rounded-full bg-white dark:bg-dark-200 mx-auto px-4 py-2">
-                                <textarea 
-                                    v-model="form.content"
-                                    class="dark:bg-dark-200 focus:outline-none w-full h-6 break-words border-none resize-none"
-                                    :placeholder="trans.type_a_message"
-                                    @keydown="isTyping"
-                                    @keyup.enter="sendMessage"
-                                />
+                                        />
+                                        <CheckIcon
+                                            v-if="item.status != 'send'"
+                                            :class="[`svg-icon svg-sm -ml-4`, {
+                                                '!text-light-200': item.status == 'accept',
+                                                '!text-purple-400': item.status == 'read'
+                                            }]"
+                                        />
+                                    </template>
+                                </small>
                             </div>
-                        </div>
-                        <div class="flex-none my-auto pl-2 pr-4">
-                            <a
-                                @click="sendMessage"
-                                class="cursor-pointer"
+                            
+                            <!-- message left -->
+                            <div
+                                v-else
+                                class="message bg-white dark:text-dark-300 rounded-r-xl rounded-t-xl shadow-lg shadow-dark-100 dark:shadow-light-100 max-w-66/100 my-4 p-2 mr-auto"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-icon" viewBox="0 0 20 20" fill="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.218,2.268L2.477,8.388C2.13,8.535,2.164,9.05,2.542,9.134L9.33,10.67l1.535,6.787c0.083,0.377,0.602,0.415,0.745,0.065l6.123-14.74C17.866,2.46,17.539,2.134,17.218,2.268 M3.92,8.641l11.772-4.89L9.535,9.909L3.92,8.641z M11.358,16.078l-1.268-5.613l6.157-6.157L11.358,16.078z"></path>
-                                </svg>
-                            </a>
+                                <div
+                                    v-if="item.content_type === models.message.chat"
+                                    class="dropdown z-20"
+                                >
+                                    <a class="dropdown-button absolute w-10 bg-gradient-to-tr from-white/80 to-white right-0 opacity-0 transition-effect">
+                                        <ChevronDownIcon
+                                            class="svg-icon !bg-white !text-gray-400 float-right transform"
+                                        />
+                                    </a>
+                                    <div class="dropdown-menu !mt-6 !w-36">
+                                        <!-- <a class="dropdown-item"></a> -->
+                                    </div>
+                                </div>
+                                <a
+                                    @click="fetchMessages(item.content_by, models.message.type_user)"
+                                    v-if="message.chat_type === models.message.type_group"
+                                    class="cursor-pointer !text-cyan-500 hover:underline"
+                                >{{
+                                    item.user_by_name
+                                }}</a>
+                                <p>
+                                    <span
+                                        :class="[`whitespace-pre-wrap`, {
+                                            'italic': item.content_type !== models.message.chat
+                                        }]"
+                                    >{{
+                                        item.content_type === models.message.chat
+                                            ? item.content
+                                            : getTransMessage(item)
+                                    }}</span>
+                                    <span class="w-13 inline-block"></span>
+                                </p>
+                                <small class="float-right -mt-3 -mb-5px z-30">{{
+                                    item.time
+                                }}</small>
+                            </div>
+                        </template>
+                    </template>
+                </article>
+
+                <!-- form chat -->
+                <article class="flex absolute bottom-0 w-full bg-light-600 dark:bg-dark-500">
+                    <div class="flex-grow pl-4 pr-2 py-2">
+                        <div class="rounded-full bg-white dark:bg-dark-200 mx-auto px-4 py-2">
+                            <textarea 
+                                v-model="form.content"
+                                class="dark:bg-dark-200 focus:outline-none w-full h-6 break-words border-none resize-none"
+                                :placeholder="trans.type_a_message"
+                                @keydown="isTyping"
+                                @keyup.enter="sendMessage"
+                            />
                         </div>
+                    </div>
+                    <div class="flex-none my-auto pl-2 pr-4">
+                        <a
+                            @click="sendMessage"
+                            class="cursor-pointer"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-icon" viewBox="0 0 20 20" fill="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.218,2.268L2.477,8.388C2.13,8.535,2.164,9.05,2.542,9.134L9.33,10.67l1.535,6.787c0.083,0.377,0.602,0.415,0.745,0.065l6.123-14.74C17.866,2.46,17.539,2.134,17.218,2.268 M3.92,8.641l11.772-4.89L9.535,9.909L3.92,8.641z M11.358,16.078l-1.268-5.613l6.157-6.157L11.358,16.078z"></path>
+                            </svg>
+                        </a>
                     </div>
                 </article>
             </template>

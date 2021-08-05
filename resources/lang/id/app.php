@@ -14,6 +14,7 @@ return [
     'group_admin' => 'Admin grup',
     'group_info' => 'Info grup',
     'group_name' => 'Nama grup',
+    'info' => 'Info',
     'info_and_email_address' => 'Info dan alamat surel',
     'language' => 'Bahasa',
     'laratalk_description' => 'Laratalk menyediakan obrolan berbasis Laravel antara pengguna dan grup',
