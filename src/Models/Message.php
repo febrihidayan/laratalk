@@ -362,4 +362,14 @@ class Message extends Model
         );
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(
+            Config::userModel(),
+            Config::messageRecipient(),
+            'message_id',
+            'to_id'
+        );
+    }
+
 }
