@@ -25,7 +25,7 @@
         >
 
         <label
-            v-if="isUpload"
+            v-if="isUpload && (isIconGroup || !config.user_gravatar)"
             @mouseover="isHover=true"
             @mouseleave="isHover=false"
             class="absolute rounded-full"
@@ -74,6 +74,7 @@ export default {
             type: Boolean,
             default: false
         },
+        modelValue: [String, Object],
         size: {
             type: Number,
             default: 10
@@ -88,11 +89,11 @@ export default {
     computed: {
         ...mapGetters({
             auth_user: 'config/profile',
-            storage: 'config/storage',
+            config: 'config/config',
         }),
 
         acceptImage() {
-            return 'image/' + this.storage.image_format.join(',image/')
+            return 'image/' + this.config.storage_image_format.join(',image/')
         },
 
         whStyle() {
@@ -115,14 +116,18 @@ export default {
             const file = e.target.files[0]
             this.src = URL.createObjectURL(file)
 
-            const data = new FormData()
-            data.append('image', file)
+            this.$emit('update:modelValue', file)
+            
+            if (!this.isIconGroup) {
+                const data = new FormData()
+                data.append('image', file)
 
-            axios
-                .post('upload-avatar', data)
-                .then(({ data }) => {
-                    this.auth_user.avatar = data
-                })
+                axios
+                    .post('upload-avatar', data)
+                    .then(({ data }) => {
+                        this.auth_user.avatar = data
+                    })
+            }
         },
         
         styleObject(size)

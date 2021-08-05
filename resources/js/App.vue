@@ -259,6 +259,7 @@
                 class="border-b dark:border-dark-50 ml-10"
             >
                 <Avatar
+                    v-model="formGroup.avatar"
                     :isIconGroup="true"
                     :isUpload="true"
                     :size="48"
@@ -916,6 +917,7 @@ export default {
                 content: ''
             },
             formGroup: {
+                avatar: '',
                 name: '',
                 users: []
             },
@@ -1421,15 +1423,22 @@ export default {
 
         sendGroup()
         {
+
+            const data = new FormData()
+            data.append('image', this.formGroup.avatar)
+            data.append('name', this.formGroup.name)
+            
             this.users_add_Groups.filter(e => {
-                this.formGroup.users.push(e.id)
+                data.append('users[]', e.id)
             })
 
-            axios.post('group-create', this.formGroup)
+            axios
+                .post('group-create', data)
                 .then(() => {
                     this.isBoxNewGroup = false
                     this.isBoxGroup = false
                     this.formGroup = {
+                        avatar: '',
                         name: '',
                         users: []
                     }

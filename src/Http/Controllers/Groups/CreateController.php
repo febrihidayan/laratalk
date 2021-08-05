@@ -10,18 +10,44 @@ use FebriHidayan\Laratalk\Models\GroupUser;
 use FebriHidayan\Laratalk\Models\Message;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class CreateController extends Controller
 {
     public function __invoke()
     {
-        Validator::validate(Request::all(), [
+        $validate = [
             'name' => 'required',
-            'users' => 'required:array'
-        ]);
+            'users' => 'required:array',
+            'users.*' => 'numeric'
+        ];
+
+        if (Request::file('image')) {
+            
+            $format = implode(',', Config::storageImageFormat());
+            $size = Config::storageImageSize();
+
+            $validate['image'] = "required|mimes:$format|max:$size";
+        }
+
+        Validator::validate(Request::all(), $validate);
+
+        if (Request::file('image')) {
+            $path = Storage::putFile(
+                    Config::storagePath(),
+                    Request::file('image')
+                );
+
+            Request::merge([
+                'avatar' =>
+                    str_replace('public', '/storage', $path)
+            ]);
+
+        }
 
         Request::merge([
             'user_id' => Auth::id()
@@ -55,7 +81,6 @@ class CreateController extends Controller
                     'to_id' => $id
                 ]);
             }
-
 
             $messageCreate = new UserListResource(
                 $messageCreate->select([

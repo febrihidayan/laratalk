@@ -138,7 +138,7 @@ return [
      * 
      */
     'group' => [
-        'disabled' => env('LARATALK_GROUP_DISABLED', false),
+        'enabled' => env('LARATALK_GROUP_ENABLED', false),
         'participant' => env('LARATALK_GROUP_PARTICIPANT', 300)
     ]
 ];

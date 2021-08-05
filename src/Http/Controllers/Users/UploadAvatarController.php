@@ -1,6 +1,6 @@
 <?php
 
-namespace FebriHidayan\Laratalk\Http\Controllers;
+namespace FebriHidayan\Laratalk\Http\Controllers\Users;
 
 use FebriHidayan\Laratalk\Config;
 use Illuminate\Routing\Controller;

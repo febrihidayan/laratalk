@@ -51,6 +51,12 @@ class LaratalkController extends Controller
             ->withScripts([
                 'title' => Config::name(),
                 'path' => Config::path(),
+                'config' => [
+                    'user_gravatar' => Config::userGravatar(),
+                    'group_enabled' => Config::groupEnabled(),
+                    'storage_image_format' => Config::storageImageFormat(),
+                    'storage_file_format' => Config::storageFileFormat(),
+                ],
                 'profile' => [
                     'id' => $user->id,
                     'avatar' => Config::userGravatar()
@@ -94,11 +100,7 @@ class LaratalkController extends Controller
                 'translations' => Laratalk::availableTranslations(
                     $user->{Config::userLocale()}
                 ),
-                'echo' => Config::pusher(),
-                'storage' => [
-                    'image_format' => Config::storageImageFormat(),
-                    'file_format' => Config::storageFileFormat(),
-                ]
+                'echo' => Config::pusher()
             ]);
     }
 }

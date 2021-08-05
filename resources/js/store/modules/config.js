@@ -1,18 +1,18 @@
 // state
 export const state = {
+    config: null,
     languages: null,
     models: null,
     profile: null,
-    storage: null,
     translations: null,
 }
 
 // getters
 export const getters = {
+    config: state => state.config,
     languages: state => state.languages,
     models: state => state.models,
     profile: state => state.profile,
-    storage: state => state.storage,
     translations: state => state.translations,
 }
 
@@ -27,10 +27,10 @@ export const actions = {
     {
         const config = window.laratalk
         
+        state.config = config.config
         state.languages = config.languages
         state.models = config.models
         state.profile = config.profile
-        state.storage = config.storage
         state.translations = config.translations
     },
 
