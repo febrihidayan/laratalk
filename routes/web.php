@@ -1,5 +1,6 @@
 <?php
 
+use FebriHidayan\Laratalk\Config;
 use FebriHidayan\Laratalk\Http\Controllers\Groups\CreateController;
 use FebriHidayan\Laratalk\Http\Controllers\LaratalkController;
 use FebriHidayan\Laratalk\Http\Controllers\Messages\DestroyController;
@@ -22,8 +23,6 @@ Route::group([
 
     Route::prefix('api')->group( function() {
 
-        Route::post('group-create', CreateController::class);
-
         Route::get('user-chat', UserChatController::class);
 
         Route::post('user-language', ChangeLanguageController::class);
@@ -42,7 +41,23 @@ Route::group([
 
         Route::post('message-store', StoreController::class);
 
-        Route::post('upload-avatar', UploadAvatarController::class);
+        /**
+         * If group is enabled then this routing should be used
+         */
+        if (Config::groupEnabled()) {
+
+            Route::post('group-create', CreateController::class);
+
+        }
+        
+        /**
+         * If gravatar (true) then routing is turned off
+         */
+        if (!Config::userGravatar()) {
+
+            Route::post('upload-avatar', UploadAvatarController::class);
+
+        }
 
     });
 
