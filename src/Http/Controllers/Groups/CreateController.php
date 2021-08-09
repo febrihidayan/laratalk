@@ -63,7 +63,7 @@ class CreateController extends Controller
         $group = Group::create(Request::all());
 
         // create relationship group to users pivot (group_user)
-        $group->users()->sync([Auth::id()], [
+        $group->users()->attach(Auth::id(), [
             'role' => Group::ADMIN
         ]);
 
@@ -79,7 +79,7 @@ class CreateController extends Controller
             ->unique();
         
         // add participants (group)
-        $group->users()->sync($usersId);
+        $group->users()->attach($usersId);
 
         // add participants (message)
         $messageCreate = Message::create([

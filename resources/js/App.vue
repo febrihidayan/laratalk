@@ -257,40 +257,42 @@
             v-model="isBoxGroup"
             :name="trans.new_group"
         >
-            <div
-                class="border-b dark:border-dark-50 ml-10"
-            >
-                <Avatar
-                    v-model="formGroup.avatar"
-                    :isIconGroup="true"
-                    :isUpload="true"
-                    :size="48"
-                    class="py-8 flex justify-center"
-                />
-
-                <input
-                    v-model="formGroup.name"
-                    type="search"
-                    class="flex-grow dark:bg-dark-200 focus:outline-none w-full" 
-                    :placeholder="trans.group_name"
-                    autofocus
+            <div class="sidebar-detail flex flex-col">
+                <div
+                    class="border-b dark:border-dark-50 ml-10"
                 >
-
-            </div>
-            <div
-                v-if="formGroup.name.length"
-                class="mx-auto my-8"
-            >
-                <a
-                    @click="sendGroup"
-                    class="cursor-pointer"
+                    <Avatar
+                        v-model="formGroup.avatar"
+                        :isIconGroup="true"
+                        :isUpload="true"
+                        :size="48"
+                        class="py-8 flex justify-center"
+                    />
+                
+                    <input
+                        v-model="formGroup.name"
+                        type="search"
+                        class="flex-grow dark:bg-dark-200 focus:outline-none w-full"
+                        :placeholder="trans.group_name"
+                        autofocus
+                    >
+                
+                </div>
+                <div
+                    v-if="formGroup.name.length"
+                    class="mx-auto my-8"
                 >
-                    <div class="bg-violet-600 rounded-full p-2">
-                        <CheckIcon
-                            class="svg-icon !text-white !h-7 !w-7"
-                        />
-                    </div>
-                </a>
+                    <a
+                        @click="sendGroup"
+                        class="cursor-pointer"
+                    >
+                        <div class="bg-violet-600 rounded-full p-2">
+                            <CheckIcon
+                                class="svg-icon !text-white !h-7 !w-7"
+                            />
+                        </div>
+                    </a>
+                </div>
             </div>
         </BoxAside>
 
@@ -1463,7 +1465,13 @@ export default {
 
             axios
                 .post('group-create', data)
-                .then(() => {
+                .then(({ data }) => {
+                    this.users.unshift(data)
+
+                    this.listenTyping(
+                        typeId(data.chat_type, data.id)
+                    )
+
                     this.isBoxNewGroup = false
                     this.isBoxGroup = false
                     this.formGroup = {
