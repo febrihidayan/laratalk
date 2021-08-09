@@ -12,7 +12,7 @@
         >
             <slot name="left" />
         </div>
-        <div class="flex flex-grow flex-col justify-center pr-3">
+        <div class="flex flex-grow flex-col justify-center w-0 pr-3">
             <slot />
         </div>
     </div>

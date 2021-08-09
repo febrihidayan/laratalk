@@ -79,7 +79,14 @@ export default {
             type: Number,
             default: 10
         },
-        user: Object
+        userId: {
+            type: [String, Number],
+            default: null
+        },
+        userType: {
+            type: String,
+            default: null
+        }
     },
     components: {
         CameraIcon,
@@ -118,14 +125,29 @@ export default {
 
             this.$emit('update:modelValue', file)
             
-            if (!this.isIconGroup) {
+            if (this.isUpload) {
                 const data = new FormData()
                 data.append('image', file)
+
+                if (this.userId && this.userType) {
+                    data.append('user_id', this.userId)
+                    data.append('user_type', this.userType)
+                }
 
                 axios
                     .post('upload-avatar', data)
                     .then(({ data }) => {
-                        this.auth_user.avatar = data
+                        if (!this.userId && !this.userType) {
+                            
+                            this.auth_user.avatar = data
+
+                        }
+
+                        this.$emit('changed', {
+                            path: data,
+                            id: this.userId,
+                            type: this.userType
+                        })
                     })
             }
         },
@@ -138,6 +160,11 @@ export default {
                 height: `${size}rem`,
                 width: `${size}rem`
             }
+        }
+    },
+    watch: {
+        image: function(e) {
+            this.src = e
         }
     }
 }

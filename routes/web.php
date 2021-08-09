@@ -8,10 +8,10 @@ use FebriHidayan\Laratalk\Http\Controllers\Messages\PullMessageController;
 use FebriHidayan\Laratalk\Http\Controllers\Messages\StatusController;
 use FebriHidayan\Laratalk\Http\Controllers\Messages\ShowController;
 use FebriHidayan\Laratalk\Http\Controllers\Messages\StoreController;
+use FebriHidayan\Laratalk\Http\Controllers\UploadAvatarController;
 use FebriHidayan\Laratalk\Http\Controllers\Users\ChangeDarkmodeController;
 use FebriHidayan\Laratalk\Http\Controllers\Users\ChangeLanguageController;
 use FebriHidayan\Laratalk\Http\Controllers\Users\NewChatController;
-use FebriHidayan\Laratalk\Http\Controllers\Users\UploadAvatarController;
 use FebriHidayan\Laratalk\Http\Controllers\Users\UserChatController;
 use Illuminate\Support\Facades\Route;
 
@@ -41,21 +41,14 @@ Route::group([
 
         Route::post('message-store', StoreController::class);
 
+        Route::post('upload-avatar', UploadAvatarController::class);
+
         /**
          * If group is enabled then this routing should be used
          */
         if (Config::groupEnabled()) {
 
             Route::post('group-create', CreateController::class);
-
-        }
-        
-        /**
-         * If gravatar (true) then routing is turned off
-         */
-        if (!Config::userGravatar()) {
-
-            Route::post('upload-avatar', UploadAvatarController::class);
 
         }
 

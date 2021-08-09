@@ -1,8 +1,10 @@
 <?php
 
-namespace FebriHidayan\Laratalk\Http\Controllers\Users;
+namespace FebriHidayan\Laratalk\Http\Controllers;
 
 use FebriHidayan\Laratalk\Config;
+use FebriHidayan\Laratalk\Models\Group;
+use FebriHidayan\Laratalk\Models\Message;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
@@ -29,13 +31,18 @@ class UploadAvatarController extends Controller
 
         $path = str_replace('public', '/storage', $path);
 
-        $user = Auth::user();
+        $user = Request::get('user_type') === Message::TYPE_GROUP
+            ? Group::find(Request::get('user_id'))
+            : Auth::user();
+
+        $field = Request::get('user_type') === Message::TYPE_GROUP
+            ? 'avatar' : Config::userAvatar();
 
         Storage::delete(
-            str_replace('/storage', 'public', $user->avatar)
+            str_replace('/storage', 'public', $user->{$field})
         );
 
-        $user->avatar = $path;
+        $user->{$field} = $path;
         $user->save();
 
         return Response::json(

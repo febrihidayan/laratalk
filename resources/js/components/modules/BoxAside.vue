@@ -18,7 +18,7 @@
                     name
                 }}</p>
             </div>
-            <div class="flex flex-col bg-white dark:bg-dark-200 h-full">
+            <div class="flex flex-col bg-white dark:bg-dark-200 h-screen">
                 <slot />
             </div>
         </div>

@@ -54,6 +54,7 @@ class LaratalkController extends Controller
                 'config' => [
                     'user_gravatar' => Config::userGravatar(),
                     'group_enabled' => Config::groupEnabled(),
+                    'group_participant' => Config::groupParticipant(),
                     'storage_image_format' => Config::storageImageFormat(),
                     'storage_file_format' => Config::storageFileFormat(),
                 ],

@@ -1,5 +1,5 @@
 <template>
-    <section class="dark:text-gray-100">
+    <section class="dark:bg-dark-200 dark:text-gray-100">
 
         <!-- box aside settings -->
         <BoxAside
@@ -385,6 +385,7 @@
                             <Avatar
                                 @click="fetchMessages(item.id, item.chat_type)"
                                 :image="item.avatar"
+                                :isIconGroup="item.chat_type === models.message.type_group"
                                 :size="13"
                             />
                         </template>
@@ -726,6 +727,7 @@
 
         <!-- detail info contact or group -->
         <aside
+            v-if="message.messages"
             :class="[`bg-light-600 dark:bg-dark-100 overflow-hidden <md:w-full lg:border-l-1 dark:lg:border-dark-200 <lg:fixed <lg:top-0 <lg:right-0 z-20`,{
                 '!w-0': !isAsideRight,
                 '<lg:w-65/100 <xl:w-3/10 xl:w-3/10': isAsideRight
@@ -747,7 +749,11 @@
                     <Avatar
                         :image="message.avatar"
                         :isIconGroup="message.chat_type === models.message.type_group"
+                        :isUpload="message.chat_type === models.message.type_group"
+                        :userId="message.id"
+                        :userType="message.chat_type"
                         :size="48"
+                        @changed="changeAvatar"
                         class="my-4 flex justify-center"
                     />
                     <p class="text-xl">{{
@@ -951,12 +957,32 @@ export default {
 
         addGroupParticipant(user)
         {
-            this.users_add_Groups.push(user)
+            /**
+             * Will add group participants up to the maximum number.
+             */
+            if (this.users_add_Groups.length < this.config.group_participant) {
+                this.users_add_Groups.push(user)
 
-            setTimeout(() => {
-                let container = document.getElementById("add-group-participant")
-                container.scrollTop = container.scrollHeight
-            }, 1)
+                setTimeout(() => {
+                    let container = document.getElementById("add-group-participant")
+                    container.scrollTop = container.scrollHeight
+                }, 1)
+            }
+        },
+
+        changeAvatar({type, path, id})
+        {
+            if (type === this.models.message.type_group) {
+                this.users.filter(user => {
+                    if (user.id === id && user.chat_type === type) {
+                        user.avatar = path
+                    }
+                })
+
+                if (this.message.id === id && this.message.chat_type === type) {
+                    this.message.avatar = path
+                }
+            }
         },
 
         deleteChatorLeaveGroup(id, chat_type)
