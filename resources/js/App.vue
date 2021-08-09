@@ -156,6 +156,7 @@
 
         <!-- box aside new group -->
         <BoxAside
+            v-if="config.group_enabled"
             v-model="isBoxNewGroup"
             :name="trans.select_group_participants"
         >
@@ -252,6 +253,7 @@
 
         <!-- box aside group -->
         <BoxAside
+            v-if="config.group_enabled"
             v-model="isBoxGroup"
             :name="trans.new_group"
         >
@@ -323,6 +325,7 @@
                             </a>
                             <div class="dropdown-menu">
                                 <a
+                                    v-if="config.group_enabled"
                                     @click="isBoxNewGroup=true"
                                     class="dropdown-item"
                                 >{{

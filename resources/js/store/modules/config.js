@@ -42,6 +42,7 @@ export const actions = {
             })
             .then(({ data }) => {
                 state.translations = data
+                window.laratalk.translations = data
             })
     }
 }

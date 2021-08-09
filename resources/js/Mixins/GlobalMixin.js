@@ -7,6 +7,7 @@ import {
 export default {
     computed: mapGetters({
         auth_user: 'config/profile',
+        config: 'config/config',
         languages: 'config/languages',
         models: 'config/models',
         trans: 'config/translations',

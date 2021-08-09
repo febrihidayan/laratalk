@@ -75,11 +75,12 @@ export default {
         programmatic: Boolean
     },
     computed: mapGetters({
-        trans: 'config/translations'
+        translation: 'config/translations'
     }),
     data() {
         return {
-            isActive: this.modelValue || false
+            isActive: this.modelValue || false,
+            trans: this.translation || window.laratalk.translations
         }
     },
     watch: {
