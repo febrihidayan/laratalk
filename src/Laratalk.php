@@ -23,9 +23,13 @@ class Laratalk
      * @param string|null $locale
      * @return array
      */
-    public static function availableTranslations(string $locale = null): array
+    public static function availableTranslations(?string $locale): array
     {
-        return trans('laratalk::app', [], $locale ?? FacadesConfig::get('app.locale'));
+        return trans(
+            'laratalk::app',
+            [], 
+            $locale ?? Auth::user()->{Config::userLocale()}
+        );
     }
 
     /**
