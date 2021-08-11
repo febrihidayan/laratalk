@@ -117,9 +117,12 @@ class ShowController extends Controller
 
             $data += [
                 'id' => $first->id,
-                'avatar' => Laratalk::gravatar($first->email),
+                'avatar' => Config::userGravatar()
+                    ? Laratalk::gravatar($first->email)
+                    : $first->{Config::userAvatar()},
                 'name' => $first->name,
                 'email' => $first->email,
+                'bio' => $first->{Config::userBio()},
             ];
         } else {
             $first = Group::with('users')
@@ -127,9 +130,9 @@ class ShowController extends Controller
 
             $data += [
                 'id' => $first->id,
-                'avatar' => $first->avatar,
+                'avatar' => $first->avatar ?? '',
                 'name' => $first->name,
-                'description' => $first->description,
+                'description' => $first->description ?? '',
                 'last_time' => Laratalk::lastTime($first->created_at, true),
                 'time' => $first-> created_at->format('H.i'),
                 'users' => UserGroupResource::collection($first->users)

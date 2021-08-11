@@ -2,6 +2,7 @@
 
 namespace FebriHidayan\Laratalk\Http\Resources\Messages;
 
+use FebriHidayan\Laratalk\Config;
 use FebriHidayan\Laratalk\Models\Message;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
@@ -44,9 +45,23 @@ class ShowGroupResource extends JsonResource
         ];
 
         if (in_array($this->type, $types)) {
+            $usersName = '';
+
+            if ($this->recipients->count() > 0) {
+                $usersName = Config::userModel()::whereIn(
+                        'id',
+                        $this->recipients->pluck('to_id')
+                    )
+                    ->get()
+                    ->pluck('name');
+            }
+            else {
+                $usersName = $this->recipient->user->name;
+            }
+
             $data += [
                 'content_to' => $this->recipient->to_id,
-                'user_to_name' => $this->recipient->user->name,
+                'user_to_name' => $usersName
             ];
         }
 

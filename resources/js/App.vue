@@ -765,21 +765,23 @@
                         `${trans.made} ${message.last_time} ${trans.at} ${message.time}`
                     }}</small>
                 </div>
-                <div class="bg-white dark:bg-dark-300 my-2 px-6 py-4">
-                    <small class="text-purple-800 dark:text-purple-300">{{
+                <div class="flex flex-col bg-white dark:bg-dark-300 my-2 pl-6">
+                    <small class="text-purple-800 dark:text-purple-300 pt-4">{{
                         message.chat_type === models.message.type_user
                             ? trans.info_and_email_address
                             : trans.description
                     }}</small>
-                    <div class="mt-4">
-                        <p v-if="message.bio">{{
-                            message.bio
-                        }}</p>
-                        <p>{{
-                            message.chat_type === models.message.type_user
-                                ? message.email : message.description
-                        }}</p>
-                    </div>
+                    <p
+                        v-if="message.bio"
+                        class="py-4 border-b dark:border-gray-500"
+                    >{{
+                        message.bio
+                    }}</p>
+                    <p class="py-4">{{
+                        message.chat_type === models.message.type_user
+                            ? message.email
+                            : (message.description || trans.add_group_description)
+                    }}</p>
                 </div>
                 <div
                     v-if="message.chat_type === models.message.type_group"

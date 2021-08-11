@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'add_group_description' => 'Add group description',
     'at' => 'at',
     'cancel' => 'Cancel',
     'change_language' => 'Change language',
@@ -8,8 +9,9 @@ return [
     'dark' => 'Dark',
     'delete_chat' => 'Delete chat',
     'delete_this_chat' => 'Delete this chat?',
-    'friday' => 'Friday',
+    'description' => 'Description',
     'exit' => 'Exit',
+    'friday' => 'Friday',
     'group_admin' => 'Group admin',
     'group_info' => 'Group info',
     'group_name' => 'Group name',

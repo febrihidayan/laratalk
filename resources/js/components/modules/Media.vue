@@ -1,6 +1,6 @@
 <template>
     <div 
-        :class="[`media flex h-18 dark:divide-gray-500`, {
+        :class="[`media flex h-18`, {
             'cursor-pointer': cursor,
             'hover:bg-light-300 dark:hover:bg-true-gray-700': cursor && !isActive,
             'bg-light-500 dark:bg-true-gray-800': isActive
@@ -40,6 +40,6 @@ export default {
 
 <style scoped>
 .media + .media {
-    @apply divide-y;
+    @apply divide-y dark:divide-gray-500;
 }
 </style>

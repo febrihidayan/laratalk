@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'add_group_description' => 'Tambahkan deskripsi grup',
     'at' => 'pukul',
     'cancel' => 'Batal',
     'change_language' => 'Ganti bahasa',
