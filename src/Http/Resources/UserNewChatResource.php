@@ -2,6 +2,7 @@
 
 namespace FebriHidayan\Laratalk\Http\Resources;
 
+use FebriHidayan\Laratalk\Config;
 use FebriHidayan\Laratalk\Laratalk;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,8 +18,11 @@ class UserNewChatResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'avatar' => Laratalk::gravatar($this->email),
-            'name' => $this->name
+            'avatar' => Config::userGravatar()
+                ? Laratalk::gravatar($this->email)
+                : $this->{Config::userAvatar()},
+            'name' => $this->name,
+            'bio' => $this->{Config::userBio()}
         ];
     }
 }

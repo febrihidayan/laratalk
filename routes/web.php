@@ -1,7 +1,11 @@
 <?php
 
 use FebriHidayan\Laratalk\Config;
+use FebriHidayan\Laratalk\Http\Controllers\Groups\ChangeAdminController;
 use FebriHidayan\Laratalk\Http\Controllers\Groups\CreateController;
+use FebriHidayan\Laratalk\Http\Controllers\Groups\ParticipantController;
+use FebriHidayan\Laratalk\Http\Controllers\Groups\RemoveParticipantController;
+use FebriHidayan\Laratalk\Http\Controllers\Groups\StoreParticipantController;
 use FebriHidayan\Laratalk\Http\Controllers\LaratalkController;
 use FebriHidayan\Laratalk\Http\Controllers\Messages\DestroyController;
 use FebriHidayan\Laratalk\Http\Controllers\Messages\PullMessageController;
@@ -48,7 +52,15 @@ Route::group([
          */
         if (Config::groupEnabled()) {
 
+            Route::post('group-admin', ChangeAdminController::class);
+
             Route::post('group-create', CreateController::class);
+
+            Route::post('group-participant', StoreParticipantController::class);
+
+            Route::delete('group-participant', RemoveParticipantController::class);
+
+            Route::get('user-group', ParticipantController::class);
 
         }
 

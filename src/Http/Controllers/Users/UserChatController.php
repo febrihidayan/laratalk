@@ -23,6 +23,7 @@ class UserChatController extends Controller
                 Config::groups('name as group_name'),
                 Config::groups('avatar as group_avatar'),
                 Config::users('id'),
+                Config::users(Config::userAvatar()),
                 Config::users('id as user_id'),
                 Config::users('name as user_name'),
                 Config::users('email as user_email'),

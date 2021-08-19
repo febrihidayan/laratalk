@@ -37,6 +37,7 @@ import {
     MoonIcon,
     SearchIcon,
     TrashIcon,
+    UserAddIcon,
     XIcon
 } from '@heroicons/vue/solid'
 
@@ -63,6 +64,7 @@ const app = createApp({
         SunIcon,
         TranslateIcon,
         TrashIcon,
+        UserAddIcon,
         XIcon
     },
     setup() {

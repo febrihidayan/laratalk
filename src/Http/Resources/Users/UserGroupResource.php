@@ -2,6 +2,7 @@
 
 namespace FebriHidayan\Laratalk\Http\Resources\Users;
 
+use FebriHidayan\Laratalk\Config;
 use FebriHidayan\Laratalk\Laratalk;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,8 +18,11 @@ class UserGroupResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'avatar' => Laratalk::gravatar($this->email),
+            'avatar' => Config::userGravatar()
+                ? Laratalk::gravatar($this->email)
+                : $this->{Config::userAvatar()},
             'name' => $this->name,
+            'bio' => $this->{Config::userBio()},
             'role' => $this->role
         ];
     }

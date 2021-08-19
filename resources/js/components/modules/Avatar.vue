@@ -125,7 +125,7 @@ export default {
 
             this.$emit('update:modelValue', file)
             
-            if (this.isUpload) {
+            if (this.isUpload && !config.user_gravatar) {
                 const data = new FormData()
                 data.append('image', file)
 

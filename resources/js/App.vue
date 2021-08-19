@@ -16,9 +16,12 @@
                         :size="20"
                     />
                 </div>
-                <div class="flex-grow my-auto">
-                    <p class="text-xl">{{
+                <div class="flex flex-col flex-grow my-auto">
+                    <p class="flex-grow text-xl">{{
                         auth_user.name
+                    }}</p>
+                    <p class="flex-grow">{{
+                        auth_user.bio || trans.about_default
                     }}</p>
                 </div>
             </div>
@@ -93,7 +96,7 @@
                     }}</small>
                     <div class="mt-4">
                         <p>{{
-                            auth_user.bio
+                            auth_user.bio || trans.about_default
                         }}</p>
                     </div>
                 </div>
@@ -113,6 +116,7 @@
                         />
                     </span>
                     <input
+                        v-model="search"
                         type="search"
                         class="flex-grow dark:bg-dark-50 focus:outline-none ml-3" 
                         :placeholder="trans.search"
@@ -144,9 +148,12 @@
                             />
                         </template>
 
-                        <div class="flex">
-                            <p class="flex-grow truncate text-lg">{{
+                        <div class="flex flex-col">
+                            <p class="flex-grow truncate">{{
                                 item.name
+                            }}</p>
+                            <p class="flex-grow truncate">{{
+                                item.bio || trans.about_default
                             }}</p>
                         </div>
                     </Media>
@@ -197,6 +204,7 @@
                     </div>
 
                     <input
+                        v-model="search"
                         type="search"
                         class="flex-grow dark:bg-dark-300 focus:outline-none w-full" 
                         :placeholder="trans.search_participant_name"
@@ -229,9 +237,12 @@
                                 />
                             </template>
 
-                            <div class="flex">
-                                <p class="flex-grow truncate text-lg">{{
+                            <div class="flex flex-col">
+                                <p class="flex-grow truncate">{{
                                     item.name
+                                }}</p>
+                                <p class="flex-grow truncate">{{
+                                    item.bio || trans.about_default
                                 }}</p>
                             </div>
                         </Media>
@@ -751,7 +762,7 @@
                     <Avatar
                         :image="message.avatar"
                         :isIconGroup="message.chat_type === models.message.type_group"
-                        :isUpload="message.chat_type === models.message.type_group"
+                        :isUpload="message.chat_type === models.message.type_group && message.users.find(s => s.role === models.group.admin && s.id === auth_user.id) ? true : false"
                         :userId="message.id"
                         :userType="message.chat_type"
                         :size="48"
@@ -772,10 +783,10 @@
                             : trans.description
                     }}</small>
                     <p
-                        v-if="message.bio"
+                        v-if="message.chat_type === models.message.type_user"
                         class="py-4 border-b dark:border-gray-500"
                     >{{
-                        message.bio
+                        message.bio || trans.about_default
                     }}</p>
                     <p class="py-4">{{
                         message.chat_type === models.message.type_user
@@ -791,23 +802,37 @@
                         message.users.length + ` ${trans.participants}`
                     }}</small>
                     <div class="mt-4">
+                        <Media @click="isModalAddParticipant=true">
+                            <template #left>
+                                <figure class="flex flex-col justify-center items-center rounded-full w-13 h-13 bg-violet-500 ml-6">
+                                    <UserAddIcon
+                                        class="svg-icon !text-gray-100"
+                                    />
+                                </figure>
+                            </template>
+
+                            <p>{{
+                                trans.add_participant
+                            }}</p>
+                        </Media>
                         <template
                             v-for="(item, index) in message.users"
                             :key="index"
                         >
-                            <Media
-                                v-on:click="auth_user.id != item.id ? fetchMessages(item.id, models.message.type_user) : ''"
-                                :cursor="auth_user.id != item.id"
-                            >
+                            <Media>
                                 <template #left>
                                     <Avatar
+                                        v-on:click="auth_user.id != item.id ? fetchMessages(item.id, models.message.type_user) : ''"
                                         :image="auth_user.avatar"
                                         :size="13"
                                         class="pl-6"
                                     />
                                 </template>
 
-                                <div class="flex pr-6">
+                                <div
+                                    v-on:click="auth_user.id != item.id ? fetchMessages(item.id, models.message.type_user) : ''"
+                                    class="flex"
+                                >
                                     <p class="flex-grow truncate text-lg">{{
                                         auth_user.id != item.id
                                             ? item.name : trans.you
@@ -818,6 +843,40 @@
                                     >{{
                                         trans.group_admin
                                     }}</small>
+                                </div>
+                                <div class="flex">
+                                    <span
+                                        v-on:click="auth_user.id != item.id ? fetchMessages(item.id, models.message.type_user) : ''"
+                                        class="flex-grow truncate"
+                                    >{{
+                                        item.bio || trans.about_default
+                                    }}</span>
+                                    <div
+                                        v-if="auth_user.id !== item.id && message.users.find(s => s.role === models.group.admin && s.id === auth_user.id) ? true : false"
+                                        class="dropdown -mr-9 pl-3 transition-effect opacity-0"
+                                    >
+                                        <a class="dropdown-button">
+                                            <ChevronDownIcon
+                                                class="svg-icon"
+                                            />
+                                        </a>
+                                        <div class="dropdown-menu">
+                                            <a
+                                                @click="leaveParticipantGroup(item)"
+                                                class="dropdown-item"
+                                            >{{
+                                                trans.remove
+                                            }}</a>
+                                            <a
+                                                @click="sendAddAdminGroup(item)"
+                                                class="dropdown-item"
+                                            >{{
+                                                item.role === models.group.admin
+                                                    ?  trans.dismiss_as_admin
+                                                    : trans.make_group_admin
+                                            }}</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </Media>
                         </template>
@@ -912,6 +971,80 @@
             </div>
         </div>
     </modal>
+
+    <!-- modal add participant -->
+    <modal
+        v-if="config.group_enabled && message.chat_type === models.message.type_group"
+        v-model="isModalAddParticipant"
+        :custom="true"
+    >
+        <div class="rounded-sm">
+            <header class="flex bg-blue-500 dark:bg-dark-400 text-white p-4">
+                <div class="flex-grow">
+                    <p>{{
+                        trans.add_participant
+                    }}</p>
+                </div>
+                <div class="flex-none">
+                    <a
+                        class="cursor-pointer"
+                        @click="isModalAddParticipant=false"
+                    >
+                        <XIcon
+                            class="svg-icon !text-white"
+                        />
+                    </a>
+                </div>
+            </header>
+            <div class="bg-light-200 dark:bg-dark-200 border-b-1 dark:border-dark-50 px-4 py-2">
+                <div class="flex rounded-full bg-white dark:bg-dark-50 p-1">
+                    <span class="flex-grow-0 flex-shrink-0">
+                        <SearchIcon
+                            class="svg-icon"
+                        />
+                    </span>
+                    <input
+                        v-model="search"
+                        type="search"
+                        class="flex-grow dark:bg-dark-50 focus:outline-none ml-3" 
+                        :placeholder="trans.search"
+                        @input="fetchSearchGroup"
+                    >
+                </div>
+            </div>
+            <div class="sidebar-content !h-54vh">
+                <template
+                    v-for="(item, index) in group_participants"
+                    :key="index"
+                >
+                    <Media
+                        v-if="auth_user.id !== item.id"
+                        checkable
+                        :avatar="item.avatar"
+                        @onChecked="addParticipantGroup(item)"
+                    >
+                        <div class="flex flex-col">
+                            <p class="flex-grow truncate">{{
+                                item.name
+                            }}</p>
+                            <p class="flex-grow truncate">{{
+                                item.bio || trans.about_default
+                            }}</p>
+                        </div>
+                    </Media>
+                </template>
+            </div>
+        </div>
+        <a
+            v-if="group_participant_users.length"
+            @click="sendParticipantGroup"
+            class="absolute cursor-pointer rounded-full bg-violet-600 hover:bg-violet-800 bottom-0 right-0 p-3 m-5"
+        >
+            <CheckIcon
+                class="svg-icon !text-white"
+            />
+        </a>
+    </modal>
 </template>
 
 <script>
@@ -926,6 +1059,7 @@ import {
 export default {
     data() {
         return {
+            search: '',
             form: {
                 content: ''
             },
@@ -941,15 +1075,45 @@ export default {
             isBoxNewGroup: false,
             isBoxProfile: false,
             isBoxSetting: false,
+            isModalAddParticipant: false,
             isSettingLang: false,
             isSettingTheme: false,
             message: {},
             message_countdown: null,
             message_second: 0,
             message_typing: false,
+            group_participants: [],
+            group_participant_users: [],
             users: [],
             users_add_Groups: [],
             users_new_chat: []
+        }
+    },
+    computed: {
+        resetProperty() {
+            return [
+                this.isBoxChat,
+                this.isBoxNewGroup
+            ].join()
+        }
+    },
+    watch: {
+        resetProperty() {
+            this.search = ''
+            this.users_add_Groups = []
+            this.users_new_chat = []
+
+            this.formGroup = {
+                avatar: '',
+                name: '',
+                users: []
+            }
+        },
+
+        isModalAddParticipant() {
+            this.search = ''
+            this.group_participants = []
+            this.group_participant_users = []
         }
     },
     methods: {
@@ -971,6 +1135,17 @@ export default {
                     let container = document.getElementById("add-group-participant")
                     container.scrollTop = container.scrollHeight
                 }, 1)
+            }
+        },
+
+        addParticipantGroup({ id })
+        {
+            const userIndex = this.group_participant_users.findIndex(s => s === id)
+
+            if (userIndex == -1) {
+                this.group_participant_users.push(id)
+            } else {
+                this.group_participant_users.splice(userIndex, 1)
             }
         },
 
@@ -1056,6 +1231,8 @@ export default {
                         type
                     }
                 }).then(({ data }) => {
+                    this.isAsideRight = false
+                    
                     this.message = data
     
                     this.users.find((s) => {
@@ -1068,6 +1245,10 @@ export default {
                             }
                         }
                     })
+
+                    if (data.chat_type === this.models.message.type_group) {
+                        this.participant_users = data.users
+                    }
 
                     this.scrollToEnd()
                 })
@@ -1090,6 +1271,19 @@ export default {
                 })
                 .then(({ data }) => {
                     this.users_new_chat = data
+                })
+        }, 500),
+
+        fetchSearchGroup: debounce(function (e) {
+            axios
+                .get('user-group', {
+                    params: {
+                        q: e.target.value,
+                        group_id: this.message.id
+                    }
+                })
+                .then(({ data }) => {
+                    this.group_participants = data
                 })
         }, 500),
 
@@ -1148,6 +1342,29 @@ export default {
                 }
 
             }, 1000)
+        },
+
+        leaveParticipantGroup({id, name})
+        {
+            this.$modal({
+                content: `${this.trans.remove} ${name}?`,
+                onConfirm: () => {
+                    axios
+                        .delete(`group-participant`, {
+                            data: {
+                                group_id: this.message.id,
+                                user_id: id,
+                            }
+                        })
+                        .then(({ data }) => {
+
+                            this.message.users.splice(
+                                this.message.users.findIndex(s => s.id === id),
+                                1
+                            )
+                        })
+                }
+            })
         },
 
         listenEcho()
@@ -1432,6 +1649,35 @@ export default {
                 let container = document.getElementById('main-content')
                 container.scrollTop = container.scrollHeight
             }, 10)
+        },
+
+        sendAddAdminGroup({ id, name })
+        {
+            this.$modal({
+                content: `${this.trans.make} ${name} ${this.trans.admin_of_this_group}?`,
+                onConfirm: () => {
+                    axios
+                        .post('group-admin', {
+                            group_id: this.message.id,
+                            user_id: id
+                        })
+                        .then(({ data }) => {
+                            
+                        })
+                }
+            })
+        },
+
+        sendParticipantGroup()
+        {
+            axios
+                .post('group-participant', {
+                    group_id: this.message.id,
+                    users: this.group_participant_users
+                })
+                .then(() => {
+                    this.isModalAddParticipant = false
+                })
         },
 
         sendLanguage({ target})

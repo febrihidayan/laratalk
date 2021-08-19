@@ -1,7 +1,10 @@
 <?php
 
 return [
+    'about_default' => 'Hey there! I am using Laratalk.',
     'add_group_description' => 'Add group description',
+    'add_participant' => 'Add participant',
+    'admin_of_this_group' => 'admin of this group',
     'at' => 'at',
     'cancel' => 'Cancel',
     'change_language' => 'Change language',
@@ -10,6 +13,7 @@ return [
     'delete_chat' => 'Delete chat',
     'delete_this_chat' => 'Delete this chat?',
     'description' => 'Description',
+    'dismiss_as_admin' => 'Dismiss as admin',
     'exit' => 'Exit',
     'friday' => 'Friday',
     'group_admin' => 'Group admin',
@@ -24,6 +28,8 @@ return [
     'leave_this_group' => 'leave this group?',
     'light' => 'Light',
     'made' => 'Made',
+    'make' => 'Make',
+    'make_group_admin' => 'Make group admin',
     'message' => [
         'add_admin_group' => 'You are now an Admin',
         'add_user_group' => 'added',
@@ -56,6 +62,7 @@ return [
     'participants' => 'participants',
     'profile' => 'Profile',
     'pull_message' => 'Pull message',
+    'remove' => 'Remove',
     'saturday' => 'Saturday',
     'search' => 'Search',
     'search_participant_name' => 'Search participant name',

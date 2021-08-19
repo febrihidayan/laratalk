@@ -1,7 +1,10 @@
 <?php
 
 return [
+    'about_default' => 'Hei! Saya menggunakan Laratalk.',
     'add_group_description' => 'Tambahkan deskripsi grup',
+    'add_participant' => 'Tambah peserta',
+    'admin_of_this_group' => 'admin group ini',
     'at' => 'pukul',
     'cancel' => 'Batal',
     'change_language' => 'Ganti bahasa',
@@ -10,6 +13,7 @@ return [
     'delete_chat' => 'Hapus obrolan',
     'delete_this_chat' => 'Hapus obrolan ini?',
     'description' => 'Deskripsi',
+    'dismiss_as_admin' => 'Keluarkan jadi admin',
     'exit' => 'Keluar',
     'friday' => 'Jumat',
     'group_admin' => 'Admin grup',
@@ -24,6 +28,8 @@ return [
     'leave_this_group' => 'Keluar dari grup ini?',
     'light' => 'Terang',
     'made' => 'Dibuat',
+    'make' => 'Jadikan',
+    'make_group_admin' => 'Jadikan admin grup',
     'message' => [
         'add_admin_group' => 'Anda sekarang adalah Admin',
         'add_user_group' => 'telah menambahkan',
@@ -56,6 +62,7 @@ return [
     'participants' => 'peserta',
     'profile' => 'Profil',
     'pull_message' => 'Tarik pesan',
+    'remove' => 'Keluarkan',
     'saturday' => 'Sabtu',
     'search' => 'Cari',
     'search_participant_name' => 'Cari nama peserta',

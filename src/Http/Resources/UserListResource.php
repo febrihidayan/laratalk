@@ -41,7 +41,9 @@ class UserListResource extends JsonResource
         }
         else {
             $data += [
-                'avatar' => Laratalk::gravatar($this->user_email),
+                'avatar' => Config::userGravatar()
+                    ? Laratalk::gravatar($this->user_email)
+                    : $this->{Config::userAvatar()},
                 'id' => $this->user_id,
                 'name' => $this->user_name,
             ];
