@@ -46,6 +46,20 @@ class ShowController extends Controller
         if ($type === Message::TYPE_GROUP) {
 
             $messages = Message::where('group_id', $id)
+                ->where(function ($query) {
+                    return $query
+                        ->whereIn('type', [
+                            Message::ADD_ADMIN_GROUP,
+                            Message::REMOVE_ADMIN_GROUP
+                        ])
+                        ->whereHas('recipients', function ($query) {
+                            return $query->where('to_id', Auth::id());
+                        });
+                })
+                ->orWhereNotIn('type', [
+                    Message::ADD_ADMIN_GROUP,
+                    Message::REMOVE_ADMIN_GROUP
+                ])
                 ->oldest()
                 ->get();
 

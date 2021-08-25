@@ -3,6 +3,8 @@
 namespace FebriHidayan\Laratalk\Http\Controllers\Groups;
 
 use FebriHidayan\Laratalk\Config;
+use FebriHidayan\Laratalk\Events\Messages\SendEvent;
+use FebriHidayan\Laratalk\Http\Resources\MessageResource;
 use FebriHidayan\Laratalk\Http\Resources\UserNewChatResource;
 use FebriHidayan\Laratalk\Models\Group;
 use FebriHidayan\Laratalk\Models\GroupUser;
@@ -35,12 +37,14 @@ class ChangeAdminController extends Controller
             ])
             ->first();
 
+        $role = $groupUser->role === Group::ADMIN
+            ? Group::MEMBER : Group::ADMIN;
+
         GroupUser::where([
             ['user_id', Request::get('user_id')],
             ['group_id', Request::get('group_id')]
         ])->update([
-            'role' => $groupUser->role === Group::ADMIN
-                ? Group::MEMBER : Group::ADMIN
+            'role' => $role
         ]);
 
         $message = Message::create([
@@ -52,6 +56,21 @@ class ChangeAdminController extends Controller
 
         $message->users()->attach([Request::get('user_id')]);
 
-        return Response::json([]);
+        $messageResource = collect(
+            new MessageResource(
+                Message::find($message->id)
+            )
+        )
+        ->put('role', $role)
+        ->toArray();
+
+        SendEvent::dispatch(
+            $messageResource,
+            Request::get('user_id')
+        );
+
+        return Response::json([
+            'data' => $messageResource
+        ]);
     }
 }

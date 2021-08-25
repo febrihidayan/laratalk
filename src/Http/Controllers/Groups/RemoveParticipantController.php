@@ -3,6 +3,8 @@
 namespace FebriHidayan\Laratalk\Http\Controllers\Groups;
 
 use FebriHidayan\Laratalk\Config;
+use FebriHidayan\Laratalk\Events\Messages\SendEvent;
+use FebriHidayan\Laratalk\Http\Resources\MessageResource;
 use FebriHidayan\Laratalk\Http\Resources\UserNewChatResource;
 use FebriHidayan\Laratalk\Models\Group;
 use FebriHidayan\Laratalk\Models\GroupUser;
@@ -42,6 +44,28 @@ class RemoveParticipantController extends Controller
 
         $message->users()->attach([Request::get('user_id')]);
 
-        return Response::json([]);
+        $userGroups = GroupUser::where('group_id', Request::get('group_id'))
+            ->where('user_id', '!=', Auth::id())
+            ->get()
+            ->pluck('user_id')
+            ->push(Request::get('user_id'));
+
+        $messageResource = collect(
+            new MessageResource(
+                Message::find($message->id)
+            )
+        )->toArray();
+
+        foreach ($userGroups as $id) {
+
+            SendEvent::dispatch(
+                $messageResource,
+                $id
+            );
+        }
+
+        return Response::json([
+            'data' => $messageResource
+        ]);
     }
 }

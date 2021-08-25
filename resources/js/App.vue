@@ -1358,6 +1358,8 @@ export default {
                         })
                         .then(({ data }) => {
 
+                            this.pushMessage(data.data)
+
                             this.message.users.splice(
                                 this.message.users.findIndex(s => s.id === id),
                                 1
@@ -1548,18 +1550,88 @@ export default {
                         e.id === data.group_id
                 )
             }
-            
+
             if (userIndex != -1) {
 
                 const user = this.users[userIndex]
-                
-                user.content = data.content
-                user.content_by = data.content_by
-                user.content_type = data.content_type
-                user.user_by_name = data.user_by_name || ''
-                user.last_time = data.time
-                user.status = 'send'
 
+                if (
+                    !includes([
+                        this.models.message.add_admin_group,
+                        this.models.message.remove_admin_group
+                    ], data.content_type)
+                    ||
+                    this.auth_user.id === data.content_to
+                ) {
+
+                    user.content = data.content
+                    user.content_by = data.content_by
+                    user.content_to = data.content_to
+                    user.content_type = data.content_type
+                    user.user_by_name = data.user_by_name || ''
+                    user.user_to_name = data.user_to_name || ''
+                    user.last_time = data.time
+                    user.status = 'send'
+
+                    if (
+                        this.message.messages &&
+                        typeId(data.chat_type, this.message.id) ===
+                            typeId(this.message.chat_type, this.message.id)
+                    ) {
+
+                        this.message.messages.push(data)
+                    
+                        this.scrollToEnd()
+
+                    }
+
+                }
+
+                // group
+                if (data.chat_type === this.models.message.type_group) {
+
+                    if (
+                        this.message.id === data.group_id &&
+                        this.message.chat_type === this.models.message.type_group
+                    ) {
+
+                        if (data.content_type === this.models.message.leave_group) {
+                            this.message.users.splice(
+                                this.message.users.findIndex(
+                                    s => s.id === data.content_by
+                                ), 1
+                            )[0]
+                        }
+
+                        if (includes([
+                            this.models.group.admin,
+                            this.models.group.member
+                        ], data.role)) {
+                            
+                            this.message.users.find(s => {
+                                if (s.id === data.content_to) {
+        
+                                    s.role = data.role
+    
+                                }
+                            })
+
+                        }
+    
+                    }
+
+                    if (
+                        data.content_to === this.auth_user.id &&
+                        data.content_type === this.models.message.remove_user_group
+                    ) {
+
+                        this.users.splice(userIndex, 1)[0]
+                        
+                    }
+
+                } // end type group
+                
+                
                 if (
                     typeId(user.chat_type, user.id) !==
                         typeId(this.message.chat_type, this.message.id)
@@ -1567,40 +1639,40 @@ export default {
                     user.read_count++
                 }
 
-                this.users.unshift(
-                    this.users.splice(userIndex, 1)[0]
-                )
+                if (data.content_type !== this.models.message.remove_user_group) {
+                    
+                    this.users.unshift(
+                        this.users.splice(userIndex, 1)[0]
+                    )
+
+                }
 
             } else {
 
                 this.users.unshift({
-                    id: data.avatar ? data.content_by : this.message.id,
+                    id: data.chat_type === this.models.message.type_group
+                        ? data.group_id
+                        : (data.avatar ? data.content_by : this.message.id),
                     avatar: data.avatar ? data.avatar : this.message.avatar,
                     name: data.name ? data.name : this.message.name,
                     content: data.content,
                     content_by: data.content_by,
-                    content_type: 0,
+                    content_to: data.content_to,
+                    content_type: data.content_type,
                     chat_type: data.chat_type,
                     read_count:
                         this.auth_user.id != data.content_by ? 1 : 0,
                     status: data.status,
+                    user_by_name: data.user_by_name,
+                    user_to_name: data.user_to_name,
                     last_time: data.time
                 })
             }
 
             if (
-                this.message.messages &&
-                typeId(data.chat_type, this.message.id) ===
-                    typeId(this.message.chat_type, this.message.id)
+                this.auth_user.id != data.content_by &&
+                data.chat_type === this.models.message.chat
             ) {
-
-                this.message.messages.push(data)
-            
-                this.scrollToEnd()
-
-            }
-
-            if (this.auth_user.id != data.content_by) {
 
                 let status = (
                     this.message.chat_type === this.models.message.type_user &&
@@ -1662,7 +1734,7 @@ export default {
                             user_id: id
                         })
                         .then(({ data }) => {
-                            
+                            this.pushMessage(data.data)
                         })
                 }
             })
@@ -1675,8 +1747,11 @@ export default {
                     group_id: this.message.id,
                     users: this.group_participant_users
                 })
-                .then(() => {
+                .then(({ data }) => {
                     this.isModalAddParticipant = false
+
+                    this.pushMessage(data.data)
+                    this.message.users = data.users
                 })
         },
 

@@ -2,6 +2,10 @@
 
 namespace FebriHidayan\Laratalk\Http\Controllers\Groups;
 
+use FebriHidayan\Laratalk\Config;
+use FebriHidayan\Laratalk\Events\Messages\SendEvent;
+use FebriHidayan\Laratalk\Http\Resources\MessageResource;
+use FebriHidayan\Laratalk\Http\Resources\Users\UserGroupResource;
 use FebriHidayan\Laratalk\Models\Group;
 use FebriHidayan\Laratalk\Models\GroupUser;
 use FebriHidayan\Laratalk\Models\Message;
@@ -39,6 +43,35 @@ class StoreParticipantController extends Controller
         $message->users()
             ->attach(Request::get('users'));
 
-        return Response::json([]);
+        // $users = Config::userModel()::whereIn('id', Request::get('users'))
+        //     ->get();
+
+        $userGroups = GroupUser::where('group_id', Request::get('group_id'))
+            ->where('user_id', '!=', Auth::id())
+            ->get()
+            ->pluck('user_id');
+
+        $messageResource = collect(
+            new MessageResource(
+                Message::find($message->id)
+            )
+        )
+        ->put('name', $group->name)
+        ->put('avatar', $group->avatar)
+        ->toArray();
+
+        foreach ($userGroups as $id) {
+
+            SendEvent::dispatch(
+                $messageResource,
+                $id
+            );
+            
+        }
+
+        return Response::json([
+            'data' => $messageResource,
+            'users' => UserGroupResource::collection($group->users)
+        ]);
     }
 }
