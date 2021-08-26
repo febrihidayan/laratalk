@@ -25,7 +25,7 @@
         >
 
         <label
-            v-if="isUpload && (isIconGroup || !config.user_gravatar)"
+            v-if="isInput && (isIconGroup || !config.user_gravatar)"
             @mouseover="isHover=true"
             @mouseleave="isHover=false"
             class="absolute rounded-full"
@@ -64,9 +64,12 @@ import {
 
 export default {
     props: {
-        hover: Boolean,
         image: String,
         isIconGroup: {
+            type: Boolean,
+            default: false
+        },
+        isInput: {
             type: Boolean,
             default: false
         },
@@ -114,7 +117,7 @@ export default {
     data() {
         return {
             src: this.image || null,
-            isHover: this.hover || false
+            isHover: false
         }
     },
     methods: {
@@ -125,7 +128,7 @@ export default {
 
             this.$emit('update:modelValue', file)
             
-            if (this.isUpload && !config.user_gravatar) {
+            if (this.isUpload && (this.isIconGroup || !this.config.user_gravatar)) {
                 const data = new FormData()
                 data.append('image', file)
 

@@ -75,6 +75,7 @@
                 <div class="bg-white dark:bg-dark-300">
                     <Avatar
                         :image="auth_user.avatar"
+                        :isInput="true"
                         :isUpload="true"
                         :size="48"
                         class="flex justify-center pt-7 pb-5"
@@ -275,7 +276,7 @@
                     <Avatar
                         v-model="formGroup.avatar"
                         :isIconGroup="true"
-                        :isUpload="true"
+                        :isInput="true"
                         :size="48"
                         class="py-8 flex justify-center"
                     />
@@ -510,6 +511,7 @@
                         <div class="flex-none p-2 cursor-pointer" @click="isAsideRight = true">
                             <Avatar
                                 :image="message.avatar"
+                                :isIconGroup="message.chat_type === models.message.type_group"
                             />
                         </div>
                         <div class="flex-grow grid cursor-pointer my-auto" @click="isAsideRight = true">
@@ -762,6 +764,7 @@
                     <Avatar
                         :image="message.avatar"
                         :isIconGroup="message.chat_type === models.message.type_group"
+                        :isInput="message.chat_type === models.message.type_group && message.users.find(s => s.role === models.group.admin && s.id === auth_user.id) ? true : false"
                         :isUpload="message.chat_type === models.message.type_group && message.users.find(s => s.role === models.group.admin && s.id === auth_user.id) ? true : false"
                         :userId="message.id"
                         :userType="message.chat_type"
