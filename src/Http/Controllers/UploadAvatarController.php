@@ -3,7 +3,10 @@
 namespace FebriHidayan\Laratalk\Http\Controllers;
 
 use FebriHidayan\Laratalk\Config;
+use FebriHidayan\Laratalk\Events\Messages\SendEvent;
+use FebriHidayan\Laratalk\Http\Resources\MessageResource;
 use FebriHidayan\Laratalk\Models\Group;
+use FebriHidayan\Laratalk\Models\GroupUser;
 use FebriHidayan\Laratalk\Models\Message;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -31,11 +34,13 @@ class UploadAvatarController extends Controller
 
         $path = str_replace('public', '/storage', $path);
 
-        $user = Request::get('user_type') === Message::TYPE_GROUP
+        $isGroup = Request::get('user_type') === Message::TYPE_GROUP;
+
+        $user = $isGroup
             ? Group::find(Request::get('user_id'))
             : Auth::user();
 
-        $field = Request::get('user_type') === Message::TYPE_GROUP
+        $field = $isGroup
             ? 'avatar' : Config::userAvatar();
 
         Storage::delete(
@@ -45,8 +50,32 @@ class UploadAvatarController extends Controller
         $user->{$field} = $path;
         $user->save();
 
-        return Response::json(
-            $path
-        );
+        $data = [
+            'path' => $path
+        ];
+
+        if ($isGroup) {
+            $message = Message::create([
+                'by_id' => Auth::id(),
+                'group_id' => $user->id,
+                'type' => Message::AVATAR_GROUP
+            ]);
+
+            $messageResource = collect(new MessageResource($message))
+                ->toArray();
+
+            foreach (GroupUser::userAll($user->id) as $id) {
+
+                SendEvent::dispatch(
+                    $messageResource,
+                    $id
+                );
+
+            }
+
+            $data['data'] = $messageResource;
+        }
+
+        return Response::json($data);
     }
 }

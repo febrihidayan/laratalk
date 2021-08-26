@@ -57,6 +57,14 @@ class GroupUser extends Pivot
         $this->table = Config::groupUser();
     }
 
+    public function scopeUserAll($query, $groupId)
+    {
+        return $query
+            ->where('group_id', $groupId)
+            ->get()
+            ->pluck('user_id');
+    }
+
     public function scopeUserGroup($query, $groupId, $userId = null)
     {
         return $query->where([

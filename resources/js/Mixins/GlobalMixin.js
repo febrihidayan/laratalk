@@ -69,7 +69,9 @@ export default {
 
             // type: 3
             if (type === _.avatar_group) {
-                return textPosition(item.user_by_name, trans.avatar_group)
+                return myUser
+                    ? trans.avatar_group_by
+                    : textPosition(item.user_by_name, trans.avatar_group)
             }
 
             // type: 4

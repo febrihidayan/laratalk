@@ -142,12 +142,12 @@ export default {
                     .then(({ data }) => {
                         if (!this.userId && !this.userType) {
                             
-                            this.auth_user.avatar = data
+                            this.auth_user.avatar = data.path
 
                         }
 
                         this.$emit('changed', {
-                            path: data,
+                            path: data.path,
                             id: this.userId,
                             type: this.userType
                         })
